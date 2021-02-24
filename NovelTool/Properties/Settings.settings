@@ -1,0 +1,228 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NovelTool.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ColorBoxFormBorderLeft" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">DarkSlateBlue</Value>
+    </Setting>
+    <Setting Name="ColorBoxFormBorderTop" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">RoyalBlue</Value>
+    </Setting>
+    <Setting Name="ColorBoxFormBorderRight" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Firebrick</Value>
+    </Setting>
+    <Setting Name="ColorBoxFormBorderBottom" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">DarkSlateGray</Value>
+    </Setting>
+    <Setting Name="ColorBoxBackPanel" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForePanel" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackMenuStrip" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeMenuStrip" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackToolStripMenuItem" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeToolStripMenuItem" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackToolStripPanel" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeToolStripPanel" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackToolStrip" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeToolStrip" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackListView" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeListView" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackPictureBox" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForePictureBox" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackTextBox" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeTextBox" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackButton" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeButton" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackSplitContainer" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeSplitContainer" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackProgressBar" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeProgressBar" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxBackOther" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ColorBoxForeOther" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IntUDFormBorderWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="CheckBoxFormBorderLeft" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CheckBoxFormBorderTop" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CheckBoxFormBorderRight" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CheckBoxFormBorderBottom" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IntUDIllustrationMinColorsLevel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2000</Value>
+    </Setting>
+    <Setting Name="IntUDIllustrationMinNonWhiteLevel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">800000</Value>
+    </Setting>
+    <Setting Name="IntUDAnalysisTaskThreadLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="FloatUDHeadMinRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="FloatUDFooterMinRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.95</Value>
+    </Setting>
+    <Setting Name="IntUDIgnoreMinDetectYSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="IntUDConfirmHeadGap" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="IntUDConfirmFooterGap" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectHead" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">DarkMagenta</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectBody" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Coral</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectFooter" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">LightSkyBlue</Value>
+    </Setting>
+    <Setting Name="IntUDRectViewWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="IntUDIllustrationMinWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">130</Value>
+    </Setting>
+    <Setting Name="IntUDIllustrationMinHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">130</Value>
+    </Setting>
+    <Setting Name="IntUDIllustrationRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectColumn" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">LightSkyBlue</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectEntityBody" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Red</Value>
+    </Setting>
+    <Setting Name="FloatUDEntityMinRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.6</Value>
+    </Setting>
+    <Setting Name="FloatUDEntityMaxRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1.2</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectColumnRuby" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">MediumSpringGreen</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectRuby" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">DarkGreen</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectMergeTB" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">MediumOrchid</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectMergeLR" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Tomato</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectSplitTop" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Gold</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectSplitMiddle" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">RoyalBlue</Value>
+    </Setting>
+    <Setting Name="ColorBoxRectSplitBottom" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">LightCoral</Value>
+    </Setting>
+    <Setting Name="ByteUDConfirmWhiteLevel" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">240</Value>
+    </Setting>
+    <Setting Name="IntUDOutputWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1200</Value>
+    </Setting>
+    <Setting Name="IntUDOutputHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1600</Value>
+    </Setting>
+    <Setting Name="IntUDMarginLeft" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="IntUDMarginRight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="IntUDMarginTop" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="IntUDMarginBottom" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="IntUDLeading" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="FloatUDEntityAdjacentRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.2</Value>
+    </Setting>
+    <Setting Name="PositionTypeBoxHead" Type="NovelTool.PositionType" Scope="User">
+      <Value Profile="(Default)">None</Value>
+    </Setting>
+    <Setting Name="PositionTypeBoxFooter" Type="NovelTool.PositionType" Scope="User">
+      <Value Profile="(Default)">None</Value>
+    </Setting>
+    <Setting Name="ColorBoxOutputBack" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">AliceBlue</Value>
+    </Setting>
+    <Setting Name="ImageTypeBoxOutput" Type="NovelTool.ImageType" Scope="User">
+      <Value Profile="(Default)">Jpeg</Value>
+    </Setting>
+    <Setting Name="LongUDOutputQuality" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">90</Value>
+    </Setting>
+    <Setting Name="PixelFormatBoxOutput" Type="System.Drawing.Imaging.PixelFormat" Scope="User">
+      <Value Profile="(Default)">DontCare</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

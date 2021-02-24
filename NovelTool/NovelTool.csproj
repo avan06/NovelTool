@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D787F082-276D-42CB-AF3A-560F5EC5BFEB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>NovelTool</RootNamespace>
+    <AssemblyName>NovelTool</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ImageTool.cs" />
+    <Compile Include="BitmapTool.cs" />
+    <Compile Include="GenerateView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GenerateView.Designer.cs">
+      <DependentUpon>GenerateView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Options.Designer.cs">
+      <DependentUpon>Options.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main.Win.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Config.cs" />
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PageData.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GenerateView.resx">
+      <DependentUpon>GenerateView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options.resx">
+      <DependentUpon>Options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\min.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\max.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Settings_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DarkTheme_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZoomIn_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZoomOut_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-1_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-2_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-3_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-4_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-5_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-6_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-7_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-8_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-9_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\number-0_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Previous_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Next_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImageSlideshow_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImageGroup_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImageBrowser_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ResourceView_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ResultToText_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SaveAll_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OutputGroup_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Output_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExportPerformanceReport_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\All_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Export_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExportData_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ExportFile_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Save_16x.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
