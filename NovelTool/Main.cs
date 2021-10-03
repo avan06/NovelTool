@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,12 +13,16 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace NovelTool
 {
     public partial class Main : Form
     {
-        private const string filterExts = "*.BMP;*.JPG;*.GIF;*.PNG";
+        private const string filterImageExts = "*.BMP;*.JPG;*.GIF;*.PNG";
+        private const string filterZipExts = "*.ZIP;*.RAR;*.7Z";
+        private const string filterEpubExts = "*.EPUB";
+        
         private string inputDir;
         private (ConcurrentDictionary<float, int> TopDict, ConcurrentDictionary<float, int> BottomDict,
                 ConcurrentDictionary<float, int> LeftDict, ConcurrentDictionary<float, int> RightDict,
@@ -207,46 +214,177 @@ namespace NovelTool
         #endregion
         private void ToolStripOpen_Click(object sender, EventArgs e)
         {
-            openFileDialog.Filter = "Image Files(" + filterExts + ")|" + filterExts + "|All files (*.*)|*.*";
+            openFileDialog.Filter =
+                $"All files (*.*)|*.*|" +
+                $"Zip Files({filterZipExts})|{filterZipExts}|" +
+                $"Epub Files({filterEpubExts})|{filterEpubExts}|" +
+                $"Image Files({filterImageExts})|{filterImageExts}"
+                ;
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
             if (openFileDialog.ShowDialog() != DialogResult.OK) return;
 
             string fileDirName = Path.GetDirectoryName(openFileDialog.FileName);
-
+            string fileName = Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+            string fileExt = Path.GetExtension(openFileDialog.FileName).ToUpper();
             try
             {
-                string[] fileEntries = Directory.GetFiles(fileDirName);
-                if (pictureBox.Image != null)
+                if (filterEpubExts.IndexOf(fileExt) != -1 || filterZipExts.IndexOf(fileExt) != -1)
                 {
-                    pictureBox.Image.Dispose();
-                    pictureBox.Image = null;
+                    fileDirName = fileDirName + @"\" + fileName;
+                    IArchive archive = ArchiveFactory.Open(openFileDialog.FileName);
+                    IReader reader = archive.ExtractAllEntries();
+                    while (reader.MoveToNextEntry())
+                    {
+                        if (!reader.Entry.IsDirectory)
+                            reader.WriteEntryToDirectory(fileDirName, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+                    }
                 }
-                fileListView.BeginUpdate();
-                fileListView.Items.Clear();
-                PageDatas.Clear();
-                sourceImg = null;
-                foreach (string filePath in fileEntries)
+                if (filterEpubExts.IndexOf(fileExt) != -1)
                 {
-                    DirectoryInfo file = new DirectoryInfo(filePath);
-                    if (!Regex.IsMatch(filterExts, file.Extension.ToUpper())) continue;
+                    string fullPath = "";
+                    string rootPath = "";
+                    XmlTextReader reader = new XmlTextReader($"{fileDirName}/META-INF/container.xml");
+                    XmlTextReader readerOpt = null;
+                    while (reader.Read())
+                    {
+                        if (reader.Name != "rootfile") continue;
 
-                    int itemIdx = fileListView.Items.Count;
-                    if (itemIdx == 0) inputDir = file.Parent.FullName;
-                    fileListView.Items.Add(itemIdx.ToString(), filePath, 0);
-                    fileListView.Items[itemIdx].Checked = true;
-                    fileListView.Items[itemIdx].SubItems.Add(file.Name);
-                    fileListView.Items[itemIdx].SubItems.Add(file.Parent.FullName);
-                    PageDatas.Add(new PageData(itemIdx, file.Parent.FullName, file.Name, file.Extension.ToUpper()));
+                        fullPath = reader.GetAttribute("full-path");
+                        rootPath = Path.GetDirectoryName($"{fileDirName}/{fullPath}");
+                        readerOpt = new XmlTextReader($"{fileDirName}/{fullPath}");
+                        break;
+                    }
+                    string title = "";
+                    string publisher = "";
+                    List<string> creators = new List<string>();
+                    List<string> itemrefs = new List<string>();
+                    Dictionary<string, string> images = new Dictionary<string, string>();
+                    Dictionary<string, string> xhtmls = new Dictionary<string, string>();
+                    while (readerOpt.Read())
+                    {
+                        if (readerOpt.NodeType != XmlNodeType.Element) continue;
+
+                        if (readerOpt.LocalName == "title") title = readerOpt.ReadString();
+                        else if (readerOpt.LocalName == "creator") creators.Add(readerOpt.ReadString());
+                        else if (readerOpt.LocalName == "publisher") publisher = readerOpt.ReadString();
+                        else if (readerOpt.LocalName == "item")
+                        {
+                            if (readerOpt.GetAttribute("media-type").StartsWith("image")) images.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
+                            if (readerOpt.GetAttribute("media-type") == "application/xhtml+xml") xhtmls.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
+                        }
+                        else if (readerOpt.LocalName == "itemref") itemrefs.Add(readerOpt.GetAttribute("idref"));
+                    }
+                    fileListView.BeginUpdate();
+                    fileListView.Items.Clear();
+                    PageDatas.Clear();
+                    for (int idx = 0; idx < itemrefs.Count; idx++)
+                    {
+                        string itemref = itemrefs[idx];
+                        string xhtml = xhtmls[itemref];
+                        string xhtmlPath = $"{rootPath}\\{xhtml}";
+                        string xhtmlDirName = Path.GetDirectoryName(xhtmlPath);
+                        string xhtmlExt = Path.GetExtension(xhtmlPath).ToUpper();
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.Load(xhtmlPath);
+                        XmlNodeList xmlNodes = xmlDoc.GetElementsByTagName("p");
+                        List<(string text, string ruby)> xmlTextList = GetXmlText(xmlNodes, xhtmlDirName);
+
+                        int itemIdx = fileListView.Items.Count;
+                        fileListView.Items.Add(itemIdx.ToString(), rootPath, 0);
+                        fileListView.Items[itemIdx].Checked = true;
+                        fileListView.Items[itemIdx].SubItems.Add(xhtml);
+                        fileListView.Items[itemIdx].SubItems.Add(rootPath);
+                        PageData pageData = new PageData(itemIdx, rootPath, xhtml, xhtmlExt);
+                        pageData.textList = xmlTextList;
+                        PageDatas.Add(pageData);
+                    }
+                    fileListView.EndUpdate();
+                    //XmlNamespaceManager nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
+                    //nsmgr.AddNamespace("ns", xmlDoc.DocumentElement.NamespaceURI);
+                    //XmlNodeList tt = xmlDoc.SelectNodes("ns:br", nsmgr);
+                    //xmlDoc.SelectNodes("//ns:img", nsmgr);
+                    //xmlDoc.SelectNodes("ns:span", nsmgr);
                 }
-                newAnalysisWorker.RunWorkerAsync();
+                else
+                {
+                    string[] fileEntries = Directory.GetFiles(fileDirName);
+                    if (pictureBox.Image != null)
+                    {
+                        pictureBox.Image.Dispose();
+                        pictureBox.Image = null;
+                    }
+                    fileListView.BeginUpdate();
+                    fileListView.Items.Clear();
+                    PageDatas.Clear();
+                    sourceImg = null;
+                    foreach (string filePath in fileEntries)
+                    {
+                        DirectoryInfo file = new DirectoryInfo(filePath);
+                        if (!Regex.IsMatch(filterImageExts, file.Extension.ToUpper())) continue;
+
+                        int itemIdx = fileListView.Items.Count;
+                        if (itemIdx == 0) inputDir = file.Parent.FullName;
+                        fileListView.Items.Add(itemIdx.ToString(), filePath, 0);
+                        fileListView.Items[itemIdx].Checked = true;
+                        fileListView.Items[itemIdx].SubItems.Add(file.Name);
+                        fileListView.Items[itemIdx].SubItems.Add(file.Parent.FullName);
+                        PageDatas.Add(new PageData(itemIdx, file.Parent.FullName, file.Name, file.Extension.ToUpper()));
+                    }
+                    newAnalysisWorker.RunWorkerAsync();
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 MessageBox.Show("Open file failed, " + ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
+        }
+
+        private List<(string text, string ruby)> GetXmlText(XmlNodeList childNodes, string xhtmlDir)
+        {
+            List<(string, string)> result = new List<(string, string)>();
+            for (int cIdx = 0; cIdx < childNodes.Count; cIdx++)
+            {
+                XmlNode childNode = childNodes[cIdx];
+                string text = childNode.InnerText;
+                int textLen = text.Length;
+                if (childNode.LocalName == "br" && textLen == 0) result.Add(("\n", ""));
+                else if (childNode.LocalName == "img" && textLen == 0)
+                {
+                    XmlAttributeCollection attrs = childNode.Attributes;
+                    for (int aIdx = 0; aIdx < attrs.Count; aIdx++)
+                    {
+                        XmlAttribute attr = attrs[aIdx];
+                        if (attr.Name == "src")
+                        {
+                            result.Add(("_img_", xhtmlDir + "/" + attr.Value));
+                            break;
+                        }
+                    }
+                }
+                else if (childNode.LocalName == "ruby" && childNode.ChildNodes.Count > 0)
+                {
+                    XmlNodeList rubyChildNodes = childNode.ChildNodes;
+                    for (int rIdx = 0; rIdx < rubyChildNodes.Count; rIdx++)
+                    {
+                        XmlNode r1 = rubyChildNodes[rIdx];
+                        XmlNode r2 = rubyChildNodes[++rIdx];
+                        result.Add((r1.InnerText, r2.InnerText));
+                    }
+                }
+                else if (childNode.LocalName == "p" || (textLen == 0 && childNode.ChildNodes.Count > 0))
+                {
+                    List<(string, string)> xmlText = GetXmlText(childNode.ChildNodes, xhtmlDir);
+                    result.AddRange(xmlText);
+                    result.Add(("\n", ""));
+                }
+                else if (childNode.LocalName == "span" && textLen > 0) result.Add((text, ""));
+                else if (childNode.NodeType == XmlNodeType.Text && textLen > 0) result.Add((text, ""));
+                else if (textLen > 0) result.Add((text, ""));
+            }
+            return result;
         }
         private void ToolStripOptions_Click(object sender, EventArgs e)
         {
@@ -284,10 +422,12 @@ namespace NovelTool
 
                 try
                 {
+                    RefreshModes();
                     fs = File.OpenRead(pageData.path + @"\" + pageData.name);
                     pageImg = Image.FromStream(fs);
-                    if (ImageTool.AnalysisPointStates((Bitmap)pageImg, pageData, true))
+                    if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData, true))
                     {
+                        pageData.isIllustration = false;
                         ImageTool.AnalysisPageY(pageData);
                         if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
                         if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
@@ -296,6 +436,8 @@ namespace NovelTool
 
                         ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
                         ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
+                        item.Selected = false;
+                        item.Selected = true;
                     }
                 }
                 catch (Exception ex)
@@ -553,13 +695,13 @@ namespace NovelTool
                         fs = File.OpenRead(pageData.path + @"\" + pageData.name);
                         pageImg = Image.FromStream(fs);
 
-                        if (ImageTool.AnalysisPointStates((Bitmap)pageImg, pageData))
+                        if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData))
                         {
                             ImageTool.AnalysisPageY(pageData);
                             if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
                             if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
                             if (pageData.xStatesFooter != null) ImageTool.AnalysisPageX(pageData.rectFooter, pageData.xStatesFooter, out pageData.columnFooterList);
-                            ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
+                            if (pageData.columnBodyList != null) ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
                         }
 
                         newAnalysisWorker.ReportProgress((int)((++calIdx / (float)fileListView.Items.Count) * 70),
@@ -584,20 +726,7 @@ namespace NovelTool
             #endregion
 
             #region CalculateModes
-            float FloatUDEntityMinRate = (float)Properties.Settings.Default["FloatUDEntityMinRate"];
-            float FloatUDEntityMaxRate = (float)Properties.Settings.Default["FloatUDEntityMaxRate"];
-            modes = 
-                (ImageTool.GetModeMostOftenLen(counts.TopDict), ImageTool.GetModeMostOftenLen(counts.BottomDict),
-                ImageTool.GetModeMostOftenLen(counts.LeftDict), ImageTool.GetModeMostOftenLen(counts.RightDict),
-                ImageTool.GetModeMostOftenLen(counts.WidthDict), ImageTool.GetModeMostOftenLen(counts.HeightDict), 0, 0, 0, 0, 0, 0, 0, 0);
-            modes.WidthMin = modes.Width * FloatUDEntityMinRate;
-            modes.WidthMax = modes.Width * FloatUDEntityMaxRate;
-            modes.HeighMin = modes.Heigh * FloatUDEntityMinRate;
-            modes.HeighMax = modes.Heigh * FloatUDEntityMaxRate;
-            modes.TopMin = (float)(modes.Top + modes.HeighMin * 0.5);
-            modes.BottomMin = (float)(modes.Bottom - modes.HeighMin * 0.5);
-            modes.LeftMin = (float)(modes.Left + modes.WidthMin * 0.5);
-            modes.RightMin = (float)(modes.Right - modes.WidthMin * 0.5);
+            RefreshModes();
             #endregion
 
             #region AnalysisEntity
@@ -615,7 +744,7 @@ namespace NovelTool
                     {
                         semaphore.Wait();
                         tickerMinor = Stopwatch.StartNew();
-                        if (!pageData.isIllustration)
+                        if (!pageData.isIllustration && pageData.columnBodyList != null)
                         {
                             ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
                             ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
@@ -653,6 +782,24 @@ namespace NovelTool
             for (int idx = 0; idx < PageDatas.Count; ++idx) if (PageDatas[idx].isIllustration) fileListView.Items[idx].Checked = false;
             fileListView.EndUpdate();
             toolProgressBar.Value = toolProgressBar.Maximum;
+        }
+
+        private void RefreshModes()
+        {
+            float FloatUDEntityMinRate = (float)Properties.Settings.Default["FloatUDEntityMinRate"];
+            float FloatUDEntityMaxRate = (float)Properties.Settings.Default["FloatUDEntityMaxRate"];
+            modes =
+                (ImageTool.GetModeMostOftenLen(counts.TopDict), ImageTool.GetModeMostOftenLen(counts.BottomDict),
+                ImageTool.GetModeMostOftenLen(counts.LeftDict), ImageTool.GetModeMostOftenLen(counts.RightDict),
+                ImageTool.GetModeMostOftenLen(counts.WidthDict), ImageTool.GetModeMostOftenLen(counts.HeightDict), 0, 0, 0, 0, 0, 0, 0, 0);
+            modes.WidthMin = modes.Width * FloatUDEntityMinRate;
+            modes.WidthMax = modes.Width * FloatUDEntityMaxRate;
+            modes.HeighMin = modes.Heigh * FloatUDEntityMinRate;
+            modes.HeighMax = modes.Heigh * FloatUDEntityMaxRate;
+            modes.TopMin = (float)(modes.Top + modes.HeighMin * 0.5);
+            modes.BottomMin = (float)(modes.Bottom - modes.HeighMin * 0.5);
+            modes.LeftMin = (float)(modes.Left + modes.WidthMin * 0.5);
+            modes.RightMin = (float)(modes.Right - modes.WidthMin * 0.5);
         }
         #endregion
     }

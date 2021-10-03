@@ -30,29 +30,29 @@ namespace NovelTool
         private void InitializeComponent()
         {
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.outputView = new System.Windows.Forms.PictureBox();
+            this.Panel1 = new System.Windows.Forms.Panel();
+            this.OutputView = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripSave = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSaveAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripSave = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripSaveAll = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripPrevious = new System.Windows.Forms.ToolStripButton();
-            this.toolStripNext = new System.Windows.Forms.ToolStripButton();
-            this.toolStripPage = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripPageBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ToolStripPrevious = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripNext = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripPage = new System.Windows.Forms.ToolStripLabel();
+            this.ToolStripPageBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripZoomIn = new System.Windows.Forms.ToolStripButton();
-            this.toolStripZoomOut = new System.Windows.Forms.ToolStripButton();
-            this.toolStripZoomFactorBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ToolStripZoomIn = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripZoomOut = new System.Windows.Forms.ToolStripButton();
+            this.ToolStripZoomFactorBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripFilter = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripFilterBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ToolStripFilterBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.outputView)).BeginInit();
+            this.Panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OutputView)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +61,7 @@ namespace NovelTool
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.panel1);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.Panel1);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip1);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(800, 425);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -75,29 +75,29 @@ namespace NovelTool
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
-            // panel1
+            // Panel1
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.Controls.Add(this.outputView);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(800, 403);
-            this.panel1.TabIndex = 2;
+            this.Panel1.AutoScroll = true;
+            this.Panel1.BackColor = System.Drawing.Color.Transparent;
+            this.Panel1.Controls.Add(this.OutputView);
+            this.Panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Panel1.Location = new System.Drawing.Point(0, 0);
+            this.Panel1.Name = "Panel1";
+            this.Panel1.Size = new System.Drawing.Size(800, 403);
+            this.Panel1.TabIndex = 2;
             // 
-            // outputView
+            // OutputView
             // 
-            this.outputView.BackColor = System.Drawing.Color.Transparent;
-            this.outputView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.outputView.Location = new System.Drawing.Point(0, 0);
-            this.outputView.Name = "outputView";
-            this.outputView.Size = new System.Drawing.Size(235, 205);
-            this.outputView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.outputView.TabIndex = 1;
-            this.outputView.TabStop = false;
-            this.outputView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutputView_MouseDown);
-            this.outputView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OutputView_MouseMove);
+            this.OutputView.BackColor = System.Drawing.Color.Transparent;
+            this.OutputView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.OutputView.Location = new System.Drawing.Point(0, 0);
+            this.OutputView.Name = "OutputView";
+            this.OutputView.Size = new System.Drawing.Size(235, 205);
+            this.OutputView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.OutputView.TabIndex = 1;
+            this.OutputView.TabStop = false;
+            this.OutputView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OutputView_MouseDown);
+            this.OutputView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OutputView_MouseMove);
             // 
             // statusStrip1
             // 
@@ -111,119 +111,119 @@ namespace NovelTool
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripSave,
-            this.toolStripSaveAll,
+            this.ToolStripSave,
+            this.ToolStripSaveAll,
             this.toolStripSeparator1,
-            this.toolStripPrevious,
-            this.toolStripNext,
-            this.toolStripPage,
-            this.toolStripPageBox,
+            this.ToolStripPrevious,
+            this.ToolStripNext,
+            this.ToolStripPage,
+            this.ToolStripPageBox,
             this.toolStripSeparator2,
-            this.toolStripZoomIn,
-            this.toolStripZoomOut,
-            this.toolStripZoomFactorBox,
+            this.ToolStripZoomIn,
+            this.ToolStripZoomOut,
+            this.ToolStripZoomFactorBox,
             this.toolStripSeparator3,
             this.toolStripFilter,
-            this.toolStripFilterBox});
+            this.ToolStripFilterBox});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(552, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(519, 25);
             this.toolStrip1.TabIndex = 0;
             // 
-            // toolStripSave
+            // ToolStripSave
             // 
-            this.toolStripSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSave.Image = global::NovelTool.Properties.Resources.Save_16x;
-            this.toolStripSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSave.Name = "toolStripSave";
-            this.toolStripSave.Size = new System.Drawing.Size(23, 22);
-            this.toolStripSave.Text = "toolStripSave";
-            this.toolStripSave.ToolTipText = "toolStripSave";
-            this.toolStripSave.Click += new System.EventHandler(this.ToolStripSave_Click);
+            this.ToolStripSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripSave.Image = global::NovelTool.Properties.Resources.Save_16x;
+            this.ToolStripSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripSave.Name = "ToolStripSave";
+            this.ToolStripSave.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripSave.Text = "toolStripSave";
+            this.ToolStripSave.ToolTipText = "toolStripSave";
+            this.ToolStripSave.Click += new System.EventHandler(this.ToolStripSave_Click);
             // 
-            // toolStripSaveAll
+            // ToolStripSaveAll
             // 
-            this.toolStripSaveAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSaveAll.Image = global::NovelTool.Properties.Resources.SaveAll_16x;
-            this.toolStripSaveAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSaveAll.Name = "toolStripSaveAll";
-            this.toolStripSaveAll.Size = new System.Drawing.Size(23, 22);
-            this.toolStripSaveAll.Text = "toolStripSaveAll";
-            this.toolStripSaveAll.ToolTipText = "toolStripSaveAll";
-            this.toolStripSaveAll.Click += new System.EventHandler(this.ToolStripSaveAll_Click);
+            this.ToolStripSaveAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripSaveAll.Image = global::NovelTool.Properties.Resources.SaveAll_16x;
+            this.ToolStripSaveAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripSaveAll.Name = "ToolStripSaveAll";
+            this.ToolStripSaveAll.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripSaveAll.Text = "toolStripSaveAll";
+            this.ToolStripSaveAll.ToolTipText = "toolStripSaveAll";
+            this.ToolStripSaveAll.Click += new System.EventHandler(this.ToolStripSaveAll_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripPrevious
+            // ToolStripPrevious
             // 
-            this.toolStripPrevious.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripPrevious.Image = global::NovelTool.Properties.Resources.Previous_16x;
-            this.toolStripPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripPrevious.Name = "toolStripPrevious";
-            this.toolStripPrevious.Size = new System.Drawing.Size(23, 22);
-            this.toolStripPrevious.Text = "toolStripPrevious";
-            this.toolStripPrevious.ToolTipText = "toolStripPrevious";
-            this.toolStripPrevious.Click += new System.EventHandler(this.ToolStripPrevious_Click);
+            this.ToolStripPrevious.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripPrevious.Image = global::NovelTool.Properties.Resources.Previous_16x;
+            this.ToolStripPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripPrevious.Name = "ToolStripPrevious";
+            this.ToolStripPrevious.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripPrevious.Text = "toolStripPrevious";
+            this.ToolStripPrevious.ToolTipText = "toolStripPrevious";
+            this.ToolStripPrevious.Click += new System.EventHandler(this.ToolStripPrevious_Click);
             // 
-            // toolStripNext
+            // ToolStripNext
             // 
-            this.toolStripNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripNext.Image = global::NovelTool.Properties.Resources.Next_16x;
-            this.toolStripNext.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripNext.Name = "toolStripNext";
-            this.toolStripNext.Size = new System.Drawing.Size(23, 22);
-            this.toolStripNext.Text = "toolStripNext";
-            this.toolStripNext.ToolTipText = "toolStripNext";
-            this.toolStripNext.Click += new System.EventHandler(this.ToolStripNext_Click);
+            this.ToolStripNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripNext.Image = global::NovelTool.Properties.Resources.Next_16x;
+            this.ToolStripNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripNext.Name = "ToolStripNext";
+            this.ToolStripNext.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripNext.Text = "toolStripNext";
+            this.ToolStripNext.ToolTipText = "toolStripNext";
+            this.ToolStripNext.Click += new System.EventHandler(this.ToolStripNext_Click);
             // 
-            // toolStripPage
+            // ToolStripPage
             // 
-            this.toolStripPage.Name = "toolStripPage";
-            this.toolStripPage.Size = new System.Drawing.Size(87, 22);
-            this.toolStripPage.Text = "Current page: ";
+            this.ToolStripPage.Name = "ToolStripPage";
+            this.ToolStripPage.Size = new System.Drawing.Size(87, 22);
+            this.ToolStripPage.Text = "Current page: ";
             // 
-            // toolStripPageBox
+            // ToolStripPageBox
             // 
-            this.toolStripPageBox.AutoSize = false;
-            this.toolStripPageBox.Name = "toolStripPageBox";
-            this.toolStripPageBox.Size = new System.Drawing.Size(50, 23);
-            this.toolStripPageBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripPageBox_SelectedIndexChanged);
-            this.toolStripPageBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripPageBox_KeyUp);
+            this.ToolStripPageBox.AutoSize = false;
+            this.ToolStripPageBox.Name = "ToolStripPageBox";
+            this.ToolStripPageBox.Size = new System.Drawing.Size(50, 23);
+            this.ToolStripPageBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripPageBox_SelectedIndexChanged);
+            this.ToolStripPageBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripPageBox_KeyUp);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripZoomIn
+            // ToolStripZoomIn
             // 
-            this.toolStripZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripZoomIn.Image = global::NovelTool.Properties.Resources.ZoomIn_16x;
-            this.toolStripZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripZoomIn.Name = "toolStripZoomIn";
-            this.toolStripZoomIn.Size = new System.Drawing.Size(23, 22);
-            this.toolStripZoomIn.Text = "toolStripZoomIn";
-            this.toolStripZoomIn.ToolTipText = "toolStripZoomIn";
-            this.toolStripZoomIn.Click += new System.EventHandler(this.ToolStripZoomIn_Click);
+            this.ToolStripZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripZoomIn.Image = global::NovelTool.Properties.Resources.ZoomIn_16x;
+            this.ToolStripZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripZoomIn.Name = "ToolStripZoomIn";
+            this.ToolStripZoomIn.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripZoomIn.Text = "toolStripZoomIn";
+            this.ToolStripZoomIn.ToolTipText = "toolStripZoomIn";
+            this.ToolStripZoomIn.Click += new System.EventHandler(this.ToolStripZoomIn_Click);
             // 
-            // toolStripZoomOut
+            // ToolStripZoomOut
             // 
-            this.toolStripZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripZoomOut.Image = global::NovelTool.Properties.Resources.ZoomOut_16x;
-            this.toolStripZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripZoomOut.Name = "toolStripZoomOut";
-            this.toolStripZoomOut.Size = new System.Drawing.Size(23, 22);
-            this.toolStripZoomOut.Text = "toolStripZoomOut";
-            this.toolStripZoomOut.ToolTipText = "toolStripZoomOut";
-            this.toolStripZoomOut.Click += new System.EventHandler(this.ToolStripZoomOut_Click);
+            this.ToolStripZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripZoomOut.Image = global::NovelTool.Properties.Resources.ZoomOut_16x;
+            this.ToolStripZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolStripZoomOut.Name = "ToolStripZoomOut";
+            this.ToolStripZoomOut.Size = new System.Drawing.Size(23, 22);
+            this.ToolStripZoomOut.Text = "toolStripZoomOut";
+            this.ToolStripZoomOut.ToolTipText = "toolStripZoomOut";
+            this.ToolStripZoomOut.Click += new System.EventHandler(this.ToolStripZoomOut_Click);
             // 
-            // toolStripZoomFactorBox
+            // ToolStripZoomFactorBox
             // 
-            this.toolStripZoomFactorBox.AutoSize = false;
-            this.toolStripZoomFactorBox.Items.AddRange(new object[] {
+            this.ToolStripZoomFactorBox.AutoSize = false;
+            this.ToolStripZoomFactorBox.Items.AddRange(new object[] {
             "100",
             "150",
             "200",
@@ -233,10 +233,10 @@ namespace NovelTool
             "400",
             "450",
             "500"});
-            this.toolStripZoomFactorBox.Name = "toolStripZoomFactorBox";
-            this.toolStripZoomFactorBox.Size = new System.Drawing.Size(50, 23);
-            this.toolStripZoomFactorBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripZoomFactorBox_SelectedIndexChanged);
-            this.toolStripZoomFactorBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripZoomFactorBox_KeyUp);
+            this.ToolStripZoomFactorBox.Name = "ToolStripZoomFactorBox";
+            this.ToolStripZoomFactorBox.Size = new System.Drawing.Size(50, 23);
+            this.ToolStripZoomFactorBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripZoomFactorBox_SelectedIndexChanged);
+            this.ToolStripZoomFactorBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripZoomFactorBox_KeyUp);
             // 
             // toolStripSeparator3
             // 
@@ -249,10 +249,10 @@ namespace NovelTool
             this.toolStripFilter.Size = new System.Drawing.Size(37, 22);
             this.toolStripFilter.Text = "Filter:";
             // 
-            // toolStripFilterBox
+            // ToolStripFilterBox
             // 
-            this.toolStripFilterBox.Name = "toolStripFilterBox";
-            this.toolStripFilterBox.Size = new System.Drawing.Size(121, 25);
+            this.ToolStripFilterBox.Name = "ToolStripFilterBox";
+            this.ToolStripFilterBox.Size = new System.Drawing.Size(121, 25);
             // 
             // GenerateView
             // 
@@ -268,9 +268,9 @@ namespace NovelTool
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.outputView)).EndInit();
+            this.Panel1.ResumeLayout(false);
+            this.Panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OutputView)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -282,21 +282,21 @@ namespace NovelTool
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.PictureBox outputView;
-        private System.Windows.Forms.ToolStripButton toolStripPrevious;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStripButton toolStripNext;
-        private System.Windows.Forms.ToolStripLabel toolStripPage;
-        private System.Windows.Forms.ToolStripComboBox toolStripPageBox;
-        private System.Windows.Forms.ToolStripButton toolStripSave;
+        private System.Windows.Forms.PictureBox OutputView;
+        private System.Windows.Forms.ToolStripButton ToolStripPrevious;
+        private System.Windows.Forms.Panel Panel1;
+        private System.Windows.Forms.ToolStripButton ToolStripNext;
+        private System.Windows.Forms.ToolStripLabel ToolStripPage;
+        private System.Windows.Forms.ToolStripComboBox ToolStripPageBox;
+        private System.Windows.Forms.ToolStripButton ToolStripSave;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripLabel toolStripFilter;
-        private System.Windows.Forms.ToolStripComboBox toolStripFilterBox;
-        private System.Windows.Forms.ToolStripButton toolStripZoomIn;
-        private System.Windows.Forms.ToolStripButton toolStripZoomOut;
-        private System.Windows.Forms.ToolStripComboBox toolStripZoomFactorBox;
+        private System.Windows.Forms.ToolStripComboBox ToolStripFilterBox;
+        private System.Windows.Forms.ToolStripButton ToolStripZoomIn;
+        private System.Windows.Forms.ToolStripButton ToolStripZoomOut;
+        private System.Windows.Forms.ToolStripComboBox ToolStripZoomFactorBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton toolStripSaveAll;
+        private System.Windows.Forms.ToolStripButton ToolStripSaveAll;
     }
 }

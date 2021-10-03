@@ -12,7 +12,7 @@ namespace NovelTool.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -841,7 +841,7 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AliceBlue")]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
         public global::System.Drawing.Color ColorBoxOutputBack {
             get {
                 return ((global::System.Drawing.Color)(this["ColorBoxOutputBack"]));
@@ -884,6 +884,102 @@ namespace NovelTool.Properties {
             }
             set {
                 this["PixelFormatBoxOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int IntUDConfirmEntityEndGap {
+            get {
+                return ((int)(this["IntUDConfirmEntityEndGap"]));
+            }
+            set {
+                this["IntUDConfirmEntityEndGap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        public global::NovelTool.PositionType PositionTypeBoxPage {
+            get {
+                return ((global::NovelTool.PositionType)(this["PositionTypeBoxPage"]));
+            }
+            set {
+                this["PositionTypeBoxPage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int IntUDConfirmEntityHeadGap {
+            get {
+                return ((int)(this["IntUDConfirmEntityHeadGap"]));
+            }
+            set {
+                this["IntUDConfirmEntityHeadGap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.5")]
+        public float FloatUDForeColorRate {
+            get {
+                return ((float)(this["FloatUDForeColorRate"]));
+            }
+            set {
+                this["FloatUDForeColorRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float FloatUDEntityMergeTBMaxRate {
+            get {
+                return ((float)(this["FloatUDEntityMergeTBMaxRate"]));
+            }
+            set {
+                this["FloatUDEntityMergeTBMaxRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int IntUDIgnoreMinDetectXSize {
+            get {
+                return ((int)(this["IntUDIgnoreMinDetectXSize"]));
+            }
+            set {
+                this["IntUDIgnoreMinDetectXSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color ColorBoxOutputFore {
+            get {
+                return ((global::System.Drawing.Color)(this["ColorBoxOutputFore"]));
+            }
+            set {
+                this["ColorBoxOutputFore"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CheckBoxOutputAdjustColor {
+            get {
+                return ((bool)(this["CheckBoxOutputAdjustColor"]));
+            }
+            set {
+                this["CheckBoxOutputAdjustColor"] = value;
             }
         }
     }

@@ -61,6 +61,7 @@ namespace NovelTool
             this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuZoomIn = new System.Windows.Forms.ToolStripMenuItem();
             this.menuZoomOut = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuGenView = new System.Windows.Forms.ToolStripMenuItem();
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
@@ -74,7 +75,6 @@ namespace NovelTool
             this.minimizeBtn = new System.Windows.Forms.Button();
             this.maximizeBtn = new System.Windows.Forms.Button();
             this.newAnalysisWorker = new System.ComponentModel.BackgroundWorker();
-            this.menuGenView = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
@@ -344,6 +344,13 @@ namespace NovelTool
             resources.ApplyResources(this.menuZoomOut, "menuZoomOut");
             this.menuZoomOut.Click += new System.EventHandler(this.ToolStripZoomOut_Click);
             // 
+            // menuGenView
+            // 
+            this.menuGenView.Image = global::NovelTool.Properties.Resources.ResourceView_16x;
+            this.menuGenView.Name = "menuGenView";
+            resources.ApplyResources(this.menuGenView, "menuGenView");
+            this.menuGenView.Click += new System.EventHandler(this.ToolStripGenView_Click);
+            // 
             // BottomToolStripPanel
             // 
             resources.ApplyResources(this.BottomToolStripPanel, "BottomToolStripPanel");
@@ -447,13 +454,6 @@ namespace NovelTool
             this.newAnalysisWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.NewAnalysis_DoWork);
             this.newAnalysisWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.NewAnalysis_ProgressChanged);
             this.newAnalysisWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.NewAnalysis_RunWorkerCompleted);
-            // 
-            // menuGenView
-            // 
-            this.menuGenView.Image = global::NovelTool.Properties.Resources.ResourceView_16x;
-            this.menuGenView.Name = "menuGenView";
-            resources.ApplyResources(this.menuGenView, "menuGenView");
-            this.menuGenView.Click += new System.EventHandler(this.ToolStripGenView_Click);
             // 
             // Main
             // 

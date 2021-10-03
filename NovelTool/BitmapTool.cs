@@ -60,50 +60,6 @@ namespace NovelTool
             }
         }
 
-        //public void ReadColors()
-        //{
-        //    // Lock bitmap and return bitmap data
-        //    bitmapData = Source.LockBits(Rect, ImageLockMode.ReadOnly, Source.PixelFormat);
-        //    unsafe
-        //    {
-        //        byte* Iptr = (byte*)(void*)bitmapData.Scan0;
-        //        for (int Y = 0; Y < Height; Y++)
-        //        {
-        //            for (int X = 0; X < Width; X++)
-        //            {
-        //                Point point = new Point(X, Y);
-        //                Color clr = Color.Empty;
-
-        //                if (Depth == 32)
-        //                { // For 32 bpp get Red, Green, Blue and Alpha
-        //                    byte b = Iptr[0];
-        //                    byte g = Iptr[1];
-        //                    byte r = Iptr[2];
-        //                    byte a = Iptr[3]; // a
-        //                    clr = Color.FromArgb(a, r, g, b);
-        //                } 
-        //                else if (Depth == 24)
-        //                { // For 24 bpp get Red, Green and Blue
-        //                    byte b = Iptr[0];
-        //                    byte g = Iptr[1];
-        //                    byte r = Iptr[2];
-        //                    clr = Color.FromArgb(r, g, b);
-        //                }
-        //                else if (Depth == 8)
-        //                { // For 8 bpp get color value (Red, Green and Blue values are the same)
-        //                    byte c = Iptr[0];
-        //                    clr = Color.FromArgb(c, c, c);
-        //                }
-        //                Points.Add(point);
-        //                Colors.Add(clr);
-        //                Iptr += Step;
-        //            }
-        //        }
-        //    }
-        //    // Unlock bitmap data
-        //    Source.UnlockBits(bitmapData);
-        //}
-
         /// <summary>
         /// Lock bitmap data
         /// </summary>
@@ -188,13 +144,10 @@ namespace NovelTool
         /// </summary>
         public void SetPixel(int x, int y, int argb)
         {
-            if (imageLockMode == ImageLockMode.ReadOnly)
-            {
-                throw new ArgumentException(string.Format("ImageLockMode is ReadOnly, can't SetPixel."));
-            }
+            if (imageLockMode == ImageLockMode.ReadOnly) throw new ArgumentException(string.Format("ImageLockMode is ReadOnly, can't SetPixel."));
+
             // Get color components count
             int cCount = Depth / 8;
-
             // Get start index of the specified pixel
             int i = ((y * Width) + x) * cCount;
 
@@ -202,23 +155,15 @@ namespace NovelTool
             //R (byte)(argb >> 16)
             //G (byte)(argb >> 8) 
             //B (byte)(argb)
+            Pixels[i] = (byte)(argb);
+            if (Depth >= 24) // For 24 bpp set Red, Green and Blue
+            {
+                Pixels[i + 1] = (byte)(argb >> 8);
+                Pixels[i + 2] = (byte)(argb >> 16);
+            }
             if (Depth == 32) // For 32 bpp set Red, Green, Blue and Alpha
             {
-                Pixels[i] = (byte)(argb);
-                Pixels[i + 1] = (byte)(argb >> 8);
-                Pixels[i + 2] = (byte)(argb >> 16);
                 Pixels[i + 3] = (byte)(argb >> 24);
-            }
-            if (Depth == 24) // For 24 bpp set Red, Green and Blue
-            {
-                Pixels[i] = (byte)(argb);
-                Pixels[i + 1] = (byte)(argb >> 8);
-                Pixels[i + 2] = (byte)(argb >> 16);
-            }
-            if (Depth == 8)
-            // For 8 bpp set color value (Red, Green and Blue values are the same)
-            {
-                Pixels[i] = (byte)(argb);
             }
         }
     }

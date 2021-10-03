@@ -24,11 +24,15 @@ namespace NovelTool
             int IntUDIllustrationMinColorsLevel = (int)Properties.Settings.Default["IntUDIllustrationMinColorsLevel"]; //判定為插圖的色彩數量
             int IntUDIllustrationMinNonWhiteLevel = (int)Properties.Settings.Default["IntUDIllustrationMinNonWhiteLevel"]; //判定為插圖的深色數量
             byte ByteUDConfirmWhiteLevel = (byte)Properties.Settings.Default["ByteUDConfirmWhiteLevel"]; //指定白色數值
+            int IntUDIgnoreMinDetectXSize = (int)Properties.Settings.Default["IntUDIgnoreMinDetectXSize"];
+            int IntUDIgnoreMinDetectYSize = (int)Properties.Settings.Default["IntUDIgnoreMinDetectYSize"];
 
             for (int y = 0; y < bmpTool.Height; y++)
             {
+                if (y < IntUDIgnoreMinDetectYSize || y > bmpTool.Height - IntUDIgnoreMinDetectYSize) continue;
                 for (int x = 0; x < bmpTool.Width; x++)
                 {
+                    if (x < IntUDIgnoreMinDetectXSize || x > bmpTool.Width - IntUDIgnoreMinDetectXSize) continue;
                     int argb = bmpTool.GetPixel(x, y);
                     bool isBlack = IsBlack(argb, out byte gray, ByteUDConfirmWhiteLevel);
                     if (isBlack) pStates.Add((x, y), argb);
@@ -76,7 +80,8 @@ namespace NovelTool
         public static byte ParseGray(int argb, bool is16Precision = false)
         {
             uint gray;
-            if (is16Precision) gray = ((uint)(byte)(argb >> 16) * 19595 + (uint)(byte)(argb >> 8) * 38469 + (uint)(byte)(argb) * 7472) >> 16;
+            if (argb >> 24 == 0) gray = 255;
+            else if (is16Precision) gray = ((uint)(byte)(argb >> 16) * 19595 + (uint)(byte)(argb >> 8) * 38469 + (uint)(byte)(argb) * 7472) >> 16;
             else gray = ((uint)(byte)(argb >> 16) * 38 + (uint)(byte)(argb >> 8) * 75 + (uint)(byte)(argb) * 15) >> 7;
 
             return (byte)(gray);
@@ -92,21 +97,20 @@ namespace NovelTool
             List<int> xStates = pageData.xStates, yStates = pageData.yStates;
             float FloatUDHeadMinRate = (float)Properties.Settings.Default["FloatUDHeadMinRate"];
             float FloatUDFooterMinRate = (float)Properties.Settings.Default["FloatUDFooterMinRate"];
-            int IntUDIgnoreMinDetectYSize = (int)Properties.Settings.Default["IntUDIgnoreMinDetectYSize"];
             int IntUDConfirmHeadGap = (int)Properties.Settings.Default["IntUDConfirmHeadGap"];
             int IntUDConfirmFooterGap = (int)Properties.Settings.Default["IntUDConfirmFooterGap"];
             for (int idx = 0; idx < yStates.Count; idx++)
             {
                 int y = yStates[idx];
+                if (rect.Y == 0)
+                {
+                    rect.X = bounds.X;
+                    rect.Width = bounds.Width;
+                    if (prevY == 0) rect.Y = yStates[0]; //當前一筆為0 時，則帶入Y軸最小前景值
+                    else rect.Y = prevY;
+                }
                 if (prevY == 0 || prevY + 1 == y)
                 { // 前後筆 Y 軸為連續時，記錄其範圍
-                    if (rect.Y == 0)
-                    {
-                        rect.X = bounds.X;
-                        rect.Width = bounds.Width;
-                        if (prevY == 0) rect.Y = yStates[0]; //當前一筆為0 時，則帶入Y軸最小前景值
-                        else rect.Y = prevY;
-                    }
                     if (rect.Y + rect.Height <= y) rect.Height = y + 1 - rect.Y;
                 }
                 if ((prevY > 0 && prevY + 1 != y) || idx == yStates.Count - 1)
@@ -116,27 +120,30 @@ namespace NovelTool
                     RectType rectType = RectType.Body;
                     if (minPosition < FloatUDHeadMinRate && maxPosition < FloatUDHeadMinRate)
                     { //由 Rect 最小與最大兩個座標Y軸，在整張圖形中的位置比例決定資料類型
-                        if (rectHead.RType == RectType.None)
-                        {
-                            if (rect.Height <= IntUDIgnoreMinDetectYSize) rectType = RectType.None;  //頂端偵測之 Y 軸過小時忽略掉
-                            else rectType = RectType.Head;
-                        }
+                        if (rectHead.RType == RectType.None) rectType = RectType.Head;
                         else if (rect.Y - rectHead.Y - rectHead.Height > 30) { } //當空白區域大於30，避免將Body誤判為Head
                     }
                     else if (minPosition > FloatUDFooterMinRate && maxPosition > FloatUDFooterMinRate)
                     {
-                        if (rect.Height <= IntUDIgnoreMinDetectYSize) rectType = RectType.None;//頂端偵測之 Y 軸過小時忽略掉
-                        else if (rectFooter.RType == RectType.None) /*.IsEmpty)*/ rectType = RectType.Footer;
+                        if (rectFooter.RType == RectType.None) rectType = RectType.Footer;
                         else if (rectFooter.Y + rectFooter.Height < rect.Y + rect.Height && rect.Height > 5)
-                        {
-                            rectBody = UnionEntity(rectBody, rectFooter);
+                        { //偵測到的rect Y軸比之前的rectFooter位置還低時，代表rectFooter之值是並非Footer，判斷是否合併至rectBody內
+                            if (rectFooter.Height > 5 && rectFooter.Y - rectBody.Y - rectBody.Height < 50) rectBody = UnionEntity(rectBody, rectFooter); //當rectFooter Y軸很小，且與rectBody之間空白大於50時，則忽略該內容
                             rectFooter = NewEntity();
                         }
                         else rectType = RectType.None;
                     }
+                    if (rect.Y == 0) continue;
+
+                    if (idx == yStates.Count - 1 && rectBody.RType != RectType.None && rectFooter.RType == RectType.None) rectType = RectType.Footer;
+
                     rect.RType = rectType;
                     if (rectType == RectType.Head) rectHead = rectHead.RType == RectType.None ? rect : UnionEntity(rectHead, rect);
-                    else if (rectType == RectType.Body) rectBody = rectBody.RType == RectType.None ? rect : UnionEntity(rectBody, rect);
+                    else if (rectType == RectType.Body && rectBody.RType == RectType.None) rectBody = rect; //rectBody = rectBody.RType == RectType.None ? rect : UnionEntity(rectBody, rect);
+                    else if (rectType == RectType.Body && rectBody.RType != RectType.None)
+                    {
+                        if (rect.Height > 3 && rect.Y - rectBody.Y - rectBody.Height < 50) rectBody = UnionEntity(rectBody, rect); //當rect Y軸很小，且與rectBody之間空白大於50時，則忽略該內容
+                    }
                     else if (rectType == RectType.Footer) rectFooter = rectFooter.RType == RectType.None ? rect : UnionEntity(rectFooter, rect);
                     rect = NewEntity();
                 }
@@ -219,7 +226,8 @@ namespace NovelTool
         /// <summary>
         /// 分析Body區域，將文字頁面圖依行分離成各自Column區域
         /// </summary>
-        public static void AnalysisPageX((RectType RType, float X, float Y, float Width, float Height) rectRegion, List<int> xStates, out List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects)
+        public static void AnalysisPageX((RectType RType, float X, float Y, float Width, float Height) rectRegion, List<int> xStates, 
+            out List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects)
         {
             columnRects = new List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)>();
             if (rectRegion.RType == RectType.None) return;
@@ -243,7 +251,7 @@ namespace NovelTool
                 { //取出單行文字範圍（假如 X 軸前景非連續，跨越空白位置時）
                     columnRect.Width = prevX + 1 - columnRect.X;
                     if (X == rectRegion.X + rectRegion.Width - 1) columnRect.Width++;
-                    columnRects.Add((RectType.Body, columnRect.X, columnRect.Y, columnRect.Width, columnRect.Height, null));
+                    if (columnRect.Width > 3) columnRects.Add((RectType.Body, columnRect.X, columnRect.Y, columnRect.Width, columnRect.Height, null)); //當該行寬度過小，則忽略掉，可能為圖片躁點誤判
                     columnRect = NewEntity();
                 }
                 prevX = X;
@@ -279,8 +287,13 @@ namespace NovelTool
                         if (entityY == 0 || X < columnRect.X + columnRect.Width) continue; //還在空白處或還未到最右側不處理
                         if (columnRect.Entitys == null) columnRect.Entitys = new List<(RectType RType, float X, float Y, float Width, float Height)>();
                         float entityHeight = Y - entityY;
-                        counts.HeightDict.AddOrUpdate(entityHeight, 1, (k, v) => v + 1);
-                        columnRect.Entitys.Add((RectType.EntityBody, columnRect.X, entityY, columnRect.Width, entityHeight));
+                        var entityPrev = columnRect.Entitys.Count > 1 ? columnRect.Entitys[columnRect.Entitys.Count -2] : (RectType.None, 0, 0, 0, 0);
+
+                        if (Y - entityPrev.Y - entityPrev.Height < 50 || entityHeight > 2)
+                        {
+                            counts.HeightDict.AddOrUpdate(entityHeight, 1, (k, v) => v + 1);
+                            columnRect.Entitys.Add((RectType.EntityBody, columnRect.X, entityY, columnRect.Width, entityHeight));
+                        }
                         entityY = 0;
                     }
                 }
@@ -299,6 +312,7 @@ namespace NovelTool
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes)
         {
+            float FloatUDEntityMergeTBMaxRate = (float)Properties.Settings.Default["FloatUDEntityMergeTBMaxRate"];
             for (int idx = 0; idx < columnRects.Count; idx++)
             {
                 var columnRect = columnRects[idx];
@@ -309,10 +323,11 @@ namespace NovelTool
                 if (columnRect.Width < modes.WidthMin)
                 { //欄位寬度小於最小實體寬度
                     bool isUnion = false;
+                    var columnRectPrev = idx - 1 >= 0 ? columnRects[idx - 1] : NewEntitys(); //  【> 0】 =>  【>= 0】
                     var columnRectNext = idx + 1 < columnRects.Count ? columnRects[idx + 1] : NewEntitys();
-                    var entitysNext = columnRectNext.Entitys;
-                    if (entitysNext != null && entitysNext.Count > 0 && columnRectNext.X > columnRect.X)
-                    {
+                    float colSpace = columnRect.X - columnRectPrev.X - columnRectPrev.Width;
+                    if (colSpace > 4 && columnRectNext.Entitys != null && columnRectNext.Entitys.Count > 0 && columnRectNext.X > columnRect.X)
+                    { //與前一列分離，且存在下一列
                         float newWidth = columnRectNext.X + columnRectNext.Width - columnRect.X;
                         if (newWidth < modes.WidthMax)
                         { //前後兩列寬度小於最大實體寬度，則判斷合併
@@ -323,16 +338,23 @@ namespace NovelTool
                     }
                     if (!isUnion)
                     {
-                        var columnRectPrev = idx - 1 > 0 ? columnRects[idx - 1] : NewEntitys();
-                        float colSpace = columnRect.X - columnRectPrev.X - columnRectPrev.Width;
                         if (columnRectPrev.RType != RectType.None && colSpace < 4)
-                        {
-                            columnRect.RType = RectType.Ruby;
-                            for (int eIdx = 0; eIdx < entitys.Count; eIdx++)
+                        { //與前一列相鄰，判斷為Ruby
+                            if (columnRectPrev.RType == RectType.Ruby && columnRect.X + columnRect.Width - columnRectPrev.X < modes.WidthMin)
+                            { //前一列也是Ruby，且兩者寬度小於最小實體寬度，則將之合併成為一個Ruby，也許是【い】之類的Ruby被分成兩列
+                                columnRect = UnionEntitys(columnRectPrev, columnRect, RectType.Ruby);
+                                columnRects.RemoveAt(idx);
+                                idx--;
+                            }
+                            else
                             {
-                                var entity = entitys[eIdx];
-                                entity.RType = RectType.Ruby;
-                                entitys[eIdx] = entity;
+                                columnRect.RType = RectType.Ruby;
+                                for (int eIdx = 0; eIdx < entitys.Count; eIdx++)
+                                {
+                                    var entity = entitys[eIdx];
+                                    entity.RType = RectType.Ruby;
+                                    entitys[eIdx] = entity;
+                                }
                             }
                         }
 
@@ -429,7 +451,7 @@ namespace NovelTool
                     var entityNext = entitys[eIdx + 1];
                     float entitySpace = entityNext.Y - entity.Y - entity.Height;
                     float newHeight = entityNext.Y + entityNext.Height - entity.Y;
-                    while (entitySpace < modes.HeighMin * 0.5 && newHeight < modes.Heigh) //前後實體高度在範圍內，則合併 * FloatUDEntityMaxRate
+                    while (entitySpace < modes.HeighMin * 0.5 && newHeight < modes.Heigh * FloatUDEntityMergeTBMaxRate) //前後實體高度在範圍內，則合併 * FloatUDEntityMaxRate
                     {
                         entity.RType = RectType.MergeTB;
                         entity.Height = newHeight;
@@ -472,6 +494,8 @@ namespace NovelTool
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes)
         {
+            int IntUDConfirmEntityHeadGap = (int)Properties.Settings.Default["IntUDConfirmEntityHeadGap"];
+            int IntUDConfirmEntityEndGap = (int)Properties.Settings.Default["IntUDConfirmEntityEndGap"];
             for (int idx = 0; idx < columnRects.Count; idx++)
             {
                 var columnRect = columnRects[idx];
@@ -495,12 +519,13 @@ namespace NovelTool
 
                 var entitysFirst = entitys[0];
                 var entitysLast = entitys[entitys.Count - 1];
-                if (entitysFirst.Y > modes.TopMin) // - rectRegion.Y > modes.HeighMin * 0.5) //判斷是否為句首
-                {
+
+                if (entitysFirst.Y - rectRegion.Y + IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5 && entitysFirst.Height + IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5) // entitysFirst.Y > modes.TopMin + IntUDConfirmEntityHeadGap //- rectRegion.Y > modes.HeighMin * 0.5)
+                { //判斷是否為句首，首字上方空白要大於最小字高，且首字高度比最小字高的一半以上，例如首字為【一】上方雖然有空白，但並非句首
                     entitysFirst.RType = RectType.EntityHead;
                     entitys[0] = entitysFirst;
                 }
-                if (entitysLast.Y + entitysLast.Height < modes.BottomMin) //rectRegion.Y + rectRegion.Height - entitysLast.Y - entitysLast.Height > modes.HeighMin * 0.5)
+                if (modes.BottomMin - entitysLast.Y > modes.HeighMax + IntUDConfirmEntityEndGap) //entitysLast.Y + entitysLast.Height + IntUDConfirmEntityEndGap < modes.BottomMin
                 { //判斷是否為句尾
                     entitysLast.RType = RectType.EntityEnd;
                     entitys[entitys.Count - 1] = entitysLast;
@@ -520,7 +545,9 @@ namespace NovelTool
         /// <summary>
         /// Gets a Entity that contains the union of two Entity.
         /// </summary>
-        public static (RectType RType, float X, float Y, float Width, float Height) UnionEntity((RectType RType, float X, float Y, float Width, float Height) entity1, (RectType RType, float X, float Y, float Width, float Height) entity2)
+        public static (RectType RType, float X, float Y, float Width, float Height) UnionEntity(
+            (RectType RType, float X, float Y, float Width, float Height) entity1, 
+            (RectType RType, float X, float Y, float Width, float Height) entity2, RectType NewRType = RectType.None)
         {
             float X = entity1.X < entity2.X ? entity1.X : entity2.X;
             float Y = entity1.Y < entity2.Y ? entity1.Y : entity2.Y;
@@ -531,7 +558,7 @@ namespace NovelTool
             float Width = maxX1 > maxX2 ? maxX1 - X : maxX2 - X;
             float Height = maxY1 > maxY2 ? maxY1 - Y : maxY2 - Y;
 
-            return (entity1.RType, X, Y, Width, Height);
+            return (NewRType == RectType.None ? entity1.RType : NewRType, X, Y, Width, Height);
         }
         /// <summary>
         /// Create new Entitys
@@ -544,9 +571,11 @@ namespace NovelTool
         /// </summary>
         public static (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) UnionEntitys(
             (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) rect1,
-            (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) rect2)
+            (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) rect2,
+            RectType NewRType = RectType.None)
         {
-            var rect = UnionEntity((rect1.RType, rect1.X, rect1.Y, rect1.Width, rect1.Height), (rect2.RType, rect2.X, rect2.Y, rect2.Width, rect2.Height));
+            var rect = UnionEntity((rect1.RType, rect1.X, rect1.Y, rect1.Width, rect1.Height), (rect2.RType, rect2.X, rect2.Y, rect2.Width, rect2.Height),
+                    NewRType == RectType.None ? rect1.RType : NewRType);
 
             var entitys1 = rect1.Entitys.ToArray();
             var entitys2 = rect2.Entitys.ToArray();
@@ -569,8 +598,7 @@ namespace NovelTool
                     if ((entity1.Y >= entity2.Y && entity1.Y <= entity2.Y + entity2.Height) || (entity2.Y >= entity1.Y && entity2.Y <= entity1.Y + entity1.Height))
                     {
                         isMerge = true;
-                        entity1 = UnionEntity(entity1, entity2);
-                        entity1.RType = RectType.MergeLR;
+                        entity1 = UnionEntity(entity1, entity2, NewRType == RectType.None ? RectType.MergeLR : NewRType);
                     }
                 }
                 entity1.X = rect.X;
@@ -581,7 +609,7 @@ namespace NovelTool
 
                 }
             }
-            if (isMerge) rect.RType = RectType.MergeLR;
+            if (isMerge) rect.RType = NewRType == RectType.None ? RectType.MergeLR : NewRType;
 
             return (rect.RType, rect.X, rect.Y, rect.Width, rect.Height, new List<(RectType RType, float X, float Y, float Width, float Height)>(entitys1));
         }
@@ -642,6 +670,50 @@ namespace NovelTool
                     else bitmap.Save(string.Format(@"{0}\{1}{2}", path, name, extension), imgEncoder, encoderParameters);
                 }
             }
+        }
+
+        public static void ChangeForeColor(in Bitmap bmp, int foreArgb, int backArgb, float FloatUDForeColorRate = 1)
+        {
+            byte ByteUDConfirmWhiteLevel = (byte)Properties.Settings.Default["ByteUDConfirmWhiteLevel"]; //指定白色數值
+
+            BitmapTool bmpTool = new BitmapTool(bmp);
+            bmpTool.ReadLockBits();
+
+            byte foreA = (byte)(foreArgb >> 24);
+            byte foreR = (byte)(foreArgb >> 16);
+            byte foreG = (byte)(foreArgb >> 8);
+            byte foreB = (byte)foreArgb;
+            for (int y = 0; y < bmpTool.Height; y++)
+            {
+                for (int x = 0; x < bmpTool.Width; x++)
+                {
+                    int argb = bmpTool.GetPixel(x, y);
+                    bool isBlack = IsBlack(argb, out byte gray, ByteUDConfirmWhiteLevel);
+                    if (isBlack)
+                    {
+                        byte blackA = (byte)(argb >> 24);
+                        byte blackR = (byte)(argb >> 16);
+                        byte blackG = (byte)(argb >> 8);
+                        byte blackB = (byte)(argb);
+                        byte aOut = (byte)(foreA + (float)blackA * (255 - foreA) / 255);
+                        byte rOut = AverageColor(foreR, blackR, FloatUDForeColorRate, foreA, blackA); //(int)(FloatUDForeColorRate * foreR * (float)foreA / 255 + blackRate * blackR * (float)blackA / 255);
+                        byte gOut = AverageColor(foreG, blackG, FloatUDForeColorRate, foreA, blackA); //(int)(FloatUDForeColorRate * foreG * (float)foreA / 255 + blackRate * blackG * (float)blackA / 255);
+                        byte bOut = AverageColor(foreB, blackB, FloatUDForeColorRate, foreA, blackA);//(int)(FloatUDForeColorRate * foreB * (float)foreA  / 255 + blackRate * blackB * (float)blackA / 255);
+
+                        int outArgb = (aOut << 24) | (rOut << 16) | (gOut << 8) | bOut;
+                        bmpTool.SetPixel(x, y, outArgb);
+                    }
+                    else bmpTool.SetPixel(x, y, backArgb);
+                }
+            }
+            bmpTool.WriteUnlockBits();
+        }
+        private static byte AverageColor(byte colorA, byte colorB, float FloatUDForeColorRate, byte alphaA=255, byte alphaB=255)
+        {
+            FloatUDForeColorRate = FloatUDForeColorRate > 2 ? 2 : FloatUDForeColorRate;
+            float BlackUDForeColorRate = (float)2 - FloatUDForeColorRate;
+
+            return (byte)((FloatUDForeColorRate * colorA * (float)alphaA / 255 + BlackUDForeColorRate * colorB * (float)alphaB / 255) / 2);
         }
     }
 }

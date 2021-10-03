@@ -38,37 +38,47 @@ namespace NovelTool
             this.treeView = new System.Windows.Forms.TreeView();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.groupBox24 = new System.Windows.Forms.GroupBox();
+            this.FloatUDEntityMergeTBMaxRate = new System.Windows.Forms.NumericUpDown();
+            this.label75 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.FloatUDHeadMinRate = new System.Windows.Forms.NumericUpDown();
             this.FloatUDEntityAdjacentRate = new System.Windows.Forms.NumericUpDown();
+            this.label24 = new System.Windows.Forms.Label();
             this.label62 = new System.Windows.Forms.Label();
-            this.ByteUDConfirmWhiteLevel = new System.Windows.Forms.NumericUpDown();
-            this.label56 = new System.Windows.Forms.Label();
+            this.FloatUDFooterMinRate = new System.Windows.Forms.NumericUpDown();
             this.FloatUDEntityMaxRate = new System.Windows.Forms.NumericUpDown();
+            this.label39 = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
+            this.IntUDIllustrationRate = new System.Windows.Forms.NumericUpDown();
             this.FloatUDEntityMinRate = new System.Windows.Forms.NumericUpDown();
             this.label47 = new System.Windows.Forms.Label();
-            this.IntUDIllustrationRate = new System.Windows.Forms.NumericUpDown();
-            this.label39 = new System.Windows.Forms.Label();
+            this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.IntUDConfirmEntityHeadGap = new System.Windows.Forms.NumericUpDown();
+            this.label73 = new System.Windows.Forms.Label();
+            this.IntUDConfirmEntityEndGap = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label71 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.IntUDIllustrationMinColorsLevel = new System.Windows.Forms.NumericUpDown();
+            this.IntUDIllustrationMinNonWhiteLevel = new System.Windows.Forms.NumericUpDown();
+            this.ByteUDConfirmWhiteLevel = new System.Windows.Forms.NumericUpDown();
+            this.label56 = new System.Windows.Forms.Label();
+            this.IntUDConfirmFooterGap = new System.Windows.Forms.NumericUpDown();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
+            this.IntUDConfirmHeadGap = new System.Windows.Forms.NumericUpDown();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.IntUDIgnoreMinDetectXSize = new System.Windows.Forms.NumericUpDown();
+            this.label76 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.IntUDAnalysisTaskThreadLimit = new System.Windows.Forms.NumericUpDown();
             this.IntUDIllustrationMinHeight = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.IntUDIllustrationMinWidth = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.IntUDConfirmFooterGap = new System.Windows.Forms.NumericUpDown();
-            this.label35 = new System.Windows.Forms.Label();
-            this.IntUDConfirmHeadGap = new System.Windows.Forms.NumericUpDown();
-            this.label32 = new System.Windows.Forms.Label();
             this.IntUDIgnoreMinDetectYSize = new System.Windows.Forms.NumericUpDown();
             this.label31 = new System.Windows.Forms.Label();
-            this.FloatUDFooterMinRate = new System.Windows.Forms.NumericUpDown();
-            this.label24 = new System.Windows.Forms.Label();
-            this.FloatUDHeadMinRate = new System.Windows.Forms.NumericUpDown();
-            this.label23 = new System.Windows.Forms.Label();
-            this.IntUDAnalysisTaskThreadLimit = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.IntUDIllustrationMinNonWhiteLevel = new System.Windows.Forms.NumericUpDown();
-            this.IntUDIllustrationMinColorsLevel = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
             this.IntUDRectViewWidth = new System.Windows.Forms.NumericUpDown();
@@ -100,6 +110,16 @@ namespace NovelTool
             this.label45 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.label74 = new System.Windows.Forms.Label();
+            this.FloatUDForeColorRate = new System.Windows.Forms.NumericUpDown();
+            this.label72 = new System.Windows.Forms.Label();
+            this.PositionTypeBoxPage = new System.Windows.Forms.ComboBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.PixelFormatBoxOutput = new System.Windows.Forms.ComboBox();
+            this.label67 = new System.Windows.Forms.Label();
+            this.LongUDOutputQuality = new System.Windows.Forms.NumericUpDown();
+            this.label66 = new System.Windows.Forms.Label();
+            this.ImageTypeBoxOutput = new System.Windows.Forms.ComboBox();
             this.label65 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
             this.ColorBoxOutputBack = new System.Windows.Forms.ComboBox();
@@ -202,40 +222,46 @@ namespace NovelTool
             this.label42 = new System.Windows.Forms.Label();
             this.ColorBoxFormBorderLeft = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.label66 = new System.Windows.Forms.Label();
-            this.ImageTypeBoxOutput = new System.Windows.Forms.ComboBox();
-            this.label67 = new System.Windows.Forms.Label();
-            this.LongUDOutputQuality = new System.Windows.Forms.NumericUpDown();
-            this.label68 = new System.Windows.Forms.Label();
-            this.PixelFormatBoxOutput = new System.Windows.Forms.ComboBox();
+            this.label77 = new System.Windows.Forms.Label();
+            this.ColorBoxOutputFore = new System.Windows.Forms.ComboBox();
+            this.CheckBoxOutputAdjustColor = new System.Windows.Forms.CheckBox();
+            this.label78 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.groupBox10.SuspendLayout();
+            this.groupBox24.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMergeTBMaxRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDHeadMinRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityAdjacentRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ByteUDConfirmWhiteLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDFooterMinRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMaxRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMinRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinHeight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMinRate)).BeginInit();
+            this.groupBox22.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmEntityHeadGap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmEntityEndGap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinColorsLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinNonWhiteLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ByteUDConfirmWhiteLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmFooterGap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmHeadGap)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectYSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDFooterMinRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDHeadMinRate)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectXSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDAnalysisTaskThreadLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinNonWhiteLevel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinColorsLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinHeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectYSize)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDRectViewWidth)).BeginInit();
             this.groupBox14.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox21.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDForeColorRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LongUDOutputQuality)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDOutputWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDOutputHeight)).BeginInit();
             this.groupBox20.SuspendLayout();
@@ -264,7 +290,6 @@ namespace NovelTool
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDFormBorderWidth)).BeginInit();
             this.groupBox19.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LongUDOutputQuality)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer
@@ -336,6 +361,8 @@ namespace NovelTool
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.groupBox24);
+            this.tabPage1.Controls.Add(this.groupBox22);
             this.tabPage1.Controls.Add(this.groupBox10);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -345,44 +372,99 @@ namespace NovelTool
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // groupBox10
+            // groupBox24
             // 
-            this.groupBox10.Controls.Add(this.FloatUDEntityAdjacentRate);
-            this.groupBox10.Controls.Add(this.label62);
-            this.groupBox10.Controls.Add(this.ByteUDConfirmWhiteLevel);
-            this.groupBox10.Controls.Add(this.label56);
-            this.groupBox10.Controls.Add(this.FloatUDEntityMaxRate);
-            this.groupBox10.Controls.Add(this.label48);
-            this.groupBox10.Controls.Add(this.FloatUDEntityMinRate);
-            this.groupBox10.Controls.Add(this.label47);
-            this.groupBox10.Controls.Add(this.IntUDIllustrationRate);
-            this.groupBox10.Controls.Add(this.label39);
-            this.groupBox10.Controls.Add(this.IntUDIllustrationMinHeight);
-            this.groupBox10.Controls.Add(this.label3);
-            this.groupBox10.Controls.Add(this.IntUDIllustrationMinWidth);
-            this.groupBox10.Controls.Add(this.label2);
-            this.groupBox10.Controls.Add(this.IntUDConfirmFooterGap);
-            this.groupBox10.Controls.Add(this.label35);
-            this.groupBox10.Controls.Add(this.IntUDConfirmHeadGap);
-            this.groupBox10.Controls.Add(this.label32);
-            this.groupBox10.Controls.Add(this.IntUDIgnoreMinDetectYSize);
-            this.groupBox10.Controls.Add(this.label31);
-            this.groupBox10.Controls.Add(this.FloatUDFooterMinRate);
-            this.groupBox10.Controls.Add(this.label24);
-            this.groupBox10.Controls.Add(this.FloatUDHeadMinRate);
-            this.groupBox10.Controls.Add(this.label23);
-            this.groupBox10.Controls.Add(this.IntUDAnalysisTaskThreadLimit);
-            this.groupBox10.Controls.Add(this.label20);
-            this.groupBox10.Controls.Add(this.IntUDIllustrationMinNonWhiteLevel);
-            this.groupBox10.Controls.Add(this.IntUDIllustrationMinColorsLevel);
-            this.groupBox10.Controls.Add(this.label4);
-            this.groupBox10.Controls.Add(this.label1);
-            this.groupBox10.Location = new System.Drawing.Point(6, 6);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(334, 500);
-            this.groupBox10.TabIndex = 2;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "AnalysisFactor";
+            this.groupBox24.Controls.Add(this.FloatUDEntityMergeTBMaxRate);
+            this.groupBox24.Controls.Add(this.label75);
+            this.groupBox24.Controls.Add(this.label23);
+            this.groupBox24.Controls.Add(this.FloatUDHeadMinRate);
+            this.groupBox24.Controls.Add(this.FloatUDEntityAdjacentRate);
+            this.groupBox24.Controls.Add(this.label24);
+            this.groupBox24.Controls.Add(this.label62);
+            this.groupBox24.Controls.Add(this.FloatUDFooterMinRate);
+            this.groupBox24.Controls.Add(this.FloatUDEntityMaxRate);
+            this.groupBox24.Controls.Add(this.label39);
+            this.groupBox24.Controls.Add(this.label48);
+            this.groupBox24.Controls.Add(this.IntUDIllustrationRate);
+            this.groupBox24.Controls.Add(this.FloatUDEntityMinRate);
+            this.groupBox24.Controls.Add(this.label47);
+            this.groupBox24.Location = new System.Drawing.Point(6, 164);
+            this.groupBox24.Name = "groupBox24";
+            this.groupBox24.Size = new System.Drawing.Size(266, 202);
+            this.groupBox24.TabIndex = 5;
+            this.groupBox24.TabStop = false;
+            this.groupBox24.Text = "Rate";
+            // 
+            // FloatUDEntityMergeTBMaxRate
+            // 
+            this.FloatUDEntityMergeTBMaxRate.DecimalPlaces = 3;
+            this.FloatUDEntityMergeTBMaxRate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.FloatUDEntityMergeTBMaxRate.Location = new System.Drawing.Point(135, 171);
+            this.FloatUDEntityMergeTBMaxRate.Margin = new System.Windows.Forms.Padding(2);
+            this.FloatUDEntityMergeTBMaxRate.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            65536});
+            this.FloatUDEntityMergeTBMaxRate.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            65536});
+            this.FloatUDEntityMergeTBMaxRate.Name = "FloatUDEntityMergeTBMaxRate";
+            this.FloatUDEntityMergeTBMaxRate.Size = new System.Drawing.Size(120, 22);
+            this.FloatUDEntityMergeTBMaxRate.TabIndex = 39;
+            this.FloatUDEntityMergeTBMaxRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label75
+            // 
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(6, 173);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(120, 12);
+            this.label75.TabIndex = 38;
+            this.label75.Text = "EntityMergeTBMaxRate";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(6, 18);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(69, 12);
+            this.label23.TabIndex = 14;
+            this.label23.Text = "HeadMinRate";
+            // 
+            // FloatUDHeadMinRate
+            // 
+            this.FloatUDHeadMinRate.DecimalPlaces = 3;
+            this.FloatUDHeadMinRate.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.FloatUDHeadMinRate.Location = new System.Drawing.Point(135, 16);
+            this.FloatUDHeadMinRate.Margin = new System.Windows.Forms.Padding(2);
+            this.FloatUDHeadMinRate.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.FloatUDHeadMinRate.Name = "FloatUDHeadMinRate";
+            this.FloatUDHeadMinRate.Size = new System.Drawing.Size(120, 22);
+            this.FloatUDHeadMinRate.TabIndex = 15;
+            this.FloatUDHeadMinRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             // 
             // FloatUDEntityAdjacentRate
             // 
@@ -392,7 +474,7 @@ namespace NovelTool
             0,
             0,
             65536});
-            this.FloatUDEntityAdjacentRate.Location = new System.Drawing.Point(200, 380);
+            this.FloatUDEntityAdjacentRate.Location = new System.Drawing.Point(135, 145);
             this.FloatUDEntityAdjacentRate.Margin = new System.Windows.Forms.Padding(2);
             this.FloatUDEntityAdjacentRate.Maximum = new decimal(new int[] {
             5,
@@ -413,41 +495,47 @@ namespace NovelTool
             0,
             65536});
             // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(6, 44);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(75, 12);
+            this.label24.TabIndex = 16;
+            this.label24.Text = "FooterMinRate";
+            // 
             // label62
             // 
             this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(7, 382);
+            this.label62.Location = new System.Drawing.Point(6, 147);
             this.label62.Name = "label62";
             this.label62.Size = new System.Drawing.Size(95, 12);
             this.label62.TabIndex = 36;
             this.label62.Text = "EntityAdjacentRate";
             // 
-            // ByteUDConfirmWhiteLevel
+            // FloatUDFooterMinRate
             // 
-            this.ByteUDConfirmWhiteLevel.Location = new System.Drawing.Point(200, 68);
-            this.ByteUDConfirmWhiteLevel.Margin = new System.Windows.Forms.Padding(2);
-            this.ByteUDConfirmWhiteLevel.Maximum = new decimal(new int[] {
-            255,
+            this.FloatUDFooterMinRate.DecimalPlaces = 3;
+            this.FloatUDFooterMinRate.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.FloatUDFooterMinRate.Location = new System.Drawing.Point(135, 42);
+            this.FloatUDFooterMinRate.Margin = new System.Windows.Forms.Padding(2);
+            this.FloatUDFooterMinRate.Maximum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
-            this.ByteUDConfirmWhiteLevel.Name = "ByteUDConfirmWhiteLevel";
-            this.ByteUDConfirmWhiteLevel.Size = new System.Drawing.Size(120, 22);
-            this.ByteUDConfirmWhiteLevel.TabIndex = 35;
-            this.ByteUDConfirmWhiteLevel.Value = new decimal(new int[] {
-            240,
+            this.FloatUDFooterMinRate.Name = "FloatUDFooterMinRate";
+            this.FloatUDFooterMinRate.Size = new System.Drawing.Size(120, 22);
+            this.FloatUDFooterMinRate.TabIndex = 17;
+            this.FloatUDFooterMinRate.Value = new decimal(new int[] {
+            95,
             0,
             0,
-            0});
-            // 
-            // label56
-            // 
-            this.label56.AutoSize = true;
-            this.label56.Location = new System.Drawing.Point(7, 70);
-            this.label56.Name = "label56";
-            this.label56.Size = new System.Drawing.Size(99, 12);
-            this.label56.TabIndex = 34;
-            this.label56.Text = "ConfirmWhiteLevel";
+            131072});
             // 
             // FloatUDEntityMaxRate
             // 
@@ -457,7 +545,7 @@ namespace NovelTool
             0,
             0,
             131072});
-            this.FloatUDEntityMaxRate.Location = new System.Drawing.Point(200, 354);
+            this.FloatUDEntityMaxRate.Location = new System.Drawing.Point(135, 119);
             this.FloatUDEntityMaxRate.Margin = new System.Windows.Forms.Padding(2);
             this.FloatUDEntityMaxRate.Maximum = new decimal(new int[] {
             2,
@@ -478,14 +566,46 @@ namespace NovelTool
             0,
             65536});
             // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(6, 69);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(76, 12);
+            this.label39.TabIndex = 28;
+            this.label39.Text = "IllustrationRate";
+            // 
             // label48
             // 
             this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(7, 356);
+            this.label48.Location = new System.Drawing.Point(6, 121);
             this.label48.Name = "label48";
             this.label48.Size = new System.Drawing.Size(75, 12);
             this.label48.TabIndex = 32;
             this.label48.Text = "EntityMaxRate";
+            // 
+            // IntUDIllustrationRate
+            // 
+            this.IntUDIllustrationRate.Location = new System.Drawing.Point(135, 67);
+            this.IntUDIllustrationRate.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIllustrationRate.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationRate.Name = "IntUDIllustrationRate";
+            this.IntUDIllustrationRate.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIllustrationRate.TabIndex = 29;
+            this.IntUDIllustrationRate.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
             // 
             // FloatUDEntityMinRate
             // 
@@ -495,7 +615,7 @@ namespace NovelTool
             0,
             0,
             131072});
-            this.FloatUDEntityMinRate.Location = new System.Drawing.Point(200, 328);
+            this.FloatUDEntityMinRate.Location = new System.Drawing.Point(135, 93);
             this.FloatUDEntityMinRate.Margin = new System.Windows.Forms.Padding(2);
             this.FloatUDEntityMinRate.Maximum = new decimal(new int[] {
             1,
@@ -519,305 +639,86 @@ namespace NovelTool
             // label47
             // 
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(7, 330);
+            this.label47.Location = new System.Drawing.Point(6, 95);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(73, 12);
             this.label47.TabIndex = 30;
             this.label47.Text = "EntityMinRate";
             // 
-            // IntUDIllustrationRate
+            // groupBox22
             // 
-            this.IntUDIllustrationRate.Location = new System.Drawing.Point(200, 302);
-            this.IntUDIllustrationRate.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDIllustrationRate.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationRate.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationRate.Name = "IntUDIllustrationRate";
-            this.IntUDIllustrationRate.Size = new System.Drawing.Size(120, 22);
-            this.IntUDIllustrationRate.TabIndex = 29;
-            this.IntUDIllustrationRate.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+            this.groupBox22.Controls.Add(this.IntUDConfirmEntityHeadGap);
+            this.groupBox22.Controls.Add(this.label73);
+            this.groupBox22.Controls.Add(this.IntUDConfirmEntityEndGap);
+            this.groupBox22.Controls.Add(this.label1);
+            this.groupBox22.Controls.Add(this.label71);
+            this.groupBox22.Controls.Add(this.label4);
+            this.groupBox22.Controls.Add(this.IntUDIllustrationMinColorsLevel);
+            this.groupBox22.Controls.Add(this.IntUDIllustrationMinNonWhiteLevel);
+            this.groupBox22.Controls.Add(this.ByteUDConfirmWhiteLevel);
+            this.groupBox22.Controls.Add(this.label56);
+            this.groupBox22.Controls.Add(this.IntUDConfirmFooterGap);
+            this.groupBox22.Controls.Add(this.label32);
+            this.groupBox22.Controls.Add(this.label35);
+            this.groupBox22.Controls.Add(this.IntUDConfirmHeadGap);
+            this.groupBox22.Location = new System.Drawing.Point(278, 6);
+            this.groupBox22.Name = "groupBox22";
+            this.groupBox22.Size = new System.Drawing.Size(325, 221);
+            this.groupBox22.TabIndex = 3;
+            this.groupBox22.TabStop = false;
+            this.groupBox22.Text = "Confirm";
             // 
-            // label39
+            // IntUDConfirmEntityHeadGap
             // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(7, 304);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(76, 12);
-            this.label39.TabIndex = 28;
-            this.label39.Text = "IllustrationRate";
+            this.IntUDConfirmEntityHeadGap.Location = new System.Drawing.Point(199, 150);
+            this.IntUDConfirmEntityHeadGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmEntityHeadGap.Name = "IntUDConfirmEntityHeadGap";
+            this.IntUDConfirmEntityHeadGap.Size = new System.Drawing.Size(120, 22);
+            this.IntUDConfirmEntityHeadGap.TabIndex = 41;
             // 
-            // IntUDIllustrationMinHeight
+            // label73
             // 
-            this.IntUDIllustrationMinHeight.Location = new System.Drawing.Point(200, 276);
-            this.IntUDIllustrationMinHeight.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDIllustrationMinHeight.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationMinHeight.Name = "IntUDIllustrationMinHeight";
-            this.IntUDIllustrationMinHeight.Size = new System.Drawing.Size(120, 22);
-            this.IntUDIllustrationMinHeight.TabIndex = 27;
-            this.IntUDIllustrationMinHeight.Value = new decimal(new int[] {
-            130,
-            0,
-            0,
-            0});
+            this.label73.AutoSize = true;
+            this.label73.Location = new System.Drawing.Point(6, 150);
+            this.label73.Name = "label73";
+            this.label73.Size = new System.Drawing.Size(116, 12);
+            this.label73.TabIndex = 40;
+            this.label73.Text = "ConfirmEntityHeadGap";
             // 
-            // label3
+            // IntUDConfirmEntityEndGap
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 278);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(105, 12);
-            this.label3.TabIndex = 26;
-            this.label3.Text = "IllustrationMinHeight";
+            this.IntUDConfirmEntityEndGap.Location = new System.Drawing.Point(199, 176);
+            this.IntUDConfirmEntityEndGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmEntityEndGap.Name = "IntUDConfirmEntityEndGap";
+            this.IntUDConfirmEntityEndGap.Size = new System.Drawing.Size(120, 22);
+            this.IntUDConfirmEntityEndGap.TabIndex = 39;
             // 
-            // IntUDIllustrationMinWidth
+            // label1
             // 
-            this.IntUDIllustrationMinWidth.Location = new System.Drawing.Point(200, 250);
-            this.IntUDIllustrationMinWidth.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDIllustrationMinWidth.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationMinWidth.Name = "IntUDIllustrationMinWidth";
-            this.IntUDIllustrationMinWidth.Size = new System.Drawing.Size(120, 22);
-            this.IntUDIllustrationMinWidth.TabIndex = 25;
-            this.IntUDIllustrationMinWidth.Value = new decimal(new int[] {
-            130,
-            0,
-            0,
-            0});
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(171, 12);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "ConfirmIllustrationMinColorsLevel";
             // 
-            // label2
+            // label71
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 252);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(103, 12);
-            this.label2.TabIndex = 24;
-            this.label2.Text = "IllustrationMinWidth";
+            this.label71.AutoSize = true;
+            this.label71.Location = new System.Drawing.Point(6, 176);
+            this.label71.Name = "label71";
+            this.label71.Size = new System.Drawing.Size(111, 12);
+            this.label71.TabIndex = 38;
+            this.label71.Text = "ConfirmEntityEndGap";
             // 
-            // IntUDConfirmFooterGap
+            // label4
             // 
-            this.IntUDConfirmFooterGap.Location = new System.Drawing.Point(200, 224);
-            this.IntUDConfirmFooterGap.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDConfirmFooterGap.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.IntUDConfirmFooterGap.Name = "IntUDConfirmFooterGap";
-            this.IntUDConfirmFooterGap.Size = new System.Drawing.Size(120, 22);
-            this.IntUDConfirmFooterGap.TabIndex = 23;
-            this.IntUDConfirmFooterGap.Value = new decimal(new int[] {
-            15,
-            0,
-            0,
-            0});
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(7, 226);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(94, 12);
-            this.label35.TabIndex = 22;
-            this.label35.Text = "ConfirmFooterGap";
-            // 
-            // IntUDConfirmHeadGap
-            // 
-            this.IntUDConfirmHeadGap.Location = new System.Drawing.Point(200, 198);
-            this.IntUDConfirmHeadGap.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDConfirmHeadGap.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.IntUDConfirmHeadGap.Name = "IntUDConfirmHeadGap";
-            this.IntUDConfirmHeadGap.Size = new System.Drawing.Size(120, 22);
-            this.IntUDConfirmHeadGap.TabIndex = 21;
-            this.IntUDConfirmHeadGap.Value = new decimal(new int[] {
-            15,
-            0,
-            0,
-            0});
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(7, 200);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(88, 12);
-            this.label32.TabIndex = 20;
-            this.label32.Text = "ConfirmHeadGap";
-            // 
-            // IntUDIgnoreMinDetectYSize
-            // 
-            this.IntUDIgnoreMinDetectYSize.Location = new System.Drawing.Point(200, 172);
-            this.IntUDIgnoreMinDetectYSize.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDIgnoreMinDetectYSize.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.IntUDIgnoreMinDetectYSize.Name = "IntUDIgnoreMinDetectYSize";
-            this.IntUDIgnoreMinDetectYSize.Size = new System.Drawing.Size(120, 22);
-            this.IntUDIgnoreMinDetectYSize.TabIndex = 19;
-            this.IntUDIgnoreMinDetectYSize.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(7, 174);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(111, 12);
-            this.label31.TabIndex = 18;
-            this.label31.Text = "IgnoreMinDetectYSize";
-            // 
-            // FloatUDFooterMinRate
-            // 
-            this.FloatUDFooterMinRate.DecimalPlaces = 3;
-            this.FloatUDFooterMinRate.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            131072});
-            this.FloatUDFooterMinRate.Location = new System.Drawing.Point(200, 146);
-            this.FloatUDFooterMinRate.Margin = new System.Windows.Forms.Padding(2);
-            this.FloatUDFooterMinRate.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.FloatUDFooterMinRate.Name = "FloatUDFooterMinRate";
-            this.FloatUDFooterMinRate.Size = new System.Drawing.Size(120, 22);
-            this.FloatUDFooterMinRate.TabIndex = 17;
-            this.FloatUDFooterMinRate.Value = new decimal(new int[] {
-            95,
-            0,
-            0,
-            131072});
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(7, 148);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(75, 12);
-            this.label24.TabIndex = 16;
-            this.label24.Text = "FooterMinRate";
-            // 
-            // FloatUDHeadMinRate
-            // 
-            this.FloatUDHeadMinRate.DecimalPlaces = 3;
-            this.FloatUDHeadMinRate.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            131072});
-            this.FloatUDHeadMinRate.Location = new System.Drawing.Point(200, 120);
-            this.FloatUDHeadMinRate.Margin = new System.Windows.Forms.Padding(2);
-            this.FloatUDHeadMinRate.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.FloatUDHeadMinRate.Name = "FloatUDHeadMinRate";
-            this.FloatUDHeadMinRate.Size = new System.Drawing.Size(120, 22);
-            this.FloatUDHeadMinRate.TabIndex = 15;
-            this.FloatUDHeadMinRate.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(7, 122);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(69, 12);
-            this.label23.TabIndex = 14;
-            this.label23.Text = "HeadMinRate";
-            // 
-            // IntUDAnalysisTaskThreadLimit
-            // 
-            this.IntUDAnalysisTaskThreadLimit.Location = new System.Drawing.Point(200, 94);
-            this.IntUDAnalysisTaskThreadLimit.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDAnalysisTaskThreadLimit.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.IntUDAnalysisTaskThreadLimit.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.IntUDAnalysisTaskThreadLimit.Name = "IntUDAnalysisTaskThreadLimit";
-            this.IntUDAnalysisTaskThreadLimit.Size = new System.Drawing.Size(120, 22);
-            this.IntUDAnalysisTaskThreadLimit.TabIndex = 13;
-            this.IntUDAnalysisTaskThreadLimit.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(7, 96);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(124, 12);
-            this.label20.TabIndex = 12;
-            this.label20.Text = "AnalysisTaskThreadLimit";
-            // 
-            // IntUDIllustrationMinNonWhiteLevel
-            // 
-            this.IntUDIllustrationMinNonWhiteLevel.Increment = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationMinNonWhiteLevel.Location = new System.Drawing.Point(200, 42);
-            this.IntUDIllustrationMinNonWhiteLevel.Margin = new System.Windows.Forms.Padding(2);
-            this.IntUDIllustrationMinNonWhiteLevel.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationMinNonWhiteLevel.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.IntUDIllustrationMinNonWhiteLevel.Name = "IntUDIllustrationMinNonWhiteLevel";
-            this.IntUDIllustrationMinNonWhiteLevel.Size = new System.Drawing.Size(120, 22);
-            this.IntUDIllustrationMinNonWhiteLevel.TabIndex = 11;
-            this.IntUDIllustrationMinNonWhiteLevel.ThousandsSeparator = true;
-            this.IntUDIllustrationMinNonWhiteLevel.Value = new decimal(new int[] {
-            800000,
-            0,
-            0,
-            0});
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 44);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(188, 12);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "ConfirmIllustrationMinNonWhiteLevel";
             // 
             // IntUDIllustrationMinColorsLevel
             // 
@@ -826,7 +727,7 @@ namespace NovelTool
             0,
             0,
             0});
-            this.IntUDIllustrationMinColorsLevel.Location = new System.Drawing.Point(200, 16);
+            this.IntUDIllustrationMinColorsLevel.Location = new System.Drawing.Point(199, 16);
             this.IntUDIllustrationMinColorsLevel.Margin = new System.Windows.Forms.Padding(2);
             this.IntUDIllustrationMinColorsLevel.Maximum = new decimal(new int[] {
             10000,
@@ -848,23 +749,274 @@ namespace NovelTool
             0,
             0});
             // 
-            // label4
+            // IntUDIllustrationMinNonWhiteLevel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 44);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(188, 12);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "ConfirmIllustrationMinNonWhiteLevel";
+            this.IntUDIllustrationMinNonWhiteLevel.Increment = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationMinNonWhiteLevel.Location = new System.Drawing.Point(199, 42);
+            this.IntUDIllustrationMinNonWhiteLevel.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIllustrationMinNonWhiteLevel.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationMinNonWhiteLevel.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationMinNonWhiteLevel.Name = "IntUDIllustrationMinNonWhiteLevel";
+            this.IntUDIllustrationMinNonWhiteLevel.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIllustrationMinNonWhiteLevel.TabIndex = 11;
+            this.IntUDIllustrationMinNonWhiteLevel.ThousandsSeparator = true;
+            this.IntUDIllustrationMinNonWhiteLevel.Value = new decimal(new int[] {
+            800000,
+            0,
+            0,
+            0});
             // 
-            // label1
+            // ByteUDConfirmWhiteLevel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(171, 12);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "ConfirmIllustrationMinColorsLevel";
+            this.ByteUDConfirmWhiteLevel.Location = new System.Drawing.Point(199, 68);
+            this.ByteUDConfirmWhiteLevel.Margin = new System.Windows.Forms.Padding(2);
+            this.ByteUDConfirmWhiteLevel.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.ByteUDConfirmWhiteLevel.Name = "ByteUDConfirmWhiteLevel";
+            this.ByteUDConfirmWhiteLevel.Size = new System.Drawing.Size(120, 22);
+            this.ByteUDConfirmWhiteLevel.TabIndex = 35;
+            this.ByteUDConfirmWhiteLevel.Value = new decimal(new int[] {
+            240,
+            0,
+            0,
+            0});
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(6, 70);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(99, 12);
+            this.label56.TabIndex = 34;
+            this.label56.Text = "ConfirmWhiteLevel";
+            // 
+            // IntUDConfirmFooterGap
+            // 
+            this.IntUDConfirmFooterGap.Location = new System.Drawing.Point(199, 122);
+            this.IntUDConfirmFooterGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmFooterGap.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.IntUDConfirmFooterGap.Name = "IntUDConfirmFooterGap";
+            this.IntUDConfirmFooterGap.Size = new System.Drawing.Size(120, 22);
+            this.IntUDConfirmFooterGap.TabIndex = 23;
+            this.IntUDConfirmFooterGap.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(6, 96);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(88, 12);
+            this.label32.TabIndex = 20;
+            this.label32.Text = "ConfirmHeadGap";
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(6, 122);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(94, 12);
+            this.label35.TabIndex = 22;
+            this.label35.Text = "ConfirmFooterGap";
+            // 
+            // IntUDConfirmHeadGap
+            // 
+            this.IntUDConfirmHeadGap.Location = new System.Drawing.Point(199, 96);
+            this.IntUDConfirmHeadGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmHeadGap.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.IntUDConfirmHeadGap.Name = "IntUDConfirmHeadGap";
+            this.IntUDConfirmHeadGap.Size = new System.Drawing.Size(120, 22);
+            this.IntUDConfirmHeadGap.TabIndex = 21;
+            this.IntUDConfirmHeadGap.Value = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.IntUDIgnoreMinDetectXSize);
+            this.groupBox10.Controls.Add(this.label76);
+            this.groupBox10.Controls.Add(this.label20);
+            this.groupBox10.Controls.Add(this.IntUDAnalysisTaskThreadLimit);
+            this.groupBox10.Controls.Add(this.IntUDIllustrationMinHeight);
+            this.groupBox10.Controls.Add(this.label3);
+            this.groupBox10.Controls.Add(this.IntUDIllustrationMinWidth);
+            this.groupBox10.Controls.Add(this.label2);
+            this.groupBox10.Controls.Add(this.IntUDIgnoreMinDetectYSize);
+            this.groupBox10.Controls.Add(this.label31);
+            this.groupBox10.Location = new System.Drawing.Point(6, 6);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(266, 152);
+            this.groupBox10.TabIndex = 2;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "AnalysisFactor";
+            // 
+            // IntUDIgnoreMinDetectXSize
+            // 
+            this.IntUDIgnoreMinDetectXSize.Location = new System.Drawing.Point(135, 42);
+            this.IntUDIgnoreMinDetectXSize.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIgnoreMinDetectXSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IntUDIgnoreMinDetectXSize.Name = "IntUDIgnoreMinDetectXSize";
+            this.IntUDIgnoreMinDetectXSize.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIgnoreMinDetectXSize.TabIndex = 29;
+            this.IntUDIgnoreMinDetectXSize.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label76
+            // 
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(6, 44);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(111, 12);
+            this.label76.TabIndex = 28;
+            this.label76.Text = "IgnoreMinDetectXSize";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(6, 18);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(124, 12);
+            this.label20.TabIndex = 12;
+            this.label20.Text = "AnalysisTaskThreadLimit";
+            // 
+            // IntUDAnalysisTaskThreadLimit
+            // 
+            this.IntUDAnalysisTaskThreadLimit.Location = new System.Drawing.Point(135, 16);
+            this.IntUDAnalysisTaskThreadLimit.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDAnalysisTaskThreadLimit.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.IntUDAnalysisTaskThreadLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IntUDAnalysisTaskThreadLimit.Name = "IntUDAnalysisTaskThreadLimit";
+            this.IntUDAnalysisTaskThreadLimit.Size = new System.Drawing.Size(120, 22);
+            this.IntUDAnalysisTaskThreadLimit.TabIndex = 13;
+            this.IntUDAnalysisTaskThreadLimit.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // IntUDIllustrationMinHeight
+            // 
+            this.IntUDIllustrationMinHeight.Location = new System.Drawing.Point(135, 120);
+            this.IntUDIllustrationMinHeight.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIllustrationMinHeight.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationMinHeight.Name = "IntUDIllustrationMinHeight";
+            this.IntUDIllustrationMinHeight.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIllustrationMinHeight.TabIndex = 27;
+            this.IntUDIllustrationMinHeight.Value = new decimal(new int[] {
+            130,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 122);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(105, 12);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "IllustrationMinHeight";
+            // 
+            // IntUDIllustrationMinWidth
+            // 
+            this.IntUDIllustrationMinWidth.Location = new System.Drawing.Point(135, 94);
+            this.IntUDIllustrationMinWidth.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIllustrationMinWidth.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.IntUDIllustrationMinWidth.Name = "IntUDIllustrationMinWidth";
+            this.IntUDIllustrationMinWidth.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIllustrationMinWidth.TabIndex = 25;
+            this.IntUDIllustrationMinWidth.Value = new decimal(new int[] {
+            130,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 96);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(103, 12);
+            this.label2.TabIndex = 24;
+            this.label2.Text = "IllustrationMinWidth";
+            // 
+            // IntUDIgnoreMinDetectYSize
+            // 
+            this.IntUDIgnoreMinDetectYSize.Location = new System.Drawing.Point(135, 68);
+            this.IntUDIgnoreMinDetectYSize.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDIgnoreMinDetectYSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IntUDIgnoreMinDetectYSize.Name = "IntUDIgnoreMinDetectYSize";
+            this.IntUDIgnoreMinDetectYSize.Size = new System.Drawing.Size(120, 22);
+            this.IntUDIgnoreMinDetectYSize.TabIndex = 19;
+            this.IntUDIgnoreMinDetectYSize.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(6, 70);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(111, 12);
+            this.label31.TabIndex = 18;
+            this.label31.Text = "IgnoreMinDetectYSize";
             // 
             // tabPage2
             // 
@@ -1188,6 +1340,14 @@ namespace NovelTool
             // 
             // groupBox21
             // 
+            this.groupBox21.Controls.Add(this.label78);
+            this.groupBox21.Controls.Add(this.CheckBoxOutputAdjustColor);
+            this.groupBox21.Controls.Add(this.label77);
+            this.groupBox21.Controls.Add(this.ColorBoxOutputFore);
+            this.groupBox21.Controls.Add(this.label74);
+            this.groupBox21.Controls.Add(this.FloatUDForeColorRate);
+            this.groupBox21.Controls.Add(this.label72);
+            this.groupBox21.Controls.Add(this.PositionTypeBoxPage);
             this.groupBox21.Controls.Add(this.label68);
             this.groupBox21.Controls.Add(this.PixelFormatBoxOutput);
             this.groupBox21.Controls.Add(this.label67);
@@ -1202,15 +1362,132 @@ namespace NovelTool
             this.groupBox21.Controls.Add(this.IntUDOutputHeight);
             this.groupBox21.Location = new System.Drawing.Point(6, 6);
             this.groupBox21.Name = "groupBox21";
-            this.groupBox21.Size = new System.Drawing.Size(220, 178);
+            this.groupBox21.Size = new System.Drawing.Size(220, 302);
             this.groupBox21.TabIndex = 6;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "Output";
             // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(6, 144);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(74, 12);
+            this.label74.TabIndex = 32;
+            this.label74.Text = "ForeColorRate";
+            // 
+            // FloatUDForeColorRate
+            // 
+            this.FloatUDForeColorRate.DecimalPlaces = 3;
+            this.FloatUDForeColorRate.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.FloatUDForeColorRate.Location = new System.Drawing.Point(86, 142);
+            this.FloatUDForeColorRate.Margin = new System.Windows.Forms.Padding(2);
+            this.FloatUDForeColorRate.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.FloatUDForeColorRate.Name = "FloatUDForeColorRate";
+            this.FloatUDForeColorRate.Size = new System.Drawing.Size(120, 22);
+            this.FloatUDForeColorRate.TabIndex = 33;
+            this.FloatUDForeColorRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label72
+            // 
+            this.label72.AutoSize = true;
+            this.label72.Location = new System.Drawing.Point(6, 250);
+            this.label72.Name = "label72";
+            this.label72.Size = new System.Drawing.Size(64, 12);
+            this.label72.TabIndex = 31;
+            this.label72.Text = "PagePosition";
+            // 
+            // PositionTypeBoxPage
+            // 
+            this.PositionTypeBoxPage.FormattingEnabled = true;
+            this.PositionTypeBoxPage.Location = new System.Drawing.Point(86, 247);
+            this.PositionTypeBoxPage.Name = "PositionTypeBoxPage";
+            this.PositionTypeBoxPage.Size = new System.Drawing.Size(120, 20);
+            this.PositionTypeBoxPage.TabIndex = 30;
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(6, 198);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(61, 12);
+            this.label68.TabIndex = 29;
+            this.label68.Text = "PixelFormat";
+            // 
+            // PixelFormatBoxOutput
+            // 
+            this.PixelFormatBoxOutput.FormattingEnabled = true;
+            this.PixelFormatBoxOutput.Location = new System.Drawing.Point(86, 195);
+            this.PixelFormatBoxOutput.Name = "PixelFormatBoxOutput";
+            this.PixelFormatBoxOutput.Size = new System.Drawing.Size(120, 20);
+            this.PixelFormatBoxOutput.TabIndex = 28;
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(6, 222);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(39, 12);
+            this.label67.TabIndex = 26;
+            this.label67.Text = "Quality";
+            // 
+            // LongUDOutputQuality
+            // 
+            this.LongUDOutputQuality.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.LongUDOutputQuality.Location = new System.Drawing.Point(86, 220);
+            this.LongUDOutputQuality.Margin = new System.Windows.Forms.Padding(2);
+            this.LongUDOutputQuality.Minimum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.LongUDOutputQuality.Name = "LongUDOutputQuality";
+            this.LongUDOutputQuality.Size = new System.Drawing.Size(120, 22);
+            this.LongUDOutputQuality.TabIndex = 27;
+            this.LongUDOutputQuality.ThousandsSeparator = true;
+            this.LongUDOutputQuality.Value = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(6, 172);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(58, 12);
+            this.label66.TabIndex = 25;
+            this.label66.Text = "ImageType";
+            // 
+            // ImageTypeBoxOutput
+            // 
+            this.ImageTypeBoxOutput.FormattingEnabled = true;
+            this.ImageTypeBoxOutput.Location = new System.Drawing.Point(86, 169);
+            this.ImageTypeBoxOutput.Name = "ImageTypeBoxOutput";
+            this.ImageTypeBoxOutput.Size = new System.Drawing.Size(120, 20);
+            this.ImageTypeBoxOutput.TabIndex = 24;
+            // 
             // label65
             // 
             this.label65.AutoSize = true;
-            this.label65.Location = new System.Drawing.Point(6, 72);
+            this.label65.Location = new System.Drawing.Point(6, 94);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(56, 12);
             this.label65.TabIndex = 8;
@@ -1228,7 +1505,7 @@ namespace NovelTool
             // ColorBoxOutputBack
             // 
             this.ColorBoxOutputBack.FormattingEnabled = true;
-            this.ColorBoxOutputBack.Location = new System.Drawing.Point(86, 69);
+            this.ColorBoxOutputBack.Location = new System.Drawing.Point(86, 91);
             this.ColorBoxOutputBack.Name = "ColorBoxOutputBack";
             this.ColorBoxOutputBack.Size = new System.Drawing.Size(120, 20);
             this.ColorBoxOutputBack.TabIndex = 7;
@@ -2287,72 +2564,41 @@ namespace NovelTool
             this.label19.TabIndex = 5;
             this.label19.Text = "Width";
             // 
-            // label66
+            // label77
             // 
-            this.label66.AutoSize = true;
-            this.label66.Location = new System.Drawing.Point(6, 98);
-            this.label66.Name = "label66";
-            this.label66.Size = new System.Drawing.Size(58, 12);
-            this.label66.TabIndex = 25;
-            this.label66.Text = "ImageType";
+            this.label77.AutoSize = true;
+            this.label77.Location = new System.Drawing.Point(6, 120);
+            this.label77.Name = "label77";
+            this.label77.Size = new System.Drawing.Size(53, 12);
+            this.label77.TabIndex = 35;
+            this.label77.Text = "ForeColor";
             // 
-            // ImageTypeBoxOutput
+            // ColorBoxOutputFore
             // 
-            this.ImageTypeBoxOutput.FormattingEnabled = true;
-            this.ImageTypeBoxOutput.Location = new System.Drawing.Point(86, 95);
-            this.ImageTypeBoxOutput.Name = "ImageTypeBoxOutput";
-            this.ImageTypeBoxOutput.Size = new System.Drawing.Size(120, 20);
-            this.ImageTypeBoxOutput.TabIndex = 24;
+            this.ColorBoxOutputFore.FormattingEnabled = true;
+            this.ColorBoxOutputFore.Location = new System.Drawing.Point(86, 117);
+            this.ColorBoxOutputFore.Name = "ColorBoxOutputFore";
+            this.ColorBoxOutputFore.Size = new System.Drawing.Size(120, 20);
+            this.ColorBoxOutputFore.TabIndex = 34;
             // 
-            // label67
+            // CheckBoxOutputAdjustColor
             // 
-            this.label67.AutoSize = true;
-            this.label67.Location = new System.Drawing.Point(6, 148);
-            this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(39, 12);
-            this.label67.TabIndex = 26;
-            this.label67.Text = "Quality";
+            this.CheckBoxOutputAdjustColor.AutoSize = true;
+            this.CheckBoxOutputAdjustColor.Location = new System.Drawing.Point(86, 69);
+            this.CheckBoxOutputAdjustColor.Name = "CheckBoxOutputAdjustColor";
+            this.CheckBoxOutputAdjustColor.Size = new System.Drawing.Size(56, 16);
+            this.CheckBoxOutputAdjustColor.TabIndex = 36;
+            this.CheckBoxOutputAdjustColor.Text = "Enable";
+            this.CheckBoxOutputAdjustColor.UseVisualStyleBackColor = true;
             // 
-            // LongUDOutputQuality
+            // label78
             // 
-            this.LongUDOutputQuality.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            this.LongUDOutputQuality.Location = new System.Drawing.Point(86, 146);
-            this.LongUDOutputQuality.Margin = new System.Windows.Forms.Padding(2);
-            this.LongUDOutputQuality.Minimum = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            this.LongUDOutputQuality.Name = "LongUDOutputQuality";
-            this.LongUDOutputQuality.Size = new System.Drawing.Size(120, 22);
-            this.LongUDOutputQuality.TabIndex = 27;
-            this.LongUDOutputQuality.ThousandsSeparator = true;
-            this.LongUDOutputQuality.Value = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            // 
-            // label68
-            // 
-            this.label68.AutoSize = true;
-            this.label68.Location = new System.Drawing.Point(6, 124);
-            this.label68.Name = "label68";
-            this.label68.Size = new System.Drawing.Size(61, 12);
-            this.label68.TabIndex = 29;
-            this.label68.Text = "PixelFormat";
-            // 
-            // PixelFormatBoxOutput
-            // 
-            this.PixelFormatBoxOutput.FormattingEnabled = true;
-            this.PixelFormatBoxOutput.Location = new System.Drawing.Point(86, 121);
-            this.PixelFormatBoxOutput.Name = "PixelFormatBoxOutput";
-            this.PixelFormatBoxOutput.Size = new System.Drawing.Size(120, 20);
-            this.PixelFormatBoxOutput.TabIndex = 28;
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(6, 70);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(62, 12);
+            this.label78.TabIndex = 38;
+            this.label78.Text = "AdjustColor";
             // 
             // Options
             // 
@@ -2369,23 +2615,31 @@ namespace NovelTool
             this.splitContainer.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
+            this.groupBox24.ResumeLayout(false);
+            this.groupBox24.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMergeTBMaxRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDHeadMinRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityAdjacentRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ByteUDConfirmWhiteLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDFooterMinRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMaxRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMinRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinHeight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDEntityMinRate)).EndInit();
+            this.groupBox22.ResumeLayout(false);
+            this.groupBox22.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmEntityHeadGap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmEntityEndGap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinColorsLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinNonWhiteLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ByteUDConfirmWhiteLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmFooterGap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDConfirmHeadGap)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectYSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDFooterMinRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FloatUDHeadMinRate)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectXSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDAnalysisTaskThreadLimit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinNonWhiteLevel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinColorsLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIllustrationMinWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntUDIgnoreMinDetectYSize)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.groupBox16.ResumeLayout(false);
             this.groupBox16.PerformLayout();
@@ -2395,6 +2649,8 @@ namespace NovelTool
             this.tabPage3.ResumeLayout(false);
             this.groupBox21.ResumeLayout(false);
             this.groupBox21.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FloatUDForeColorRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LongUDOutputQuality)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDOutputWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntUDOutputHeight)).EndInit();
             this.groupBox20.ResumeLayout(false);
@@ -2440,7 +2696,6 @@ namespace NovelTool
             ((System.ComponentModel.ISupportInitialize)(this.IntUDFormBorderWidth)).EndInit();
             this.groupBox19.ResumeLayout(false);
             this.groupBox19.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LongUDOutputQuality)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2621,5 +2876,23 @@ namespace NovelTool
         private System.Windows.Forms.NumericUpDown LongUDOutputQuality;
         private System.Windows.Forms.Label label68;
         private System.Windows.Forms.ComboBox PixelFormatBoxOutput;
+        private System.Windows.Forms.NumericUpDown IntUDConfirmEntityEndGap;
+        private System.Windows.Forms.Label label71;
+        private System.Windows.Forms.GroupBox groupBox24;
+        private System.Windows.Forms.GroupBox groupBox22;
+        private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.ComboBox PositionTypeBoxPage;
+        private System.Windows.Forms.NumericUpDown IntUDConfirmEntityHeadGap;
+        private System.Windows.Forms.Label label73;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.NumericUpDown FloatUDForeColorRate;
+        private System.Windows.Forms.NumericUpDown FloatUDEntityMergeTBMaxRate;
+        private System.Windows.Forms.Label label75;
+        private System.Windows.Forms.NumericUpDown IntUDIgnoreMinDetectXSize;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.Label label77;
+        private System.Windows.Forms.ComboBox ColorBoxOutputFore;
+        private System.Windows.Forms.CheckBox CheckBoxOutputAdjustColor;
+        private System.Windows.Forms.Label label78;
     }
 }

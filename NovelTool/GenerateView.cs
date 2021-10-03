@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace NovelTool
 {
+    [System.Runtime.InteropServices.ComVisibleAttribute(true)]
     public partial class GenerateView : Form
     {
         private readonly Main mainForm;
@@ -19,39 +20,46 @@ namespace NovelTool
         public List<Image> OutputImgs { get => outputImgs; set => outputImgs = value; }
         private int outputCount = -1;
         private int outputIdx;
+        private WebBrowser WebBox;
         public GenerateView(Main mainForm)
         {
             if (mainForm.PageDatas.Count == 0) return;
 
             this.mainForm = mainForm;
             InitializeComponent();
-            toolStripZoomFactorBox.SelectedItem = (mainForm.ZoomFactor * 100).ToString();
+            ToolStripZoomFactorBox.SelectedItem = (mainForm.ZoomFactor * 100).ToString();
             #region InitFilterBox
-            toolStripFilterBox.Items.Add("None");
-            foreach (BitmapFilter.Filter filterEnum in (BitmapFilter.Filter[])Enum.GetValues(typeof(BitmapFilter.Filter))) toolStripFilterBox.Items.Add(filterEnum);
-            foreach (BitmapFilter.FilterXY filterEnum in (BitmapFilter.FilterXY[])Enum.GetValues(typeof(BitmapFilter.FilterXY))) toolStripFilterBox.Items.Add(filterEnum);
-            if (Enum.TryParse(mainForm.Filter.name, out BitmapFilter.Filter filter)) toolStripFilterBox.SelectedItem = filter;
-            else if (Enum.TryParse(mainForm.Filter.name, out BitmapFilter.FilterXY filterXY)) toolStripFilterBox.SelectedItem = filterXY;
-            toolStripFilterBox.SelectedIndexChanged += ToolStripFilterBox_SelectedIndexChanged;
+            ToolStripFilterBox.Items.Add("None");
+            foreach (BitmapFilter.Filter filterEnum in (BitmapFilter.Filter[])Enum.GetValues(typeof(BitmapFilter.Filter))) ToolStripFilterBox.Items.Add(filterEnum);
+            foreach (BitmapFilter.FilterXY filterEnum in (BitmapFilter.FilterXY[])Enum.GetValues(typeof(BitmapFilter.FilterXY))) ToolStripFilterBox.Items.Add(filterEnum);
+            if (Enum.TryParse(mainForm.Filter.name, out BitmapFilter.Filter filter)) ToolStripFilterBox.SelectedItem = filter;
+            else if (Enum.TryParse(mainForm.Filter.name, out BitmapFilter.FilterXY filterXY)) ToolStripFilterBox.SelectedItem = filterXY;
+            ToolStripFilterBox.SelectedIndexChanged += ToolStripFilterBox_SelectedIndexChanged;
             #endregion
 
             outputIdx = SetOutputPage(10);
         }
         private int SetOutputPage(int outputIdx)
         {
-            Color ColorBoxOutputBack = (Color)Properties.Settings.Default["ColorBoxOutputBack"];
             outputCount = ParseOutput(outputIdx);
-            if (toolStripPageBox.Items.Count != outputCount)
+            if (ToolStripPageBox.Items.Count != outputCount)
             {
-                toolStripPageBox.BeginUpdate();
-                toolStripPageBox.Items.Clear();
-                for (int idx = 0; idx < outputCount; idx++) toolStripPageBox.Items.Add(idx);
-                toolStripPageBox.EndUpdate();
+                ToolStripPageBox.BeginUpdate();
+                ToolStripPageBox.Items.Clear();
+                for (int idx = 0; idx < outputCount; idx++) ToolStripPageBox.Items.Add(idx);
+                ToolStripPageBox.EndUpdate();
             }
             if (outputIdx >= outputCount) outputIdx = 0; //顯示第一頁
             else if (outputIdx < 0) outputIdx = outputCount - 1; //顯示最後一頁
             if (OutputImgs.Count == 0) ParseOutput(outputIdx);
+            if (OutputImgs.Count == 0) return 0;
+
             Bitmap result = (Bitmap)OutputImgs[0];
+            bool CheckBoxOutputAdjustColor = (bool)Properties.Settings.Default["CheckBoxOutputAdjustColor"];
+            Color ColorBoxOutputBack = (Color)Properties.Settings.Default["ColorBoxOutputBack"];
+            Color ColorBoxOutputFore = (Color)Properties.Settings.Default["ColorBoxOutputFore"];
+            float FloatUDForeColorRate = (float)Properties.Settings.Default["FloatUDForeColorRate"];
+            if (CheckBoxOutputAdjustColor && (result.Tag == null || (bool)result.Tag != true)) ImageTool.ChangeForeColor(result, ColorBoxOutputFore.ToArgb(), ColorBoxOutputBack.ToArgb(), FloatUDForeColorRate);
             if (!(result.Tag is bool))
             {
                 if (mainForm.Filter.xFilterMatrix != null)
@@ -63,9 +71,14 @@ namespace NovelTool
                 }
                 result.MakeTransparent(Color.Transparent);
             }
-            outputView.Image = result;
-            outputView.BackColor = ColorBoxOutputBack;
-            toolStripPageBox.SelectedItem = outputIdx;
+
+            OutputView.Image = result;
+            if (result.Tag == null || (bool)result.Tag != true)
+            {
+                if (CheckBoxOutputAdjustColor) OutputView.BackColor = ColorBoxOutputBack;
+                else OutputView.BackColor = Color.White;
+            }
+            ToolStripPageBox.SelectedItem = outputIdx;
 
             return outputIdx;
         }
@@ -79,8 +92,6 @@ namespace NovelTool
             int IntUDMarginBottom = (int)Properties.Settings.Default["IntUDMarginBottom"]; //輸出圖片下側邊距
             int IntUDLeading = (int)Properties.Settings.Default["IntUDLeading"]; //輸出圖片行距
             float FloatUDEntityAdjacentRate = (float)Properties.Settings.Default["FloatUDEntityAdjacentRate"]; //判斷兩行之間是否相鄰之比例
-            PositionType PositionTypeBoxHead = (PositionType)Properties.Settings.Default["PositionTypeBoxHead"]; //Head輸出位置
-            PositionType PositionTypeBoxFooter = (PositionType)Properties.Settings.Default["PositionTypeBoxFooter"]; //Footer輸出位置
 
             int initWidthLocation = IntUDOutputWidth - IntUDMarginRight;
             int initHeightLocation = IntUDMarginTop;
@@ -92,67 +103,131 @@ namespace NovelTool
             outputImgs = new List<Image>();
             Bitmap destImage = null;
             Point destPoint = new Point(initWidthLocation, initHeightLocation);
+            System.Text.StringBuilder webStr = new System.Text.StringBuilder();
 
             for (int pIdx = 0; pIdx < mainForm.PageDatas.Count; ++pIdx)
             {
-                Bitmap srcImage = null;
                 PageData pageData = mainForm.PageDatas[pIdx];
-                AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
-                    ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                    PositionTypeBoxHead, PositionTypeBoxFooter, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
-                    false, true);
-                if (pageData.isIllustration)
-                {   //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
-                    AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, 
-                        ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                        PositionTypeBoxHead, PositionTypeBoxFooter, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
-                        true, false, true);
+                if (pageData.textList != null && pageData.textList.Count > 0)
+                {
+                    if (WebBox == null)
+                    {
+                        WebBox = new WebBrowser();
+                        Panel1.Controls.Add(WebBox);
+                        WebBox.Location = OutputView.Location;
+                        WebBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                        WebBox.Dock = DockStyle.Fill;
+                        //WebBox.DocumentCompleted += WebBox_DocumentCompleted;
+                        WebBox.DocumentCompleted += (o, e) =>
+                        {
+                            WebBox.Document.Window.Error += (w, we) =>
+                            {
+                                we.Handled = true;
+                                // Do something with the error...
+                                Debug.WriteLine(
+                                    string.Format(
+                                       "Error: {1}\nline: {0}\nurl: {2}",
+                                       we.LineNumber, //#0
+                                       we.Description, //#1
+                                       we.Url));  //#2
+                            };
+                        };
+                        WebBox.ScriptErrorsSuppressed = true;
+                        WebBox.BringToFront();
+                    }
+                    for (int tIdx = 0; tIdx < pageData.textList.Count; tIdx++)
+                    {
+                        (string text, string ruby) = pageData.textList[tIdx];
+                        if (text == "\n") webStr.Append("<br/>");
+                        if (text == "_img_") webStr.AppendLine($"<img height='100%' src='{ruby}'>");
+                        else if (ruby.Length > 0) webStr.AppendLine($"<ruby><rb>{text}</rb><rp>（</rp><rt>{ruby}</rt><rp>）</rp></ruby>");
+                        else webStr.AppendLine(text);
+                        //if (tIdx > 0 && tIdx < pageData.textList.Count - 1 && pageData.textList[tIdx - 1].text == "\n" && pageData.textList[tIdx + 1].text == "\n") webStr.AppendLine("<h1>" + text + "</h1>");
+                    }
+                    webStr.AppendLine("<hr>");
                 }
                 else
                 {
-                    float offsetX = -1;
-                    var columnRects = pageData.columnBodyList;
-                    float bodyTop = pageData.rectBody.Y;
-                    //if (destImage == null) (destImage, destPoint) = CreateDestImage(IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, srcImage);
-                    (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnRuby = (RectType.None, 0, 0, 0, 0, null);
-                    for (int cIdx = columnRects.Count - 1; cIdx >= 0; cIdx--)
+                    Bitmap srcImage = null;
+                    AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                        ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
+                        false, true);
+                    if (pageData.isIllustration)
+                    {   //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
+                        AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                            ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
+                            true, false, true);
+                    }
+                    else if (pageData.columnBodyList != null)
                     {
-                        (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) = columnRects[cIdx];
-                        int newWidth = (int)(Width * zoomFactor);
-                        int blankWidth = offsetX != -1 ? (int)((offsetX - X - Width) * zoomFactor) : 0;
-                        double blankFactor = blankWidth / newWidth;
-                        blankFactor = blankFactor > 2.5 ? 2.5 : (blankFactor < 1.5 ? 0 : blankFactor);
-                        destPoint.X -= (int)(newWidth * blankFactor);
-                        if (RType == RectType.BodyIn) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, 
-                            ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                            PositionTypeBoxHead, PositionTypeBoxFooter, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
-                        if (Entitys == null || Entitys.Count == 0) continue;
-                        if (RType == RectType.Ruby)
-                        { //保留Ruby行內容，下一行主句中再處理
-                            columnRuby = (RType, X, Y, Width, Height, Entitys);
-                            continue;
-                        }
-                        if (destPoint.X == initWidthLocation) destPoint.X -= newWidth + IntUDLeading; //位移右邊第一行輸出位置
-                        if (columnRuby.Entitys != null && columnRuby.X - X - Width > mainForm.Modes.Width * FloatUDEntityAdjacentRate)
-                        { //column 與 Ruby 非相鄰時，代表右側非 Ruby
-                            var rubyWidth = (int)(columnRuby.Width * zoomFactor);
-                            GenerateDrawImage(pageData.path, pageData.name, bodyTop, columnRuby.X, columnRuby.Width, columnRuby.Entitys, rubyWidth,
-                                PositionTypeBoxHead, PositionTypeBoxFooter, pageData.columnHeadList, pageData.columnFooterList,
-                                IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, (RectType.None, 0, 0, 0, 0, null), outputAll);
-                            columnRuby = (RectType.None, 0, 0, 0, 0, null);
-                        }
+                        float offsetX = -1;
+                        var columnRects = pageData.columnBodyList;
+                        float bodyTop = pageData.rectBody.Y;
+                        (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnRuby = (RectType.None, 0, 0, 0, 0, null);
+                        for (int cIdx = columnRects.Count - 1; cIdx >= 0; cIdx--)
+                        {
+                            (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) = columnRects[cIdx];
+                            (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnNext = cIdx > 1 ? columnRects[cIdx - 1] : ImageTool.NewEntitys();
+                            int newWidth = (int)(Width * zoomFactor);
+                            int blankWidth = offsetX != -1 ? (int)((offsetX - X - Width) * zoomFactor) : 0;
+                            double blankFactor = (double)blankWidth / newWidth;
+                            blankFactor = blankFactor > 2.5 ? 2.5 : (blankFactor < 1.5 ? 0 : blankFactor);
+                            destPoint.X -= (int)(newWidth * blankFactor); //原圖兩行之間的空白行較大時，輸出位置加上空白行比例寬度
+                            if (columnNext.Entitys != null && columnNext.RType != RectType.Ruby && RType != RectType.Ruby && X - columnNext.X - columnNext.Width < mainForm.Modes.Width * FloatUDEntityAdjacentRate) //前後行為相鄰時
+                            {
+                                RType = RectType.Ruby;
+                                for (int eIdx = 0; eIdx < Entitys.Count; eIdx++)
+                                {
+                                    var entity = Entitys[eIdx];
+                                    entity.RType = RectType.Ruby;
+                                    Entitys[eIdx] = entity;
+                                }
+                            }
+                            if (RType == RectType.BodyIn && RType == RectType.EntityHead) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                                ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
+                            if (Entitys == null || Entitys.Count == 0) continue;
+                            if (RType == RectType.Ruby)
+                            { //保留Ruby行內容，下一行主句中再處理
+                                columnRuby = (RType, X, Y, Width, Height, Entitys);
+                                continue;
+                            }
+                            if (destPoint.X == initWidthLocation) destPoint.X -= newWidth + IntUDLeading; //位移右邊第一行輸出位置
+                            if (columnRuby.Entitys != null && columnRuby.X - X - Width > mainForm.Modes.Width * FloatUDEntityAdjacentRate)
+                            { //column 與 Ruby 非相鄰時，代表右側非 Ruby
+                                var rubyWidth = (int)(columnRuby.Width * zoomFactor);
+                                GenerateDrawImage(pageData.path, pageData.name, bodyTop, columnRuby.X, columnRuby.Width, columnRuby.Entitys, rubyWidth, pageData.columnHeadList, pageData.columnFooterList,
+                                    IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, (RectType.None, 0, 0, 0, 0, null), outputAll);
+                                columnRuby = (RectType.None, 0, 0, 0, 0, null);
+                            }
+                            
+                            GenerateDrawImage(pageData.path, pageData.name, bodyTop, X, Width, Entitys, newWidth, pageData.columnHeadList, pageData.columnFooterList,
+                                IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, columnRuby, outputAll);
 
-                        GenerateDrawImage(pageData.path, pageData.name, bodyTop, X, Width, Entitys, newWidth,
-                            PositionTypeBoxHead, PositionTypeBoxFooter, pageData.columnHeadList, pageData.columnFooterList,
-                            IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, columnRuby, outputAll);
-
-                        if (columnRuby.Entitys != null) columnRuby = (RectType.None, 0, 0, 0, 0, null);
-                        if (RType == RectType.BodyOut) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, 
-                            ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                            PositionTypeBoxHead, PositionTypeBoxFooter, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
-                        offsetX = X;
+                            if (columnRuby.Entitys != null) columnRuby = (RectType.None, 0, 0, 0, 0, null);
+                            if (RType == RectType.BodyOut && RType == RectType.EntityEnd) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                                ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
+                            offsetX = X;
+                            if (Entitys[Entitys.Count -1].Height < mainForm.Modes.HeighMin && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
+                            { //每行非句尾的最後一字，若高度不到最小高度(例如符號字)，則增加空白輸出
+                                destPoint.Y += (int)(mainForm.Modes.HeighMin * zoomFactor);
+                            }
+                        }
                     }
                 }
+            }
+            if (webStr.Length > 0 && WebBox.DocumentText == "")
+            {
+                WebBox.Navigate("about:blank");
+                WebBox.Document.Write(String.Empty);
+                WebBox.DocumentText = "<html><head><meta http-equiv='X-UA-Compatible' content='IE=edge'/>" +
+                    "<style type='text/css'>body {background-color: #000;color: #ccc;line-height: 150%; font-size: 140%; font-family: 'Lucida Grande', 'Meiryo', 'Meiryo UI', 'Microsoft JhengHei UI', 'Microsoft JhengHei', sans-serif; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; overflow-x: scroll; padding: 10px; margin: 0px auto;}</style></head>" +
+                    $"<body>{webStr}" +
+                    "<script>" +
+                    "function scrollLeft(element, type, value) { if (!value || value <= 0) value = element.clientWidth*0.9; if (!type) type = 'down'; if (type === 'up') element.scrollTop-=value;else if (type === 'down') element.scrollTop+=value;}" +
+                    "const novel = document.querySelector('body');" +
+                    "novel.addEventListener('mousewheel', function(e){e.preventDefault(); if(e.wheelDelta > 0) scrollLeft(novel, 'up'); else scrollLeft(novel, 'down');});" +
+                    "</script>" +
+                    "</body></html>";
             }
             if (destImage != null && destPoint.X != initWidthLocation)
             {
@@ -161,28 +236,30 @@ namespace NovelTool
             }
             return outputCount;
         }
+        //private void WebBox_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        //{
+        //    WebBox.Document.MouseMove += WebBoxDocument_MouseMove;
+        //}
+
+        //private void WebBoxDocument_MouseMove(object sender, HtmlElementEventArgs e)
+        //{
+        //    WebBox.Document.Focus();
+        //}
 
         private void AddNowCreateNext(string path, string name, bool outputAll, int outputIdx,
             int IntUDOutputWidth, int IntUDOutputHeight, int initWidthLocation, int initHeightLocation,
-            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref Point destPoint,
-            PositionType PositionTypeBoxHead, PositionType PositionTypeBoxFooter, double zoomFactor,
+            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref Point destPoint, double zoomFactor,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnFooterList, 
             bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false
             )
         {
+            PositionType PositionTypeBoxHead = (PositionType)Properties.Settings.Default["PositionTypeBoxHead"]; //Head輸出位置
+            PositionType PositionTypeBoxFooter = (PositionType)Properties.Settings.Default["PositionTypeBoxFooter"]; //Footer輸出位置
+            PositionType PositionTypeBoxPage = (PositionType)Properties.Settings.Default["PositionTypeBoxPage"]; //Page輸出位置
             if (triggerAdd && destImage != null && destPoint.X != initWidthLocation)
             {
-                if (outputCount == outputIdx || outputAll)
-                {
-                    if (srcImage == null) srcImage = OpenImage(path, name);
-                    int initSize = 10;
-                    GenerateDrawTitle(initSize, PositionTypeBoxHead, columnHeadList,
-                     IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
-                    GenerateDrawTitle(initSize, PositionTypeBoxFooter, columnFooterList,
-                     IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
-                    outputImgs.Add(destImage);
-                }
+                if (outputCount == outputIdx || outputAll) outputImgs.Add(destImage);
                 outputCount++;
                 destImage = null;
             }
@@ -197,7 +274,19 @@ namespace NovelTool
                 outputCount++;
             }
             if ((outputCount == outputIdx || outputAll) && srcImage == null) srcImage = OpenImage(path, name);
-            if (triggerCreate && destImage == null) (destImage, destPoint) = CreateDestImage(IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, srcImage);
+            if (triggerCreate && destImage == null)
+            {
+                (destImage, destPoint) = CreateDestImage(IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, srcImage);
+                if (srcImage == null)
+                {
+                    srcImage = OpenImage(path, name);
+                }
+                int initSize = 10;
+                GenerateDrawTitle(initSize, PositionTypeBoxHead, columnHeadList,
+                 IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
+                GenerateDrawTitle(initSize, PositionTypeBoxFooter, columnFooterList,
+                 IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
+            }
         }
 
         private void GenerateDrawTitle(int initSize, PositionType PositionTypeBoxTitle,
@@ -272,6 +361,8 @@ namespace NovelTool
             Bitmap srcImage = null;
             try
             {
+                if (name.EndsWith("xhtml")) return srcImage;
+
                 fs = File.OpenRead(string.Format("{0}/{1}", path, name));
                 srcImage = (Bitmap)Image.FromStream(fs);
                 //https://www.c-sharpcorner.com/article/solution-for-a-graphics-object-cannot-be-created-from-an-im/
@@ -293,7 +384,6 @@ namespace NovelTool
 
         private void GenerateDrawImage(string path, string name, float bodyTop,
             float columnX, float columnWidth, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys, int newWidth,
-            PositionType PositionTypeBoxHead, PositionType PositionTypeBoxFooter,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnFooterList,
             int IntUDOutputWidth, int IntUDOutputHeight, int IntUDLeading, 
@@ -338,7 +428,7 @@ namespace NovelTool
                 if (destPoint.X < IntUDMarginLeft) //若輸出 X軸位置已於最左側，則換一頁
                 {
                     AddNowCreateNext(path, name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                               PositionTypeBoxHead, PositionTypeBoxFooter, zoomFactor, columnHeadList, columnFooterList);
+                               zoomFactor, columnHeadList, columnFooterList);
                     destPoint.X -= newWidth + IntUDLeading;
                 }
                 destPoint.Y += blankHeight;
@@ -410,8 +500,8 @@ namespace NovelTool
             if (((PictureBox)sender).Image == null) return;
             if (e.Button == MouseButtons.Left)
             {
-                outputView.Left += e.X - MouseDownLocation.X;
-                outputView.Top += e.Y - MouseDownLocation.Y;
+                OutputView.Left += e.X - MouseDownLocation.X;
+                OutputView.Top += e.Y - MouseDownLocation.Y;
             }
         }
         private void ToolStripPageBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -434,6 +524,41 @@ namespace NovelTool
             }
         }
         private void ToolStripSave_Click(object sender, EventArgs e)
+        {
+            (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = getSaveInfo();
+            string name;
+            if (mainForm.Filter.name != null) name = string.Format(@"{0}_{1}", ToolStripPageBox.SelectedItem, mainForm.Filter.name);
+            else name = string.Format(@"{0}", ToolStripPageBox.SelectedItem);
+            ImageTool.SaveImage(OutputView.Image, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
+        }
+        private void ToolStripSaveAll_Click(object sender, EventArgs e)
+        {
+            (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = getSaveInfo();
+            ParseOutput(-1, true);
+            bool CheckBoxOutputAdjustColor = (bool)Properties.Settings.Default["CheckBoxOutputAdjustColor"];
+            Color ColorBoxOutputBack = (Color)Properties.Settings.Default["ColorBoxOutputBack"];
+            Color ColorBoxOutputFore = (Color)Properties.Settings.Default["ColorBoxOutputFore"];
+            float FloatUDForeColorRate = (float)Properties.Settings.Default["FloatUDForeColorRate"];
+            for (int idx=0; idx < OutputImgs.Count; idx++)
+            {
+                string name;
+                if (mainForm.Filter.name != null) name = string.Format(@"{0}_{1}", idx, mainForm.Filter.name);
+                else name = string.Format(@"{0}", idx);
+                Image srcImage = OutputImgs[idx];
+                if (CheckBoxOutputAdjustColor && (srcImage.Tag == null || (bool)srcImage.Tag != true)) ImageTool.ChangeForeColor((Bitmap)srcImage, ColorBoxOutputFore.ToArgb(), ColorBoxOutputBack.ToArgb(), FloatUDForeColorRate);
+                using (Bitmap outputImage = new Bitmap(srcImage.Width, srcImage.Height))
+                using (Graphics graphics = Graphics.FromImage(outputImage))
+                using (SolidBrush brush = new SolidBrush(ColorBoxOutputBack))
+                {
+                    graphics.FillRectangle(brush, 0, 0, srcImage.Width, srcImage.Height);
+                    graphics.DrawImage(srcImage, 0, 0, srcImage.Width, srcImage.Height);
+                    ImageTool.SaveImage(outputImage, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
+                }
+                srcImage.Dispose();
+            }
+        }
+
+        private (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) getSaveInfo()
         {
             ImageType ImageTypeBoxOutput = (ImageType)Properties.Settings.Default["ImageTypeBoxOutput"]; //輸出檔案格式
             PixelFormat PixelFormatBoxOutput = (PixelFormat)Properties.Settings.Default["PixelFormatBoxOutput"]; //輸出色彩資料格式
@@ -471,62 +596,7 @@ namespace NovelTool
                     extension = ".jpg";
                     break;
             }
-
-            if (mainForm.Filter.name != null) name = string.Format(@"{0}_{1}", toolStripPageBox.SelectedItem, mainForm.Filter.name);
-            else name = string.Format(@"{0}", toolStripPageBox.SelectedItem);
-            ImageTool.SaveImage(outputView.Image, path, name, extension, imgEncoder, encoderParameters, PixelFormatBoxOutput);
-        }
-        private void ToolStripSaveAll_Click(object sender, EventArgs e)
-        {
-            ImageType ImageTypeBoxOutput = (ImageType)Properties.Settings.Default["ImageTypeBoxOutput"]; //輸出檔案格式
-            PixelFormat PixelFormatBoxOutput = (PixelFormat)Properties.Settings.Default["PixelFormatBoxOutput"]; //輸出色彩資料格式
-            long LongUDOutputQuality = (long)Properties.Settings.Default["LongUDOutputQuality"]; //輸出品質
-            string path = string.Format(@"{0}\Output", mainForm.InputDir);
-
-            string extension;
-            ImageCodecInfo imgEncoder;
-            EncoderParameters encoderParameters = new EncoderParameters(1);
-            Encoder encoder = Encoder.Quality;
-            encoderParameters.Param[0] = new EncoderParameter(encoder, LongUDOutputQuality);
-
-            switch (ImageTypeBoxOutput)
-            {
-                case ImageType.Jpeg:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Jpeg.Guid).FirstOrDefault();
-                    extension = ".jpg";
-                    break;
-                case ImageType.Png:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Png.Guid).FirstOrDefault();
-                    extension = ".png";
-                    break;
-                case ImageType.Tiff:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Tiff.Guid).FirstOrDefault();
-                    extension = ".tiff";
-                    break;
-                case ImageType.Bmp:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Bmp.Guid).FirstOrDefault();
-                    extension = ".bmp";
-                    break;
-                case ImageType.Gif:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Gif.Guid).FirstOrDefault();
-                    extension = ".gif";
-                    break;
-                default:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Jpeg.Guid).FirstOrDefault();
-                    extension = ".jpg";
-                    break;
-            }
-
-            ParseOutput(-1, true);
-            for (int idx=0; idx < OutputImgs.Count; idx++)
-            {
-                string name;
-                if (mainForm.Filter.name != null) name = string.Format(@"{0}_{1}", idx, mainForm.Filter.name);
-                else name = string.Format(@"{0}", idx);
-                Image srcImage = OutputImgs[idx];
-                ImageTool.SaveImage(srcImage, path, name, extension, imgEncoder, encoderParameters, PixelFormatBoxOutput);
-                srcImage.Dispose();
-            }
+            return (path, extension, imgEncoder, encoderParameters, PixelFormatBoxOutput);
         }
         private void ToolStripFilterBox_SelectedIndexChanged(object sender, EventArgs e)
         {

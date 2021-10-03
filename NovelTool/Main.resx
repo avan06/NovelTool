@@ -445,7 +445,7 @@
     <value>3, 0</value>
   </data>
   <data name="toolStrip.Size" type="System.Drawing.Size, System.Drawing">
-    <value>386, 25</value>
+    <value>419, 25</value>
   </data>
   <data name="toolStrip.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -523,19 +523,19 @@
     <value>Tools</value>
   </data>
   <data name="menuZoomIn.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="menuZoomIn.Text" xml:space="preserve">
     <value>ZoomIn</value>
   </data>
   <data name="menuZoomOut.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="menuZoomOut.Text" xml:space="preserve">
     <value>ZoomOut</value>
   </data>
   <data name="menuGenView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>153, 22</value>
   </data>
   <data name="menuGenView.Text" xml:space="preserve">
     <value>GenerateView</value>
@@ -1001,6 +1001,12 @@
   <data name="&gt;&gt;menuZoomOut.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;menuGenView.Name" xml:space="preserve">
+    <value>menuGenView</value>
+  </data>
+  <data name="&gt;&gt;menuGenView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolProgressBar.Name" xml:space="preserve">
     <value>toolProgressBar</value>
   </data>
@@ -1018,12 +1024,6 @@
   </data>
   <data name="&gt;&gt;newAnalysisWorker.Type" xml:space="preserve">
     <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuGenView.Name" xml:space="preserve">
-    <value>menuGenView</value>
-  </data>
-  <data name="&gt;&gt;menuGenView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>Main</value>

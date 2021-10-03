@@ -213,7 +213,7 @@
       <Value Profile="(Default)">None</Value>
     </Setting>
     <Setting Name="ColorBoxOutputBack" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">AliceBlue</Value>
+      <Value Profile="(Default)">White</Value>
     </Setting>
     <Setting Name="ImageTypeBoxOutput" Type="NovelTool.ImageType" Scope="User">
       <Value Profile="(Default)">Jpeg</Value>
@@ -223,6 +223,30 @@
     </Setting>
     <Setting Name="PixelFormatBoxOutput" Type="System.Drawing.Imaging.PixelFormat" Scope="User">
       <Value Profile="(Default)">DontCare</Value>
+    </Setting>
+    <Setting Name="IntUDConfirmEntityEndGap" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="PositionTypeBoxPage" Type="NovelTool.PositionType" Scope="User">
+      <Value Profile="(Default)">None</Value>
+    </Setting>
+    <Setting Name="IntUDConfirmEntityHeadGap" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="FloatUDForeColorRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.5</Value>
+    </Setting>
+    <Setting Name="FloatUDEntityMergeTBMaxRate" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="IntUDIgnoreMinDetectXSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ColorBoxOutputFore" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Black</Value>
+    </Setting>
+    <Setting Name="CheckBoxOutputAdjustColor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
