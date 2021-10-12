@@ -520,12 +520,12 @@ namespace NovelTool
                 var entitysFirst = entitys[0];
                 var entitysLast = entitys[entitys.Count - 1];
 
-                if (entitysFirst.Y - rectRegion.Y + IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5 && entitysFirst.Height + IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5) // entitysFirst.Y > modes.TopMin + IntUDConfirmEntityHeadGap //- rectRegion.Y > modes.HeighMin * 0.5)
+                if (entitysFirst.Y - rectRegion.Y - IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5 && entitysFirst.Height > modes.HeighMin * 0.5) // entitysFirst.Y > modes.TopMin + IntUDConfirmEntityHeadGap //- rectRegion.Y > modes.HeighMin * 0.5)
                 { //判斷是否為句首，首字上方空白要大於最小字高，且首字高度比最小字高的一半以上，例如首字為【一】上方雖然有空白，但並非句首
                     entitysFirst.RType = RectType.EntityHead;
                     entitys[0] = entitysFirst;
                 }
-                if (modes.BottomMin - entitysLast.Y > modes.HeighMax + IntUDConfirmEntityEndGap) //entitysLast.Y + entitysLast.Height + IntUDConfirmEntityEndGap < modes.BottomMin
+                if (modes.BottomMin - entitysLast.Y - entitysLast.Height > modes.HeighMax + IntUDConfirmEntityEndGap) //entitysLast.Y + entitysLast.Height + IntUDConfirmEntityEndGap < modes.BottomMin
                 { //判斷是否為句尾
                     entitysLast.RType = RectType.EntityEnd;
                     entitys[entitys.Count - 1] = entitysLast;

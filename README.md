@@ -1,5 +1,4 @@
 # NovelTool
-====
 NovelTool is a tool for rearranging novel/eBook image to the specified output resolution.
 
 ## Analysis
@@ -17,6 +16,8 @@ Rearrange the recognized text images and generate new image files according to t
 6. Save the generated content as a new image file.
 
 ## Option settings
+
+### Analysis
 1. AnalysisFactor
    * AnalysisTaskThreadLimit
    * IgnoreMinDetectXSize
@@ -42,6 +43,7 @@ Rearrange the recognized text images and generate new image files according to t
    * ConfirmEntityHeadGap
    * ConfirmEntityEndGap
 
+### Generate
 1. Output
    * Width
    * Height

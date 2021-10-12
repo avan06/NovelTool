@@ -173,7 +173,7 @@ namespace NovelTool
                             double blankFactor = (double)blankWidth / newWidth;
                             blankFactor = blankFactor > 2.5 ? 2.5 : (blankFactor < 1.5 ? 0 : blankFactor);
                             destPoint.X -= (int)(newWidth * blankFactor); //原圖兩行之間的空白行較大時，輸出位置加上空白行比例寬度
-                            if (columnNext.Entitys != null && columnNext.RType != RectType.Ruby && RType != RectType.Ruby && X - columnNext.X - columnNext.Width < mainForm.Modes.Width * FloatUDEntityAdjacentRate) //前後行為相鄰時
+                            if (columnNext.Entitys != null && columnNext.RType != RectType.Ruby && RType != RectType.Ruby && X - columnNext.X - columnNext.Width < mainForm.Modes.Width * FloatUDEntityAdjacentRate && Width <= mainForm.Modes.WidthMin) //前後行為相鄰時
                             {
                                 RType = RectType.Ruby;
                                 for (int eIdx = 0; eIdx < Entitys.Count; eIdx++)
@@ -183,9 +183,9 @@ namespace NovelTool
                                     Entitys[eIdx] = entity;
                                 }
                             }
-                            if (RType == RectType.BodyIn && RType == RectType.EntityHead) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
-                                ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
                             if (Entitys == null || Entitys.Count == 0) continue;
+                            if (RType == RectType.BodyIn && Entitys[0].RType == RectType.EntityHead) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                                ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
                             if (RType == RectType.Ruby)
                             { //保留Ruby行內容，下一行主句中再處理
                                 columnRuby = (RType, X, Y, Width, Height, Entitys);
@@ -407,12 +407,13 @@ namespace NovelTool
                 int newHeight = (int)(entity.Height * zoomFactor);
                 if (destPoint.Y != initHeightLocation)
                 {
+                    if (eIdx == 0) destPoint.X += newWidth < mainForm.Modes.Width * zoomFactor ? (int)(mainForm.Modes.Width * zoomFactor - newWidth) : 0; //該行寬度小於通常寬度時，將輸出 X軸位置往右偏移一點
                     if (eIdx == 0 && entity.RType == RectType.EntityHead)
                     {
                         destPoint.X -= newWidth + IntUDLeading;
                         destPoint.Y = initHeightLocation;
                     }
-                    else if ((destPoint.Y + blankHeight + newHeight > maxOutputHeight)) //若輸出 Y軸位置已於最下方，則換下一行 //initMaxHeight
+                    else if (destPoint.Y + blankHeight + newHeight > maxOutputHeight) //若輸出 Y軸位置已於最下方，則換下一行
                     {
                         var sliceHeight = maxOutputHeight - destPoint.Y;
                         if (destPoint.Y < maxOutputHeight)
@@ -463,9 +464,10 @@ namespace NovelTool
                     }
                 }
                 destPoint.Y += newHeight;
-                if ((eIdx == Entitys.Count - 1 && entity.RType == RectType.EntityEnd)) //若輸出 Y軸位置已於最下方，則換下一行 //IntUDOutputHeight - IntUDMarginBottom
+                if (eIdx == Entitys.Count - 1 && entity.RType == RectType.EntityEnd) //若該行最後一字為句尾，則換下一行
                 {
-                    destPoint.X -= newWidth + IntUDLeading;
+                    if (newWidth < mainForm.Modes.Width * zoomFactor) destPoint.X -= (int)(mainForm.Modes.Width * zoomFactor) + IntUDLeading;
+                    else destPoint.X -= newWidth + IntUDLeading;
                     destPoint.Y = initHeightLocation;
                 }
                 offsetY = entity.Y + entity.Height;

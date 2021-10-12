@@ -110,6 +110,10 @@ namespace NovelTool
             this.label45 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.label78 = new System.Windows.Forms.Label();
+            this.CheckBoxOutputAdjustColor = new System.Windows.Forms.CheckBox();
+            this.label77 = new System.Windows.Forms.Label();
+            this.ColorBoxOutputFore = new System.Windows.Forms.ComboBox();
             this.label74 = new System.Windows.Forms.Label();
             this.FloatUDForeColorRate = new System.Windows.Forms.NumericUpDown();
             this.label72 = new System.Windows.Forms.Label();
@@ -222,10 +226,6 @@ namespace NovelTool
             this.label42 = new System.Windows.Forms.Label();
             this.ColorBoxFormBorderLeft = new System.Windows.Forms.ComboBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.label77 = new System.Windows.Forms.Label();
-            this.ColorBoxOutputFore = new System.Windows.Forms.ComboBox();
-            this.CheckBoxOutputAdjustColor = new System.Windows.Forms.CheckBox();
-            this.label78 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
@@ -672,6 +672,11 @@ namespace NovelTool
             // 
             this.IntUDConfirmEntityHeadGap.Location = new System.Drawing.Point(199, 150);
             this.IntUDConfirmEntityHeadGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmEntityHeadGap.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.IntUDConfirmEntityHeadGap.Name = "IntUDConfirmEntityHeadGap";
             this.IntUDConfirmEntityHeadGap.Size = new System.Drawing.Size(120, 22);
             this.IntUDConfirmEntityHeadGap.TabIndex = 41;
@@ -689,6 +694,11 @@ namespace NovelTool
             // 
             this.IntUDConfirmEntityEndGap.Location = new System.Drawing.Point(199, 176);
             this.IntUDConfirmEntityEndGap.Margin = new System.Windows.Forms.Padding(2);
+            this.IntUDConfirmEntityEndGap.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.IntUDConfirmEntityEndGap.Name = "IntUDConfirmEntityEndGap";
             this.IntUDConfirmEntityEndGap.Size = new System.Drawing.Size(120, 22);
             this.IntUDConfirmEntityEndGap.TabIndex = 39;
@@ -1366,6 +1376,42 @@ namespace NovelTool
             this.groupBox21.TabIndex = 6;
             this.groupBox21.TabStop = false;
             this.groupBox21.Text = "Output";
+            // 
+            // label78
+            // 
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(6, 70);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(62, 12);
+            this.label78.TabIndex = 38;
+            this.label78.Text = "AdjustColor";
+            // 
+            // CheckBoxOutputAdjustColor
+            // 
+            this.CheckBoxOutputAdjustColor.AutoSize = true;
+            this.CheckBoxOutputAdjustColor.Location = new System.Drawing.Point(86, 69);
+            this.CheckBoxOutputAdjustColor.Name = "CheckBoxOutputAdjustColor";
+            this.CheckBoxOutputAdjustColor.Size = new System.Drawing.Size(56, 16);
+            this.CheckBoxOutputAdjustColor.TabIndex = 36;
+            this.CheckBoxOutputAdjustColor.Text = "Enable";
+            this.CheckBoxOutputAdjustColor.UseVisualStyleBackColor = true;
+            // 
+            // label77
+            // 
+            this.label77.AutoSize = true;
+            this.label77.Location = new System.Drawing.Point(6, 120);
+            this.label77.Name = "label77";
+            this.label77.Size = new System.Drawing.Size(53, 12);
+            this.label77.TabIndex = 35;
+            this.label77.Text = "ForeColor";
+            // 
+            // ColorBoxOutputFore
+            // 
+            this.ColorBoxOutputFore.FormattingEnabled = true;
+            this.ColorBoxOutputFore.Location = new System.Drawing.Point(86, 117);
+            this.ColorBoxOutputFore.Name = "ColorBoxOutputFore";
+            this.ColorBoxOutputFore.Size = new System.Drawing.Size(120, 20);
+            this.ColorBoxOutputFore.TabIndex = 34;
             // 
             // label74
             // 
@@ -2563,42 +2609,6 @@ namespace NovelTool
             this.label19.Size = new System.Drawing.Size(34, 12);
             this.label19.TabIndex = 5;
             this.label19.Text = "Width";
-            // 
-            // label77
-            // 
-            this.label77.AutoSize = true;
-            this.label77.Location = new System.Drawing.Point(6, 120);
-            this.label77.Name = "label77";
-            this.label77.Size = new System.Drawing.Size(53, 12);
-            this.label77.TabIndex = 35;
-            this.label77.Text = "ForeColor";
-            // 
-            // ColorBoxOutputFore
-            // 
-            this.ColorBoxOutputFore.FormattingEnabled = true;
-            this.ColorBoxOutputFore.Location = new System.Drawing.Point(86, 117);
-            this.ColorBoxOutputFore.Name = "ColorBoxOutputFore";
-            this.ColorBoxOutputFore.Size = new System.Drawing.Size(120, 20);
-            this.ColorBoxOutputFore.TabIndex = 34;
-            // 
-            // CheckBoxOutputAdjustColor
-            // 
-            this.CheckBoxOutputAdjustColor.AutoSize = true;
-            this.CheckBoxOutputAdjustColor.Location = new System.Drawing.Point(86, 69);
-            this.CheckBoxOutputAdjustColor.Name = "CheckBoxOutputAdjustColor";
-            this.CheckBoxOutputAdjustColor.Size = new System.Drawing.Size(56, 16);
-            this.CheckBoxOutputAdjustColor.TabIndex = 36;
-            this.CheckBoxOutputAdjustColor.Text = "Enable";
-            this.CheckBoxOutputAdjustColor.UseVisualStyleBackColor = true;
-            // 
-            // label78
-            // 
-            this.label78.AutoSize = true;
-            this.label78.Location = new System.Drawing.Point(6, 70);
-            this.label78.Name = "label78";
-            this.label78.Size = new System.Drawing.Size(62, 12);
-            this.label78.TabIndex = 38;
-            this.label78.Text = "AdjustColor";
             // 
             // Options
             // 
