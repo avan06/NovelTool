@@ -32,9 +32,8 @@ namespace NovelTool
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes;
         private List<PageData> pageDatas = new List<PageData>();
         private Point MouseDownLocation;
-        private bool isDefaultTheme = false;
         private Bitmap sourceImg;
-        private Options options;
+        private Option option;
         private GenerateView generateView;
         private double zoomFactor = 1;
         private (string name, double[,] xFilterMatrix, double[,] yFilterMatrix, double factor, int bias) filter;
@@ -45,7 +44,7 @@ namespace NovelTool
             set
             {
                 zoomFactor = value;
-                toolStripZoomFactorBox.SelectedItem = (value * 100).ToString();
+                ToolStripZoomFactorBox.SelectedItem = (value * 100).ToString();
             }
         }
         public (float Top, float Bottom, float Left, float Right, float Width, float Heigh, 
@@ -57,27 +56,7 @@ namespace NovelTool
             ConcurrentDictionary<float, int> LeftDict, ConcurrentDictionary<float, int> RightDict, 
             ConcurrentDictionary<float, int> WidthDict, ConcurrentDictionary<float, int> HeightDict) Counts { get => counts; set => counts = value; }
 
-        #region event
-        #region MinMaxCloseButtonEvent
-
-        private void MinimizeBtn_Click(object sender, EventArgs e)
-        {
-            WindowState = FormWindowState.Minimized;
-        }
-        private void MaximizeBtn_Click(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Maximized) WindowState = FormWindowState.Normal;
-            else WindowState = FormWindowState.Maximized;
-        }
-        private void CloseBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-        #endregion
-        private void MenuStrip_MouseDown(object sender, MouseEventArgs e)
-        {
-            MouseDownEvent(sender, e);
-        }
+        #region Event
         #region PictureBoxEvent
         private void PictureBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -89,8 +68,8 @@ namespace NovelTool
             if (((PictureBox)sender).Image == null) return;
             if (e.Button == MouseButtons.Left)
             {
-                pictureBox.Left += e.X - MouseDownLocation.X;
-                pictureBox.Top += e.Y - MouseDownLocation.Y;
+                PicBox.Left += e.X - MouseDownLocation.X;
+                PicBox.Top += e.Y - MouseDownLocation.Y;
             }
             else
             {
@@ -121,74 +100,71 @@ namespace NovelTool
 
         }
         /// <summary>
-        /// 縮放 PictureBox的圖片
+        /// Zoom PictureBox's image
         /// </summary>
         private void PictureBox_MouseWheel(object sender, MouseEventArgs e)
-        {   if (Control.ModifierKeys == Keys.Control && sender is PictureBox pBox)
-            {
-                if (pBox.Image == null) return;
-                ((HandledMouseEventArgs)e).Handled = true;
-                if (e.Delta >= 0) ZoomFactor += 0.1;
-                else ZoomFactor -= 0.1;
+        {
+            if (Control.ModifierKeys != Keys.Control || !(sender is PictureBox pBox) || pBox.Image == null) return;
 
-                pBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
-            }
+            ((HandledMouseEventArgs)e).Handled = true;
+            if (e.Delta >= 0) ZoomFactor += 0.1;
+            else ZoomFactor -= 0.1;
+
+            pBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
         private void PictureBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (sender is PictureBox pBox)
+            if (!(sender is PictureBox pBox) || pBox.Image == null) return;
+
+            switch (e.KeyCode)
             {
-                if (pBox.Image == null) return;
-                switch (e.KeyCode)
-                {
-                    case Keys.Add:
-                    case Keys.Oemplus:
-                        ZoomFactor += 0.1;
-                        break;
-                    case Keys.Subtract:
-                    case Keys.OemMinus:
-                        ZoomFactor -= 0.1;
-                        break;
-                }
-                if (zoomFactor != 1) pBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
+                case Keys.Add:
+                case Keys.Oemplus:
+                    ZoomFactor += 0.1;
+                    break;
+                case Keys.Subtract:
+                case Keys.OemMinus:
+                    ZoomFactor -= 0.1;
+                    break;
             }
+            if (zoomFactor != 1) pBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
         private void ToolStripZoomIn_Click(object sender, EventArgs e)
         {
             ZoomFactor += 0.1;
-            pictureBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
+            PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
 
         private void ToolStripZoomOut_Click(object sender, EventArgs e)
         {
             ZoomFactor -= 0.1;
-            pictureBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
+            PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
         private void ToolStripZoomFactorBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (sender is ToolStripComboBox comboBox)
-            {
-                ZoomFactor = double.Parse(comboBox.SelectedItem.ToString()) / 100;
-                if (sourceImg == null) return;
-                pictureBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
-            }
+            if (!(sender is ToolStripComboBox comboBox)) return;
+
+            ZoomFactor = double.Parse(comboBox.SelectedItem.ToString()) / 100;
+            if (sourceImg == null) return;
+
+            PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
         private void ToolStripZoomFactorBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (sender is ToolStripComboBox comboBox)
-            {
-                if (!Regex.IsMatch(((char)e.KeyValue).ToString(), "[0-9]") && comboBox.Text.Length > 0) comboBox.Text.Remove(comboBox.Text.Length - 1);
-                if (e.KeyData == Keys.Enter)
-                {
-                    ZoomFactor = double.Parse(comboBox.Text) / 100;
-                    if (sourceImg == null) return;
-                    pictureBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
-                }
-            }
+            if (!(sender is ToolStripComboBox comboBox)) return;
+
+            if (!Regex.IsMatch(((char)e.KeyValue).ToString(), "[0-9]") && comboBox.Text.Length > 0) comboBox.Text.Remove(comboBox.Text.Length - 1);
+            if (e.KeyData != Keys.Enter) return;
+
+            ZoomFactor = double.Parse(comboBox.Text) / 100;
+            if (sourceImg == null) return;
+
+            PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
         private Bitmap PictureBox_Zoom(Bitmap bitMap, double zoomFactor)
         {
             if (bitMap == null) return null;
+
             int newWidth = (int)(bitMap.Width * zoomFactor);
             int newHeight = (int)(bitMap.Height * zoomFactor);
             Size newSize = new Size(newWidth, newHeight);
@@ -212,6 +188,7 @@ namespace NovelTool
             return destImage;
         }
         #endregion
+        
         private void ToolStripOpen_Click(object sender, EventArgs e)
         {
             openFileDialog.Filter =
@@ -230,17 +207,21 @@ namespace NovelTool
             string fileExt = Path.GetExtension(openFileDialog.FileName).ToUpper();
             try
             {
+                #region UNZIP
                 if (filterEpubExts.IndexOf(fileExt) != -1 || filterZipExts.IndexOf(fileExt) != -1)
                 {
-                    fileDirName = fileDirName + @"\" + fileName;
+                    fileDirName = fileDirName + Path.DirectorySeparatorChar + fileName;
+                    Directory.CreateDirectory(fileDirName);
                     IArchive archive = ArchiveFactory.Open(openFileDialog.FileName);
                     IReader reader = archive.ExtractAllEntries();
                     while (reader.MoveToNextEntry())
                     {
                         if (!reader.Entry.IsDirectory)
-                            reader.WriteEntryToDirectory(fileDirName, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+                            reader.WriteEntryToDirectory(fileDirName, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true, PreserveFileTime = true });
                     }
                 }
+                #endregion
+                #region Parse Epub
                 if (filterEpubExts.IndexOf(fileExt) != -1)
                 {
                     string fullPath = "";
@@ -276,8 +257,8 @@ namespace NovelTool
                         }
                         else if (readerOpt.LocalName == "itemref") itemrefs.Add(readerOpt.GetAttribute("idref"));
                     }
-                    fileListView.BeginUpdate();
-                    fileListView.Items.Clear();
+                    FileListView.BeginUpdate();
+                    FileListView.Items.Clear();
                     PageDatas.Clear();
                     for (int idx = 0; idx < itemrefs.Count; idx++)
                     {
@@ -291,32 +272,34 @@ namespace NovelTool
                         XmlNodeList xmlNodes = xmlDoc.GetElementsByTagName("p");
                         List<(string text, string ruby)> xmlTextList = GetXmlText(xmlNodes, xhtmlDirName);
 
-                        int itemIdx = fileListView.Items.Count;
-                        fileListView.Items.Add(itemIdx.ToString(), rootPath, 0);
-                        fileListView.Items[itemIdx].Checked = true;
-                        fileListView.Items[itemIdx].SubItems.Add(xhtml);
-                        fileListView.Items[itemIdx].SubItems.Add(rootPath);
+                        int itemIdx = FileListView.Items.Count;
+                        FileListView.Items.Add(itemIdx.ToString(), rootPath, 0);
+                        FileListView.Items[itemIdx].Checked = true;
+                        FileListView.Items[itemIdx].SubItems.Add(xhtml);
+                        FileListView.Items[itemIdx].SubItems.Add(rootPath);
                         PageData pageData = new PageData(itemIdx, rootPath, xhtml, xhtmlExt);
                         pageData.textList = xmlTextList;
                         PageDatas.Add(pageData);
                     }
-                    fileListView.EndUpdate();
+                    FileListView.EndUpdate();
                     //XmlNamespaceManager nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
                     //nsmgr.AddNamespace("ns", xmlDoc.DocumentElement.NamespaceURI);
                     //XmlNodeList tt = xmlDoc.SelectNodes("ns:br", nsmgr);
                     //xmlDoc.SelectNodes("//ns:img", nsmgr);
                     //xmlDoc.SelectNodes("ns:span", nsmgr);
                 }
+                #endregion
+                #region Parse Image
                 else
                 {
                     string[] fileEntries = Directory.GetFiles(fileDirName);
-                    if (pictureBox.Image != null)
+                    if (PicBox.Image != null)
                     {
-                        pictureBox.Image.Dispose();
-                        pictureBox.Image = null;
+                        PicBox.Image.Dispose();
+                        PicBox.Image = null;
                     }
-                    fileListView.BeginUpdate();
-                    fileListView.Items.Clear();
+                    FileListView.BeginUpdate();
+                    FileListView.Items.Clear();
                     PageDatas.Clear();
                     sourceImg = null;
                     foreach (string filePath in fileEntries)
@@ -324,21 +307,22 @@ namespace NovelTool
                         DirectoryInfo file = new DirectoryInfo(filePath);
                         if (!Regex.IsMatch(filterImageExts, file.Extension.ToUpper())) continue;
 
-                        int itemIdx = fileListView.Items.Count;
+                        int itemIdx = FileListView.Items.Count;
                         if (itemIdx == 0) inputDir = file.Parent.FullName;
-                        fileListView.Items.Add(itemIdx.ToString(), filePath, 0);
-                        fileListView.Items[itemIdx].Checked = true;
-                        fileListView.Items[itemIdx].SubItems.Add(file.Name);
-                        fileListView.Items[itemIdx].SubItems.Add(file.Parent.FullName);
+                        FileListView.Items.Add(itemIdx.ToString(), filePath, 0);
+                        FileListView.Items[itemIdx].Checked = true;
+                        FileListView.Items[itemIdx].SubItems.Add(file.Name);
+                        FileListView.Items[itemIdx].SubItems.Add(file.Parent.FullName);
                         PageDatas.Add(new PageData(itemIdx, file.Parent.FullName, file.Name, file.Extension.ToUpper()));
                     }
                     newAnalysisWorker.RunWorkerAsync();
                 }
+                #endregion
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                MessageBox.Show("Open file failed, " + ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show("Open file failed, " + ex.Message + "\n" + ex.StackTrace, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
         }
 
@@ -388,15 +372,10 @@ namespace NovelTool
         }
         private void ToolStripOptions_Click(object sender, EventArgs e)
         {
-            if (options == null || options.IsDisposed) options = new Options(this);
-            options.StartPosition = FormStartPosition.CenterParent;
-            options.TopLevel = true;
-            options.Show();
-        }
-        private void ToolStripDarkTheme_Click(object sender, EventArgs e)
-        {
-            ChangeTheme(Controls, isDefaultTheme);
-            isDefaultTheme = !isDefaultTheme;
+            if (option == null || option.IsDisposed) option = new Option();
+            option.StartPosition = FormStartPosition.CenterParent;
+            option.TopLevel = true;
+            option.Show();
         }
         private void ToolStripGenView_Click(object sender, EventArgs e)
         {
@@ -406,6 +385,7 @@ namespace NovelTool
             generateView.TopMost = true;
             generateView.Show();
         }
+
         private void FileListView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             ListViewItem item = e.Item;
@@ -413,9 +393,9 @@ namespace NovelTool
             var pageData = PageDatas.Count > item.Index ? PageDatas[item.Index] : null;
             if (item.Checked)
             {
-                item.BackColor = Color.LightSkyBlue;
+                item.BackColor = Color.SteelBlue;
 
-                if (newAnalysisWorker.IsBusy || toolProgressBar.Value != toolProgressBar.Maximum || PageDatas.Count <= item.Index) return;
+                if (newAnalysisWorker.IsBusy || ToolProgressBar.Value != ToolProgressBar.Maximum || PageDatas.Count <= item.Index) return;
 
                 FileStream fs = null;
                 Image pageImg = null;
@@ -453,7 +433,7 @@ namespace NovelTool
             }
             else
             {
-                item.BackColor = Color.Azure;
+                item.BackColor = Color.CadetBlue;
                 if (pageData != null) pageData.isIllustration = true;
             }
         }
@@ -463,39 +443,39 @@ namespace NovelTool
             FileStream fs = null;
             ListViewItem item = e.Item;
 
-            int IntUDRectViewWidth = (int)Properties.Settings.Default["IntUDRectViewWidth"];
+            int RectViewWidth = Properties.Settings.Default.RectViewWidth.Value;
             RectType[] rTypes = new RectType[] { //RectType.Head, RectType.Body, RectType.Footer, 
                 RectType.EntityBody, RectType.Ruby, 
                 RectType.MergeTB, RectType.MergeLR, 
                 RectType.SplitTop, RectType.SplitMiddle, RectType.SplitBottom};
             Dictionary<RectType, (Color color, Pen pen, List<RectangleF> rects)> drawRectObj = new Dictionary<RectType, (Color color, Pen pen, List<RectangleF> rects)>();
-            drawRectObj.Add(RectType.None, (Color.Black, new Pen(Color.Black, IntUDRectViewWidth), new List<RectangleF>()));
+            drawRectObj.Add(RectType.None, (Color.Black, new Pen(Color.Black, RectViewWidth), new List<RectangleF>()));
             for (int idx = 0; idx < rTypes.Length; idx++)
             {
                 var rType = rTypes[idx];
-                Color color = (Color)Properties.Settings.Default["ColorBoxRect" + rType.ToString()];
-                Pen pen = new Pen(color, IntUDRectViewWidth);
+                Color color = Color.FromName(Properties.Settings.Default["Rect" + rType.ToString() + "Color"].ToString());
+                Pen pen = new Pen(color, RectViewWidth);
                 List<RectangleF> rects = new List<RectangleF>();
                 drawRectObj.Add(rType, (color, pen, rects));
             }
 
-            Color ColorBoxRectHead = (Color)Properties.Settings.Default["ColorBoxRectHead"];
-            Color ColorBoxRectBody = (Color)Properties.Settings.Default["ColorBoxRectBody"];
-            Color ColorBoxRectFooter = (Color)Properties.Settings.Default["ColorBoxRectFooter"];
-            Color ColorBoxRectColumn = (Color)Properties.Settings.Default["ColorBoxRectColumn"];
-            Color ColorBoxRectColumnRuby = (Color)Properties.Settings.Default["ColorBoxRectColumnRuby"];
+            Color RectHeadColor = Color.FromKnownColor(Properties.Settings.Default.RectHeadColor.Value);
+            Color RectBodyColor = Color.FromKnownColor(Properties.Settings.Default.RectBodyColor.Value);
+            Color RectFooterColor = Color.FromKnownColor(Properties.Settings.Default.RectFooterColor.Value);
+            Color RectColumnColor = Color.FromKnownColor(Properties.Settings.Default.RectColumnColor.Value);
+            Color RectColumnRubyColor = Color.FromKnownColor(Properties.Settings.Default.RectColumnRubyColor.Value);
 
-            Pen penHead = new Pen(ColorBoxRectHead, IntUDRectViewWidth); 
-            Pen penBody = new Pen(ColorBoxRectBody, IntUDRectViewWidth);
-            Pen penFooter = new Pen(ColorBoxRectFooter, IntUDRectViewWidth);
-            Pen penColumn = new Pen(ColorBoxRectColumn, IntUDRectViewWidth);
-            Pen penColumnRuby = new Pen(ColorBoxRectColumnRuby, IntUDRectViewWidth);
+            Pen penHead = new Pen(RectHeadColor, RectViewWidth); 
+            Pen penBody = new Pen(RectBodyColor, RectViewWidth);
+            Pen penFooter = new Pen(RectFooterColor, RectViewWidth);
+            Pen penColumn = new Pen(RectColumnColor, RectViewWidth);
+            Pen penColumnRuby = new Pen(RectColumnRubyColor, RectViewWidth);
 
             string name = item.SubItems[1].Text;
             var pageData = PageDatas[item.Index];
             try
             {
-                if (pictureBox.Image != null) pictureBox.Image.Dispose();
+                if (PicBox.Image != null) PicBox.Image.Dispose();
 
                 fs = File.OpenRead(item.Text);
                 Bitmap img = (Bitmap)Image.FromStream(fs);
@@ -504,11 +484,11 @@ namespace NovelTool
                     img.PixelFormat == PixelFormat.Format4bppIndexed || img.PixelFormat == PixelFormat.Format8bppIndexed || 
                     img.PixelFormat == PixelFormat.Format16bppGrayScale || img.PixelFormat == PixelFormat.Format16bppArgb1555 ) img = new Bitmap(img);
 
-                pictureBox.Image = img;
-                pictureBox.Location = Point.Empty;
-                sourceImg = (Bitmap)pictureBox.Image;
+                PicBox.Image = img;
+                PicBox.Location = Point.Empty;
+                sourceImg = (Bitmap)PicBox.Image;
                 sourceImg.Tag = item.Index;
-                using (Graphics gr = Graphics.FromImage(pictureBox.Image))
+                using (Graphics gr = Graphics.FromImage(PicBox.Image))
                 {
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                     gr.DrawRectangles(penHead, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.rectHead) });
@@ -517,7 +497,7 @@ namespace NovelTool
                     DrawRectangles(gr, rTypes, pageData.columnBodyList, drawRectObj, penColumn, penColumnRuby);
                 }
 
-                if (zoomFactor != 1) pictureBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
+                if (zoomFactor != 1) PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
             }
             catch (Exception ex)
             {
@@ -529,6 +509,18 @@ namespace NovelTool
                 if (fs != null) fs.Dispose();
             }
         }
+        private void FileListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            Rectangle rect = e.Bounds;
+            using (Brush brush = new SolidBrush(BackColor)) e.Graphics.FillRectangle(brush, rect); //Brushes.DarkGray
+            e.Graphics.DrawRectangle(SystemPens.ControlLight, Rectangle.Inflate(rect, 0, -1));
+
+            Rectangle rectangle = Rectangle.Inflate(rect, -4, 0);
+            TextRenderer.DrawText(e.Graphics, e.Header.Text, e.Font, rectangle, ForeColor, TextFormatFlags.VerticalCenter);
+        }
+        private void FileListView_DrawItem(object sender, DrawListViewItemEventArgs e) => e.DrawDefault = true;
+        private void FileListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e) => e.DrawDefault = true;
+
         public void DrawRectangles(Graphics gr, RectType[] rTypes, 
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects, 
             Dictionary<RectType, (Color color, Pen pen, List<RectangleF> rects)> drawRectObj, Pen penColumn, Pen penColumnRuby)
@@ -565,10 +557,7 @@ namespace NovelTool
             }
         }
 
-        public void SetToolStripFilterBox(object item)
-        {
-            toolStripFilterBox.SelectedItem = item;
-        }
+        public void SetToolStripFilterBox(object item) => ToolStripFilterBox.SelectedItem = item;
 
         #region ConvolutionFilter
         private void ToolStripFilterBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -586,11 +575,11 @@ namespace NovelTool
                     filter.name = filterEnum.ToString();
                     (filter.xFilterMatrix, filter.factor, filter.bias) = BitmapFilter.Filters[filterEnum]; //(double[,] filterMatrix, double factor, int bias) = BitmapFilter.Filters[filterEnum];
                     Bitmap bitMap = zoomFactor != 1 ? PictureBox_Zoom(sourceImg, zoomFactor) : sourceImg;
-                    pictureBox.Image = BitmapFilter.ConvolutionFilter(bitMap, filter.xFilterMatrix, filter.factor, filter.bias, true); //, (int)(573 * zoomFactor), (int)(110 * zoomFactor), (int)(17 * zoomFactor), (int)(32 * zoomFactor) //convolutionfilter(filtermatrix, factor, bias, true);
+                    PicBox.Image = BitmapFilter.ConvolutionFilter(bitMap, filter.xFilterMatrix, filter.factor, filter.bias, true); //, (int)(573 * zoomFactor), (int)(110 * zoomFactor), (int)(17 * zoomFactor), (int)(32 * zoomFactor) //convolutionfilter(filtermatrix, factor, bias, true);
                     if (Regex.IsMatch(filterEnum.ToString(), "Gaussian3x3|Gaussian5x5Type1|Gaussian5x5Type2"))
                     {
                         (double[,] filterMatrix2, double factor2, int bias2) = BitmapFilter.Filters[BitmapFilter.Filter.Laplacian5x5Type1];
-                        pictureBox.Image = BitmapFilter.ConvolutionFilter((Bitmap)pictureBox.Image, filterMatrix2, factor2, bias2, true);
+                        PicBox.Image = BitmapFilter.ConvolutionFilter((Bitmap)PicBox.Image, filterMatrix2, factor2, bias2, true);
                     }
                 }
                 else if (comboBox.SelectedItem is BitmapFilter.FilterXY filterXYEnum)
@@ -598,7 +587,7 @@ namespace NovelTool
                     filter.name = filterXYEnum.ToString();
                     (filter.xFilterMatrix, filter.yFilterMatrix, filter.factor, filter.bias) = BitmapFilter.FilterXYs[filterXYEnum]; //(double[,] xFilterMatrix, double[,] yFilterMatrix, double factor, int bias) = BitmapFilter.FilterXYs[filterXYEnum];
                     Bitmap bitMap = zoomFactor != 1 ? PictureBox_Zoom(sourceImg, zoomFactor) : sourceImg;
-                    pictureBox.Image = BitmapFilter.ConvolutionFilter(bitMap, filter.xFilterMatrix, filter.yFilterMatrix, filter.factor, filter.bias, true); //ConvolutionFilter(xFilterMatrix, yFilterMatrix, factor, bias, true);
+                    PicBox.Image = BitmapFilter.ConvolutionFilter(bitMap, filter.xFilterMatrix, filter.yFilterMatrix, filter.factor, filter.bias, true); //ConvolutionFilter(xFilterMatrix, yFilterMatrix, factor, bias, true);
                 }
                 ToolMsg.Text = string.Format("{0}, elapsed: {1}", comboBox.SelectedItem, ticker.Elapsed.TotalSeconds);
             }
@@ -642,20 +631,14 @@ namespace NovelTool
 
         public Main()
         {
-            isHideControlBox = true;
             InitializeComponent();
-            pictureBox.MouseWheel += PictureBox_MouseWheel;
+            Text += " " + Application.ProductVersion;
+            PicBox.MouseWheel += PictureBox_MouseWheel;
             #region InitFilterBox
-            toolStripFilterBox.Items.Add("None");
-            foreach (BitmapFilter.Filter filterEnum in (BitmapFilter.Filter[])Enum.GetValues(typeof(BitmapFilter.Filter)))
-            {
-                toolStripFilterBox.Items.Add(filterEnum);
-            }
-            foreach (BitmapFilter.FilterXY filterEnum in (BitmapFilter.FilterXY[])Enum.GetValues(typeof(BitmapFilter.FilterXY)))
-            {
-                toolStripFilterBox.Items.Add(filterEnum);
-            }
-            toolStripFilterBox.SelectedIndexChanged += ToolStripFilterBox_SelectedIndexChanged;
+            ToolStripFilterBox.Items.Add("None");
+            foreach (BitmapFilter.Filter filterEnum in (BitmapFilter.Filter[])Enum.GetValues(typeof(BitmapFilter.Filter))) ToolStripFilterBox.Items.Add(filterEnum);
+            foreach (BitmapFilter.FilterXY filterEnum in (BitmapFilter.FilterXY[])Enum.GetValues(typeof(BitmapFilter.FilterXY))) ToolStripFilterBox.Items.Add(filterEnum);
+            ToolStripFilterBox.SelectedIndexChanged += ToolStripFilterBox_SelectedIndexChanged;
             #endregion
 
         }
@@ -666,12 +649,12 @@ namespace NovelTool
         /// </summary>
         private void NewAnalysis_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            int IntUDAnalysisTaskThreadLimit = (int)Properties.Settings.Default["IntUDAnalysisTaskThreadLimit"];
+            int AnalysisTaskThreadLimit = Properties.Settings.Default.AnalysisTaskThreadLimit.Value;
             Stopwatch tickerMajor = Stopwatch.StartNew();
             Stopwatch tickerMinor = null;
-            SemaphoreSlim semaphore = new SemaphoreSlim(IntUDAnalysisTaskThreadLimit);
-
-            ToolMsg.Text = string.Format("Analysis {0} Image, start...", PageDatas.Count);
+            SemaphoreSlim semaphore = new SemaphoreSlim(AnalysisTaskThreadLimit);
+            Invoke(new MethodInvoker(() => { ToolMsg.Text = string.Format("Analysis {0} Image, start...", PageDatas.Count); }));
+            
             newAnalysisWorker.ReportProgress(0);
             #region AnalysisImage
             Task<(string, TimeSpan)>[] tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
@@ -704,7 +687,7 @@ namespace NovelTool
                             if (pageData.columnBodyList != null) ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
                         }
 
-                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)fileListView.Items.Count) * 70),
+                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 70),
                             new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
                         return (pageData.name, tickerMinor.Elapsed);
                     }
@@ -749,7 +732,7 @@ namespace NovelTool
                             ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
                             ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
                         }
-                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)fileListView.Items.Count) * 30 + 70),
+                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 30 + 70),
                             new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
                         return (pageData.name, tickerMinor.Elapsed);
                     }
@@ -771,7 +754,7 @@ namespace NovelTool
 
         private void NewAnalysis_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
-            toolProgressBar.Value = e.ProgressPercentage;
+            ToolProgressBar.Value = e.ProgressPercentage;
             if (e.UserState is Tuple<string, float, int, TimeSpan, TimeSpan> args)
                 ToolMsg.Text = string.Format("Analysis {0} {1}/{2} Image, elapsed: {3}/{4}s.", 
                     args.Item1, args.Item2, args.Item3, args.Item4.TotalSeconds.ToString(), args.Item5.TotalSeconds);
@@ -779,23 +762,24 @@ namespace NovelTool
 
         private void NewAnalysis_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            for (int idx = 0; idx < PageDatas.Count; ++idx) if (PageDatas[idx].isIllustration) fileListView.Items[idx].Checked = false;
-            fileListView.EndUpdate();
-            toolProgressBar.Value = toolProgressBar.Maximum;
+            for (int idx = 0; idx < PageDatas.Count; ++idx) if (PageDatas[idx].isIllustration) FileListView.Items[idx].Checked = false;
+
+            FileListView.EndUpdate();
+            ToolProgressBar.Value = ToolProgressBar.Maximum;
         }
 
         private void RefreshModes()
         {
-            float FloatUDEntityMinRate = (float)Properties.Settings.Default["FloatUDEntityMinRate"];
-            float FloatUDEntityMaxRate = (float)Properties.Settings.Default["FloatUDEntityMaxRate"];
+            float EntityMinRate = Properties.Settings.Default.EntityMinRate.Value;
+            float EntityMaxRate = Properties.Settings.Default.EntityMaxRate.Value;
             modes =
                 (ImageTool.GetModeMostOftenLen(counts.TopDict), ImageTool.GetModeMostOftenLen(counts.BottomDict),
                 ImageTool.GetModeMostOftenLen(counts.LeftDict), ImageTool.GetModeMostOftenLen(counts.RightDict),
                 ImageTool.GetModeMostOftenLen(counts.WidthDict), ImageTool.GetModeMostOftenLen(counts.HeightDict), 0, 0, 0, 0, 0, 0, 0, 0);
-            modes.WidthMin = modes.Width * FloatUDEntityMinRate;
-            modes.WidthMax = modes.Width * FloatUDEntityMaxRate;
-            modes.HeighMin = modes.Heigh * FloatUDEntityMinRate;
-            modes.HeighMax = modes.Heigh * FloatUDEntityMaxRate;
+            modes.WidthMin = modes.Width * EntityMinRate;
+            modes.WidthMax = modes.Width * EntityMaxRate;
+            modes.HeighMin = modes.Heigh * EntityMinRate;
+            modes.HeighMax = modes.Heigh * EntityMaxRate;
             modes.TopMin = (float)(modes.Top + modes.HeighMin * 0.5);
             modes.BottomMin = (float)(modes.Bottom - modes.HeighMin * 0.5);
             modes.LeftMin = (float)(modes.Left + modes.WidthMin * 0.5);

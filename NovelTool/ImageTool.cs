@@ -21,24 +21,24 @@ namespace NovelTool
             HashSet<int> xStateSet = new HashSet<int>();
             HashSet<int> yStateSet = new HashSet<int>();
 
-            int IntUDIllustrationMinColorsLevel = (int)Properties.Settings.Default["IntUDIllustrationMinColorsLevel"]; //判定為插圖的色彩數量
-            int IntUDIllustrationMinNonWhiteLevel = (int)Properties.Settings.Default["IntUDIllustrationMinNonWhiteLevel"]; //判定為插圖的深色數量
-            byte ByteUDConfirmWhiteLevel = (byte)Properties.Settings.Default["ByteUDConfirmWhiteLevel"]; //指定白色數值
-            int IntUDIgnoreMinDetectXSize = (int)Properties.Settings.Default["IntUDIgnoreMinDetectXSize"];
-            int IntUDIgnoreMinDetectYSize = (int)Properties.Settings.Default["IntUDIgnoreMinDetectYSize"];
+            int IllustrationMinColorsLevel = Properties.Settings.Default.IllustrationMinColorsLevel.Value; //判定為插圖的色彩數量
+            int IllustrationMinNonWhiteLevel = Properties.Settings.Default.IllustrationMinNonWhiteLevel.Value; //判定為插圖的深色數量
+            byte ConfirmWhiteLevel = Properties.Settings.Default.ConfirmWhiteLevel.Value; //指定白色數值
+            int IgnoreMinDetectXSize = Properties.Settings.Default.IgnoreMinDetectXSize.Value;
+            int IgnoreMinDetectYSize = Properties.Settings.Default.IgnoreMinDetectYSize.Value;
 
             for (int y = 0; y < bmpTool.Height; y++)
             {
-                if (y < IntUDIgnoreMinDetectYSize || y > bmpTool.Height - IntUDIgnoreMinDetectYSize) continue;
+                if (y < IgnoreMinDetectYSize || y > bmpTool.Height - IgnoreMinDetectYSize) continue;
                 for (int x = 0; x < bmpTool.Width; x++)
                 {
-                    if (x < IntUDIgnoreMinDetectXSize || x > bmpTool.Width - IntUDIgnoreMinDetectXSize) continue;
+                    if (x < IgnoreMinDetectXSize || x > bmpTool.Width - IgnoreMinDetectXSize) continue;
                     int argb = bmpTool.GetPixel(x, y);
-                    bool isBlack = IsBlack(argb, out byte gray, ByteUDConfirmWhiteLevel);
+                    bool isBlack = IsBlack(argb, out byte gray, ConfirmWhiteLevel);
                     if (isBlack) pStates.Add((x, y), argb);
                     if (forcedAnalysis) continue;
                     if (!isBlack && !colorDict.Contains(argb)) colorDict.Add(argb);
-                    if (colorDict.Count > IntUDIllustrationMinColorsLevel || pStates.Count > IntUDIllustrationMinNonWhiteLevel) //2000色以上視為插圖 or 前景數量過多判定為插圖
+                    if (colorDict.Count > IllustrationMinColorsLevel || pStates.Count > IllustrationMinNonWhiteLevel) //2000色以上視為插圖 or 前景數量過多判定為插圖
                     {
                         pageData.isIllustration = true;
                         return false;
@@ -95,10 +95,10 @@ namespace NovelTool
             (RectType RType, float X, float Y, float Width, float Height) bounds = pageData.rectImg, rect = NewEntity(), rectHead = NewEntity(), rectBody = NewEntity(), rectFooter = NewEntity();
             Dictionary<(int, int), int> pStates = pageData.pStates;
             List<int> xStates = pageData.xStates, yStates = pageData.yStates;
-            float FloatUDHeadMinRate = (float)Properties.Settings.Default["FloatUDHeadMinRate"];
-            float FloatUDFooterMinRate = (float)Properties.Settings.Default["FloatUDFooterMinRate"];
-            int IntUDConfirmHeadGap = (int)Properties.Settings.Default["IntUDConfirmHeadGap"];
-            int IntUDConfirmFooterGap = (int)Properties.Settings.Default["IntUDConfirmFooterGap"];
+            float HeadMinRate = Properties.Settings.Default.HeadMinRate.Value;
+            float FooterMinRate = Properties.Settings.Default.FooterMinRate.Value;
+            int ConfirmHeadGap = Properties.Settings.Default.ConfirmHeadGap.Value;
+            int ConfirmFooterGap = Properties.Settings.Default.ConfirmFooterGap.Value;
             for (int idx = 0; idx < yStates.Count; idx++)
             {
                 int y = yStates[idx];
@@ -118,12 +118,12 @@ namespace NovelTool
                     float minPosition = (rect.Y - bounds.Y) / bounds.Height;
                     float maxPosition = (rect.Y + rect.Height - bounds.Y) / bounds.Height;
                     RectType rectType = RectType.Body;
-                    if (minPosition < FloatUDHeadMinRate && maxPosition < FloatUDHeadMinRate)
+                    if (minPosition < HeadMinRate && maxPosition < HeadMinRate)
                     { //由 Rect 最小與最大兩個座標Y軸，在整張圖形中的位置比例決定資料類型
                         if (rectHead.RType == RectType.None) rectType = RectType.Head;
                         else if (rect.Y - rectHead.Y - rectHead.Height > 30) { } //當空白區域大於30，避免將Body誤判為Head
                     }
-                    else if (minPosition > FloatUDFooterMinRate && maxPosition > FloatUDFooterMinRate)
+                    else if (minPosition > FooterMinRate && maxPosition > FooterMinRate)
                     {
                         if (rectFooter.RType == RectType.None) rectType = RectType.Footer;
                         else if (rectFooter.Y + rectFooter.Height < rect.Y + rect.Height && rect.Height > 5)
@@ -150,12 +150,12 @@ namespace NovelTool
                 prevY = y;
             }
 
-            if (rectHead.RType != RectType.None && rectBody.RType != RectType.None && rectBody.Y - rectHead.Y - rectHead.Height < IntUDConfirmHeadGap)
+            if (rectHead.RType != RectType.None && rectBody.RType != RectType.None && rectBody.Y - rectHead.Y - rectHead.Height < ConfirmHeadGap)
             { //當Head 與 Body 之間寬度過小，代表誤偵測
                 rectBody = UnionEntity(rectBody, rectHead);
                 rectHead = NewEntity();
             }
-            if (rectFooter.RType != RectType.None && rectBody.RType != RectType.None && rectFooter.Y - rectBody.Y - rectBody.Height < IntUDConfirmFooterGap)
+            if (rectFooter.RType != RectType.None && rectBody.RType != RectType.None && rectFooter.Y - rectBody.Y - rectBody.Height < ConfirmFooterGap)
             { //當Body 與 Footer 之間寬度過小，代表誤偵測
                 rectBody = UnionEntity(rectBody, rectFooter);
                 rectFooter = NewEntity(); //RectangleF.Empty;
@@ -312,7 +312,7 @@ namespace NovelTool
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes)
         {
-            float FloatUDEntityMergeTBMaxRate = (float)Properties.Settings.Default["FloatUDEntityMergeTBMaxRate"];
+            float EntityMergeTBMaxRate = Properties.Settings.Default.EntityMergeTBMaxRate.Value;
             for (int idx = 0; idx < columnRects.Count; idx++)
             {
                 var columnRect = columnRects[idx];
@@ -451,7 +451,7 @@ namespace NovelTool
                     var entityNext = entitys[eIdx + 1];
                     float entitySpace = entityNext.Y - entity.Y - entity.Height;
                     float newHeight = entityNext.Y + entityNext.Height - entity.Y;
-                    while (entitySpace < modes.HeighMin * 0.5 && newHeight < modes.Heigh * FloatUDEntityMergeTBMaxRate) //前後實體高度在範圍內，則合併 * FloatUDEntityMaxRate
+                    while (entitySpace < modes.HeighMin * 0.5 && newHeight < modes.Heigh * EntityMergeTBMaxRate) //前後實體高度在範圍內，則合併 * EntityMaxRate
                     {
                         entity.RType = RectType.MergeTB;
                         entity.Height = newHeight;
@@ -494,8 +494,8 @@ namespace NovelTool
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes)
         {
-            int IntUDConfirmEntityHeadGap = (int)Properties.Settings.Default["IntUDConfirmEntityHeadGap"];
-            int IntUDConfirmEntityEndGap = (int)Properties.Settings.Default["IntUDConfirmEntityEndGap"];
+            int ConfirmEntityHeadGap = Properties.Settings.Default.ConfirmEntityHeadGap.Value;
+            int ConfirmEntityEndGap = Properties.Settings.Default.ConfirmEntityEndGap.Value;
             for (int idx = 0; idx < columnRects.Count; idx++)
             {
                 var columnRect = columnRects[idx];
@@ -520,12 +520,12 @@ namespace NovelTool
                 var entitysFirst = entitys[0];
                 var entitysLast = entitys[entitys.Count - 1];
 
-                if (entitysFirst.Y - rectRegion.Y - IntUDConfirmEntityHeadGap > modes.HeighMin * 0.5 && entitysFirst.Height > modes.HeighMin * 0.5) // entitysFirst.Y > modes.TopMin + IntUDConfirmEntityHeadGap //- rectRegion.Y > modes.HeighMin * 0.5)
+                if (entitysFirst.Y - rectRegion.Y - ConfirmEntityHeadGap > modes.HeighMin * 0.5 && entitysFirst.Height > modes.HeighMin * 0.5) // entitysFirst.Y > modes.TopMin + ConfirmEntityHeadGap //- rectRegion.Y > modes.HeighMin * 0.5)
                 { //判斷是否為句首，首字上方空白要大於最小字高，且首字高度比最小字高的一半以上，例如首字為【一】上方雖然有空白，但並非句首
                     entitysFirst.RType = RectType.EntityHead;
                     entitys[0] = entitysFirst;
                 }
-                if (modes.BottomMin - entitysLast.Y - entitysLast.Height > modes.HeighMax + IntUDConfirmEntityEndGap) //entitysLast.Y + entitysLast.Height + IntUDConfirmEntityEndGap < modes.BottomMin
+                if (modes.BottomMin - entitysLast.Y - entitysLast.Height > modes.HeighMax + ConfirmEntityEndGap) //entitysLast.Y + entitysLast.Height + ConfirmEntityEndGap < modes.BottomMin
                 { //判斷是否為句尾
                     entitysLast.RType = RectType.EntityEnd;
                     entitys[entitys.Count - 1] = entitysLast;
@@ -613,8 +613,10 @@ namespace NovelTool
 
             return (rect.RType, rect.X, rect.Y, rect.Width, rect.Height, new List<(RectType RType, float X, float Y, float Width, float Height)>(entitys1));
         }
+
         public static RectangleF EntityToRectangleF((RectType RType, float X, float Y, float Width, float Height) entity) => new RectangleF(entity.X, entity.Y, entity.Width, entity.Height);
         #endregion
+        
         /// <summary>
         /// 取得高度、寬度...等長度中的眾數(Mode)
         /// </summary>
@@ -672,9 +674,9 @@ namespace NovelTool
             }
         }
 
-        public static void ChangeForeColor(in Bitmap bmp, int foreArgb, int backArgb, float FloatUDForeColorRate = 1)
+        public static void ChangeForeColor(in Bitmap bmp, int foreArgb, int backArgb, float ForeColorRate = 1)
         {
-            byte ByteUDConfirmWhiteLevel = (byte)Properties.Settings.Default["ByteUDConfirmWhiteLevel"]; //指定白色數值
+            byte ConfirmWhiteLevel = Properties.Settings.Default.ConfirmWhiteLevel.Value; //指定白色數值
 
             BitmapTool bmpTool = new BitmapTool(bmp);
             bmpTool.ReadLockBits();
@@ -688,7 +690,7 @@ namespace NovelTool
                 for (int x = 0; x < bmpTool.Width; x++)
                 {
                     int argb = bmpTool.GetPixel(x, y);
-                    bool isBlack = IsBlack(argb, out byte gray, ByteUDConfirmWhiteLevel);
+                    bool isBlack = IsBlack(argb, out _, ConfirmWhiteLevel);
                     if (isBlack)
                     {
                         byte blackA = (byte)(argb >> 24);
@@ -696,9 +698,9 @@ namespace NovelTool
                         byte blackG = (byte)(argb >> 8);
                         byte blackB = (byte)(argb);
                         byte aOut = (byte)(foreA + (float)blackA * (255 - foreA) / 255);
-                        byte rOut = AverageColor(foreR, blackR, FloatUDForeColorRate, foreA, blackA); //(int)(FloatUDForeColorRate * foreR * (float)foreA / 255 + blackRate * blackR * (float)blackA / 255);
-                        byte gOut = AverageColor(foreG, blackG, FloatUDForeColorRate, foreA, blackA); //(int)(FloatUDForeColorRate * foreG * (float)foreA / 255 + blackRate * blackG * (float)blackA / 255);
-                        byte bOut = AverageColor(foreB, blackB, FloatUDForeColorRate, foreA, blackA);//(int)(FloatUDForeColorRate * foreB * (float)foreA  / 255 + blackRate * blackB * (float)blackA / 255);
+                        byte rOut = AverageColor(foreR, blackR, ForeColorRate, foreA, blackA); //(int)(ForeColorRate * foreR * (float)foreA / 255 + blackRate * blackR * (float)blackA / 255);
+                        byte gOut = AverageColor(foreG, blackG, ForeColorRate, foreA, blackA); //(int)(ForeColorRate * foreG * (float)foreA / 255 + blackRate * blackG * (float)blackA / 255);
+                        byte bOut = AverageColor(foreB, blackB, ForeColorRate, foreA, blackA);//(int)(ForeColorRate * foreB * (float)foreA  / 255 + blackRate * blackB * (float)blackA / 255);
 
                         int outArgb = (aOut << 24) | (rOut << 16) | (gOut << 8) | bOut;
                         bmpTool.SetPixel(x, y, outArgb);
@@ -708,12 +710,13 @@ namespace NovelTool
             }
             bmpTool.WriteUnlockBits();
         }
-        private static byte AverageColor(byte colorA, byte colorB, float FloatUDForeColorRate, byte alphaA=255, byte alphaB=255)
-        {
-            FloatUDForeColorRate = FloatUDForeColorRate > 2 ? 2 : FloatUDForeColorRate;
-            float BlackUDForeColorRate = (float)2 - FloatUDForeColorRate;
 
-            return (byte)((FloatUDForeColorRate * colorA * (float)alphaA / 255 + BlackUDForeColorRate * colorB * (float)alphaB / 255) / 2);
+        private static byte AverageColor(byte colorA, byte colorB, float ForeColorRate, byte alphaA=255, byte alphaB=255)
+        {
+            ForeColorRate = ForeColorRate > 2 ? 2 : ForeColorRate;
+            float BlackForeColorRate = (float)2 - ForeColorRate;
+
+            return (byte)((ForeColorRate * colorA * (float)alphaA / 255 + BlackForeColorRate * colorB * (float)alphaB / 255) / 2);
         }
     }
 }

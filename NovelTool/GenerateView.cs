@@ -21,6 +21,7 @@ namespace NovelTool
         private int outputCount = -1;
         private int outputIdx;
         private WebBrowser WebBox;
+
         public GenerateView(Main mainForm)
         {
             if (mainForm.PageDatas.Count == 0) return;
@@ -28,6 +29,7 @@ namespace NovelTool
             this.mainForm = mainForm;
             InitializeComponent();
             ToolStripZoomFactorBox.SelectedItem = (mainForm.ZoomFactor * 100).ToString();
+
             #region InitFilterBox
             ToolStripFilterBox.Items.Add("None");
             foreach (BitmapFilter.Filter filterEnum in (BitmapFilter.Filter[])Enum.GetValues(typeof(BitmapFilter.Filter))) ToolStripFilterBox.Items.Add(filterEnum);
@@ -39,6 +41,7 @@ namespace NovelTool
 
             outputIdx = SetOutputPage(10);
         }
+
         private int SetOutputPage(int outputIdx)
         {
             outputCount = ParseOutput(outputIdx);
@@ -55,11 +58,11 @@ namespace NovelTool
             if (OutputImgs.Count == 0) return 0;
 
             Bitmap result = (Bitmap)OutputImgs[0];
-            bool CheckBoxOutputAdjustColor = (bool)Properties.Settings.Default["CheckBoxOutputAdjustColor"];
-            Color ColorBoxOutputBack = (Color)Properties.Settings.Default["ColorBoxOutputBack"];
-            Color ColorBoxOutputFore = (Color)Properties.Settings.Default["ColorBoxOutputFore"];
-            float FloatUDForeColorRate = (float)Properties.Settings.Default["FloatUDForeColorRate"];
-            if (CheckBoxOutputAdjustColor && (result.Tag == null || (bool)result.Tag != true)) ImageTool.ChangeForeColor(result, ColorBoxOutputFore.ToArgb(), ColorBoxOutputBack.ToArgb(), FloatUDForeColorRate);
+            bool OutputAdjustColorCheck = Properties.Settings.Default.OutputAdjustColorCheck.Value;
+            Color OutputBackColor = Color.FromKnownColor(Properties.Settings.Default.OutputBackColor.Value);
+            Color OutputForeColor = Color.FromKnownColor(Properties.Settings.Default.OutputForeColor.Value);
+            float ForeColorRate = Properties.Settings.Default.ForeColorRate.Value;
+            if (OutputAdjustColorCheck && (result.Tag == null || (bool)result.Tag != true)) ImageTool.ChangeForeColor(result, OutputForeColor.ToArgb(), OutputBackColor.ToArgb(), ForeColorRate);
             if (!(result.Tag is bool))
             {
                 if (mainForm.Filter.xFilterMatrix != null)
@@ -75,7 +78,7 @@ namespace NovelTool
             OutputView.Image = result;
             if (result.Tag == null || (bool)result.Tag != true)
             {
-                if (CheckBoxOutputAdjustColor) OutputView.BackColor = ColorBoxOutputBack;
+                if (OutputAdjustColorCheck) OutputView.BackColor = OutputBackColor;
                 else OutputView.BackColor = Color.White;
             }
             ToolStripPageBox.SelectedItem = outputIdx;
@@ -84,17 +87,17 @@ namespace NovelTool
         }
         private int ParseOutput(int outputIdx, bool outputAll=false)
         {
-            int IntUDOutputWidth = (int)Properties.Settings.Default["IntUDOutputWidth"]; //輸出圖片寬度
-            int IntUDOutputHeight = (int)Properties.Settings.Default["IntUDOutputHeight"]; //輸出圖片高度
-            int IntUDMarginLeft = (int)Properties.Settings.Default["IntUDMarginLeft"]; //輸出圖片左側邊距
-            int IntUDMarginRight = (int)Properties.Settings.Default["IntUDMarginRight"]; //輸出圖片右側邊距
-            int IntUDMarginTop = (int)Properties.Settings.Default["IntUDMarginTop"]; //輸出圖片上側邊距
-            int IntUDMarginBottom = (int)Properties.Settings.Default["IntUDMarginBottom"]; //輸出圖片下側邊距
-            int IntUDLeading = (int)Properties.Settings.Default["IntUDLeading"]; //輸出圖片行距
-            float FloatUDEntityAdjacentRate = (float)Properties.Settings.Default["FloatUDEntityAdjacentRate"]; //判斷兩行之間是否相鄰之比例
+            int OutputWidth = Properties.Settings.Default.OutputWidth.Value; //輸出圖片寬度
+            int OutputHeight = Properties.Settings.Default.OutputHeight.Value; //輸出圖片高度
+            int MarginLeft = Properties.Settings.Default.MarginLeft.Value; //輸出圖片左側邊距
+            int MarginRight = Properties.Settings.Default.MarginRight.Value; //輸出圖片右側邊距
+            int MarginTop = Properties.Settings.Default.MarginTop.Value; //輸出圖片上側邊距
+            int MarginBottom = Properties.Settings.Default.MarginBottom.Value; //輸出圖片下側邊距
+            int Leading = Properties.Settings.Default.Leading.Value; //輸出圖片行距
+            float EntityAdjacentRate = Properties.Settings.Default.EntityAdjacentRate.Value; //判斷兩行之間是否相鄰之比例
 
-            int initWidthLocation = IntUDOutputWidth - IntUDMarginRight;
-            int initHeightLocation = IntUDMarginTop;
+            int initWidthLocation = OutputWidth - MarginRight;
+            int initHeightLocation = MarginTop;
 
             int outputCount = 0;
 
@@ -149,12 +152,12 @@ namespace NovelTool
                 else
                 {
                     Bitmap srcImage = null;
-                    AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                    AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, OutputWidth, OutputHeight, initWidthLocation, initHeightLocation,
                         ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
                         false, true);
                     if (pageData.isIllustration)
                     {   //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
-                        AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                        AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, OutputWidth, OutputHeight, initWidthLocation, initHeightLocation,
                             ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList,
                             true, false, true);
                     }
@@ -173,7 +176,7 @@ namespace NovelTool
                             double blankFactor = (double)blankWidth / newWidth;
                             blankFactor = blankFactor > 2.5 ? 2.5 : (blankFactor < 1.5 ? 0 : blankFactor);
                             destPoint.X -= (int)(newWidth * blankFactor); //原圖兩行之間的空白行較大時，輸出位置加上空白行比例寬度
-                            if (columnNext.Entitys != null && columnNext.RType != RectType.Ruby && RType != RectType.Ruby && X - columnNext.X - columnNext.Width < mainForm.Modes.Width * FloatUDEntityAdjacentRate && Width <= mainForm.Modes.WidthMin) //前後行為相鄰時
+                            if (columnNext.Entitys != null && columnNext.RType != RectType.Ruby && RType != RectType.Ruby && X - columnNext.X - columnNext.Width < mainForm.Modes.Width * EntityAdjacentRate && Width <= mainForm.Modes.WidthMin) //前後行為相鄰時
                             {
                                 RType = RectType.Ruby;
                                 for (int eIdx = 0; eIdx < Entitys.Count; eIdx++)
@@ -184,27 +187,27 @@ namespace NovelTool
                                 }
                             }
                             if (Entitys == null || Entitys.Count == 0) continue;
-                            if (RType == RectType.BodyIn && Entitys[0].RType == RectType.EntityHead) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                            if (RType == RectType.BodyIn && Entitys[0].RType == RectType.EntityHead) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, OutputWidth, OutputHeight, initWidthLocation, initHeightLocation,
                                 ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
                             if (RType == RectType.Ruby)
                             { //保留Ruby行內容，下一行主句中再處理
                                 columnRuby = (RType, X, Y, Width, Height, Entitys);
                                 continue;
                             }
-                            if (destPoint.X == initWidthLocation) destPoint.X -= newWidth + IntUDLeading; //位移右邊第一行輸出位置
-                            if (columnRuby.Entitys != null && columnRuby.X - X - Width > mainForm.Modes.Width * FloatUDEntityAdjacentRate)
+                            if (destPoint.X == initWidthLocation) destPoint.X -= newWidth + Leading; //位移右邊第一行輸出位置
+                            if (columnRuby.Entitys != null && columnRuby.X - X - Width > mainForm.Modes.Width * EntityAdjacentRate)
                             { //column 與 Ruby 非相鄰時，代表右側非 Ruby
                                 var rubyWidth = (int)(columnRuby.Width * zoomFactor);
                                 GenerateDrawImage(pageData.path, pageData.name, bodyTop, columnRuby.X, columnRuby.Width, columnRuby.Entitys, rubyWidth, pageData.columnHeadList, pageData.columnFooterList,
-                                    IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, (RectType.None, 0, 0, 0, 0, null), outputAll);
+                                    OutputWidth, OutputHeight, Leading, MarginLeft, MarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, (RectType.None, 0, 0, 0, 0, null), outputAll);
                                 columnRuby = (RectType.None, 0, 0, 0, 0, null);
                             }
                             
                             GenerateDrawImage(pageData.path, pageData.name, bodyTop, X, Width, Entitys, newWidth, pageData.columnHeadList, pageData.columnFooterList,
-                                IntUDOutputWidth, IntUDOutputHeight, IntUDLeading, IntUDMarginLeft, IntUDMarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, columnRuby, outputAll);
+                                OutputWidth, OutputHeight, Leading, MarginLeft, MarginBottom, initWidthLocation, initHeightLocation, zoomFactor, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, columnRuby, outputAll);
 
                             if (columnRuby.Entitys != null) columnRuby = (RectType.None, 0, 0, 0, 0, null);
-                            if (RType == RectType.BodyOut && RType == RectType.EntityEnd) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation,
+                            if (RType == RectType.BodyOut && RType == RectType.EntityEnd) AddNowCreateNext(pageData.path, pageData.name, outputAll, outputIdx, OutputWidth, OutputHeight, initWidthLocation, initHeightLocation,
                                 ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, pageData.columnHeadList, pageData.columnFooterList);
                             offsetX = X;
                             if (Entitys[Entitys.Count -1].Height < mainForm.Modes.HeighMin && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
@@ -247,16 +250,16 @@ namespace NovelTool
         //}
 
         private void AddNowCreateNext(string path, string name, bool outputAll, int outputIdx,
-            int IntUDOutputWidth, int IntUDOutputHeight, int initWidthLocation, int initHeightLocation,
+            int OutputWidth, int OutputHeight, int initWidthLocation, int initHeightLocation,
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref Point destPoint, double zoomFactor,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnFooterList, 
             bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false
             )
         {
-            PositionType PositionTypeBoxHead = (PositionType)Properties.Settings.Default["PositionTypeBoxHead"]; //Head輸出位置
-            PositionType PositionTypeBoxFooter = (PositionType)Properties.Settings.Default["PositionTypeBoxFooter"]; //Footer輸出位置
-            PositionType PositionTypeBoxPage = (PositionType)Properties.Settings.Default["PositionTypeBoxPage"]; //Page輸出位置
+            PositionType HeadPositionType = Properties.Settings.Default.HeadPositionType.Value; //Head輸出位置
+            PositionType FooterPositionType = Properties.Settings.Default.FooterPositionType.Value; //Footer輸出位置
+            PositionType PagePositionType = Properties.Settings.Default.PagePositionType.Value; //Page輸出位置
             if (triggerAdd && destImage != null && destPoint.X != initWidthLocation)
             {
                 if (outputCount == outputIdx || outputAll) outputImgs.Add(destImage);
@@ -276,22 +279,22 @@ namespace NovelTool
             if ((outputCount == outputIdx || outputAll) && srcImage == null) srcImage = OpenImage(path, name);
             if (triggerCreate && destImage == null)
             {
-                (destImage, destPoint) = CreateDestImage(IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, srcImage);
+                (destImage, destPoint) = CreateDestImage(OutputWidth, OutputHeight, initWidthLocation, initHeightLocation, srcImage);
                 if (srcImage == null)
                 {
                     srcImage = OpenImage(path, name);
                 }
                 int initSize = 10;
-                GenerateDrawTitle(initSize, PositionTypeBoxHead, columnHeadList,
-                 IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
-                GenerateDrawTitle(initSize, PositionTypeBoxFooter, columnFooterList,
-                 IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
+                GenerateDrawTitle(initSize, HeadPositionType, columnHeadList,
+                 OutputWidth, OutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
+                GenerateDrawTitle(initSize, FooterPositionType, columnFooterList,
+                 OutputWidth, OutputHeight, initWidthLocation, initHeightLocation, zoomFactor, srcImage, ref destImage);
             }
         }
 
         private void GenerateDrawTitle(int initSize, PositionType PositionTypeBoxTitle,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnTitleList,
-            int IntUDOutputWidth, int IntUDOutputHeight, int initWidthLocation, int initHeightLocation, double zoomFactor, Bitmap srcImage, ref Bitmap destImage)
+            int OutputWidth, int OutputHeight, int initWidthLocation, int initHeightLocation, double zoomFactor, Bitmap srcImage, ref Bitmap destImage)
         {
             if (PositionTypeBoxTitle != PositionType.None && columnTitleList != null && columnTitleList.Count > 0)
             {
@@ -299,8 +302,8 @@ namespace NovelTool
                 Point destPointTitle = new Point(10, 10);
                 if (PositionTypeBoxTitle == PositionType.TopRight || PositionTypeBoxTitle == PositionType.BottomRight)
                 {
-                    if (PositionTypeBoxTitle == PositionType.TopRight) destPointTitle = new Point(IntUDOutputWidth - initSize, initSize);
-                    else if (PositionTypeBoxTitle == PositionType.BottomRight) destPointTitle = new Point(IntUDOutputWidth - initSize, IntUDOutputHeight - initSize);
+                    if (PositionTypeBoxTitle == PositionType.TopRight) destPointTitle = new Point(OutputWidth - initSize, initSize);
+                    else if (PositionTypeBoxTitle == PositionType.BottomRight) destPointTitle = new Point(OutputWidth - initSize, OutputHeight - initSize);
                     for (int cIdx = columnTitleList.Count - 1; cIdx >= 0; cIdx--)
                     {
                         var columnTitle = columnTitleList[cIdx];
@@ -309,14 +312,14 @@ namespace NovelTool
                         int modeWidth = (int)(mainForm.Modes.Width * zoomFactor);
                         int blankWidth = offsetX != -1 ? (int)((offsetX - columnTitle.X - columnTitle.Width) * zoomFactor) : 0;
                         blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
-                        DrawTitle(columnTitle, newWidth, newHeight, -blankWidth, true, destPointTitle.Y == IntUDOutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
+                        DrawTitle(columnTitle, newWidth, newHeight, -blankWidth, true, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                         offsetX = columnTitle.X;
                     }
                 }
                 else if (PositionTypeBoxTitle == PositionType.TopLeft || PositionTypeBoxTitle == PositionType.BottomLeft)
                 {
                     if (PositionTypeBoxTitle == PositionType.TopLeft) destPointTitle = new Point(initSize, initSize);
-                    else if (PositionTypeBoxTitle == PositionType.BottomLeft) destPointTitle = new Point(10, IntUDOutputHeight - initSize);
+                    else if (PositionTypeBoxTitle == PositionType.BottomLeft) destPointTitle = new Point(10, OutputHeight - initSize);
                     for (int cIdx = 0; cIdx < columnTitleList.Count; cIdx++)
                     {
                         var columnTitle = columnTitleList[cIdx];
@@ -325,7 +328,7 @@ namespace NovelTool
                         int modeWidth = (int)(mainForm.Modes.Width * zoomFactor);
                         int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * zoomFactor) : 0;
                         blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
-                        DrawTitle(columnTitle, newWidth, newHeight, blankWidth, false, destPointTitle.Y == IntUDOutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
+                        DrawTitle(columnTitle, newWidth, newHeight, blankWidth, false, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                         offsetX = columnTitle.X + columnTitle.Width;
                     }
                 }
@@ -386,14 +389,14 @@ namespace NovelTool
             float columnX, float columnWidth, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys, int newWidth,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnFooterList,
-            int IntUDOutputWidth, int IntUDOutputHeight, int IntUDLeading, 
-            int IntUDMarginLeft, int IntUDMarginBottom, 
+            int OutputWidth, int OutputHeight, int Leading, 
+            int MarginLeft, int MarginBottom, 
             int initWidthLocation, int initHeightLocation,
             double zoomFactor, int outputIdx,
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref Point destPoint,
             (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnRuby, bool outputAll=false)
         {
-            var maxOutputHeight = IntUDOutputHeight - IntUDMarginBottom;
+            var maxOutputHeight = OutputHeight - MarginBottom;
             float offsetY = bodyTop;
             int rubyIdx = 0;
             var rubyNewWidth = 0;
@@ -410,7 +413,7 @@ namespace NovelTool
                     if (eIdx == 0) destPoint.X += newWidth < mainForm.Modes.Width * zoomFactor ? (int)(mainForm.Modes.Width * zoomFactor - newWidth) : 0; //該行寬度小於通常寬度時，將輸出 X軸位置往右偏移一點
                     if (eIdx == 0 && entity.RType == RectType.EntityHead)
                     {
-                        destPoint.X -= newWidth + IntUDLeading;
+                        destPoint.X -= newWidth + Leading;
                         destPoint.Y = initHeightLocation;
                     }
                     else if (destPoint.Y + blankHeight + newHeight > maxOutputHeight) //若輸出 Y軸位置已於最下方，則換下一行
@@ -422,15 +425,15 @@ namespace NovelTool
                             if (blankHeight > sliceHeight) blankHeight -= sliceHeight;
                             else blankHeight = 0;
                         }
-                        destPoint.X -= newWidth + IntUDLeading;
+                        destPoint.X -= newWidth + Leading;
                         destPoint.Y = initHeightLocation;
                     }
                 }
-                if (destPoint.X < IntUDMarginLeft) //若輸出 X軸位置已於最左側，則換一頁
+                if (destPoint.X < MarginLeft) //若輸出 X軸位置已於最左側，則換一頁
                 {
-                    AddNowCreateNext(path, name, outputAll, outputIdx, IntUDOutputWidth, IntUDOutputHeight, initWidthLocation, initHeightLocation, ref outputCount, ref srcImage, ref destImage, ref destPoint,
+                    AddNowCreateNext(path, name, outputAll, outputIdx, OutputWidth, OutputHeight, initWidthLocation, initHeightLocation, ref outputCount, ref srcImage, ref destImage, ref destPoint,
                                zoomFactor, columnHeadList, columnFooterList);
-                    destPoint.X -= newWidth + IntUDLeading;
+                    destPoint.X -= newWidth + Leading;
                 }
                 destPoint.Y += blankHeight;
                 if (outputCount == outputIdx || outputAll)
@@ -466,18 +469,18 @@ namespace NovelTool
                 destPoint.Y += newHeight;
                 if (eIdx == Entitys.Count - 1 && entity.RType == RectType.EntityEnd) //若該行最後一字為句尾，則換下一行
                 {
-                    if (newWidth < mainForm.Modes.Width * zoomFactor) destPoint.X -= (int)(mainForm.Modes.Width * zoomFactor) + IntUDLeading;
-                    else destPoint.X -= newWidth + IntUDLeading;
+                    if (newWidth < mainForm.Modes.Width * zoomFactor) destPoint.X -= (int)(mainForm.Modes.Width * zoomFactor) + Leading;
+                    else destPoint.X -= newWidth + Leading;
                     destPoint.Y = initHeightLocation;
                 }
                 offsetY = entity.Y + entity.Height;
             }
         }
 
-        private (Bitmap destImage, Point destPoint) CreateDestImage(int IntUDOutputWidth, int IntUDOutputHeight, int initWidthLocation, int initHeightLocation, Bitmap srcImage=null)
+        private (Bitmap destImage, Point destPoint) CreateDestImage(int OutputWidth, int OutputHeight, int initWidthLocation, int initHeightLocation, Bitmap srcImage=null)
         {
             Point destPoint = new Point(initWidthLocation, initHeightLocation);
-            Bitmap destImage = new Bitmap(IntUDOutputWidth, IntUDOutputHeight);
+            Bitmap destImage = new Bitmap(OutputWidth, OutputHeight);
             if (srcImage != null) destImage.SetResolution(srcImage.HorizontalResolution, srcImage.VerticalResolution);
 
             return (destImage, destPoint);
@@ -537,20 +540,20 @@ namespace NovelTool
         {
             (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = getSaveInfo();
             ParseOutput(-1, true);
-            bool CheckBoxOutputAdjustColor = (bool)Properties.Settings.Default["CheckBoxOutputAdjustColor"];
-            Color ColorBoxOutputBack = (Color)Properties.Settings.Default["ColorBoxOutputBack"];
-            Color ColorBoxOutputFore = (Color)Properties.Settings.Default["ColorBoxOutputFore"];
-            float FloatUDForeColorRate = (float)Properties.Settings.Default["FloatUDForeColorRate"];
+            bool OutputAdjustColorCheck = Properties.Settings.Default.OutputAdjustColorCheck.Value;
+            Color OutputBackColor = Color.FromKnownColor(Properties.Settings.Default.OutputBackColor.Value);
+            Color OutputForeColor = Color.FromKnownColor(Properties.Settings.Default.OutputForeColor.Value);
+            float ForeColorRate = Properties.Settings.Default.ForeColorRate.Value;
             for (int idx=0; idx < OutputImgs.Count; idx++)
             {
                 string name;
                 if (mainForm.Filter.name != null) name = string.Format(@"{0}_{1}", idx, mainForm.Filter.name);
                 else name = string.Format(@"{0}", idx);
                 Image srcImage = OutputImgs[idx];
-                if (CheckBoxOutputAdjustColor && (srcImage.Tag == null || (bool)srcImage.Tag != true)) ImageTool.ChangeForeColor((Bitmap)srcImage, ColorBoxOutputFore.ToArgb(), ColorBoxOutputBack.ToArgb(), FloatUDForeColorRate);
+                if (OutputAdjustColorCheck && (srcImage.Tag == null || (bool)srcImage.Tag != true)) ImageTool.ChangeForeColor((Bitmap)srcImage, OutputForeColor.ToArgb(), OutputBackColor.ToArgb(), ForeColorRate);
                 using (Bitmap outputImage = new Bitmap(srcImage.Width, srcImage.Height))
                 using (Graphics graphics = Graphics.FromImage(outputImage))
-                using (SolidBrush brush = new SolidBrush(ColorBoxOutputBack))
+                using (SolidBrush brush = new SolidBrush(OutputBackColor))
                 {
                     graphics.FillRectangle(brush, 0, 0, srcImage.Width, srcImage.Height);
                     graphics.DrawImage(srcImage, 0, 0, srcImage.Width, srcImage.Height);
@@ -562,16 +565,16 @@ namespace NovelTool
 
         private (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) getSaveInfo()
         {
-            ImageType ImageTypeBoxOutput = (ImageType)Properties.Settings.Default["ImageTypeBoxOutput"]; //輸出檔案格式
-            PixelFormat PixelFormatBoxOutput = (PixelFormat)Properties.Settings.Default["PixelFormatBoxOutput"]; //輸出色彩資料格式
-            long LongUDOutputQuality = (long)Properties.Settings.Default["LongUDOutputQuality"]; //輸出品質
+            ImageType OutputImageType = Properties.Settings.Default.OutputImageType.Value; //輸出檔案格式
+            PixelFormat OutputPixelFormat = Properties.Settings.Default.OutputPixelFormat.Value; //輸出色彩資料格式
+            long OutputQuality = Properties.Settings.Default.OutputQuality.Value; //輸出品質
             string path = string.Format(@"{0}\Output", mainForm.InputDir), name, extension;
             ImageCodecInfo imgEncoder;
             EncoderParameters encoderParameters = new EncoderParameters(1);
             Encoder encoder = Encoder.Quality;
-            encoderParameters.Param[0] = new EncoderParameter(encoder, LongUDOutputQuality);
+            encoderParameters.Param[0] = new EncoderParameter(encoder, OutputQuality);
 
-            switch (ImageTypeBoxOutput)
+            switch (OutputImageType)
             {
                 case ImageType.Jpeg:
                     imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Jpeg.Guid).FirstOrDefault();
@@ -598,7 +601,7 @@ namespace NovelTool
                     extension = ".jpg";
                     break;
             }
-            return (path, extension, imgEncoder, encoderParameters, PixelFormatBoxOutput);
+            return (path, extension, imgEncoder, encoderParameters, OutputPixelFormat);
         }
         private void ToolStripFilterBox_SelectedIndexChanged(object sender, EventArgs e)
         {

@@ -1,252 +1,153 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NovelTool.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="ColorBoxFormBorderLeft" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">DarkSlateBlue</Value>
-    </Setting>
-    <Setting Name="ColorBoxFormBorderTop" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">RoyalBlue</Value>
-    </Setting>
-    <Setting Name="ColorBoxFormBorderRight" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Firebrick</Value>
-    </Setting>
-    <Setting Name="ColorBoxFormBorderBottom" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">DarkSlateGray</Value>
-    </Setting>
-    <Setting Name="ColorBoxBackPanel" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForePanel" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackMenuStrip" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeMenuStrip" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackToolStripMenuItem" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeToolStripMenuItem" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackToolStripPanel" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeToolStripPanel" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackToolStrip" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeToolStrip" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackListView" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeListView" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackPictureBox" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForePictureBox" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackTextBox" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeTextBox" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackButton" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeButton" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackSplitContainer" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeSplitContainer" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackProgressBar" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeProgressBar" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxBackOther" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="ColorBoxForeOther" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="IntUDFormBorderWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">5</Value>
-    </Setting>
-    <Setting Name="CheckBoxFormBorderLeft" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="CheckBoxFormBorderTop" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="CheckBoxFormBorderRight" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="CheckBoxFormBorderBottom" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="IntUDIllustrationMinColorsLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2000</Value>
-    </Setting>
-    <Setting Name="IntUDIllustrationMinNonWhiteLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">800000</Value>
-    </Setting>
-    <Setting Name="IntUDAnalysisTaskThreadLimit" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="FloatUDHeadMinRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.1</Value>
-    </Setting>
-    <Setting Name="FloatUDFooterMinRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.95</Value>
-    </Setting>
-    <Setting Name="IntUDIgnoreMinDetectYSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="IntUDConfirmHeadGap" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">15</Value>
-    </Setting>
-    <Setting Name="IntUDConfirmFooterGap" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">15</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectHead" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">DarkMagenta</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectBody" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Coral</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectFooter" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">LightSkyBlue</Value>
-    </Setting>
-    <Setting Name="IntUDRectViewWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="IntUDIllustrationMinWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">130</Value>
-    </Setting>
-    <Setting Name="IntUDIllustrationMinHeight" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">130</Value>
-    </Setting>
-    <Setting Name="IntUDIllustrationRate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectColumn" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">LightSkyBlue</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectEntityBody" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Red</Value>
-    </Setting>
-    <Setting Name="FloatUDEntityMinRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.6</Value>
-    </Setting>
-    <Setting Name="FloatUDEntityMaxRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1.2</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectColumnRuby" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">MediumSpringGreen</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectRuby" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">DarkGreen</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectMergeTB" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">MediumOrchid</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectMergeLR" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Tomato</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectSplitTop" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Gold</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectSplitMiddle" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">RoyalBlue</Value>
-    </Setting>
-    <Setting Name="ColorBoxRectSplitBottom" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">LightCoral</Value>
-    </Setting>
-    <Setting Name="ByteUDConfirmWhiteLevel" Type="System.Byte" Scope="User">
-      <Value Profile="(Default)">240</Value>
-    </Setting>
-    <Setting Name="IntUDOutputWidth" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1200</Value>
-    </Setting>
-    <Setting Name="IntUDOutputHeight" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1600</Value>
-    </Setting>
-    <Setting Name="IntUDMarginLeft" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="IntUDMarginRight" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="IntUDMarginTop" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="IntUDMarginBottom" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="IntUDLeading" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
-    </Setting>
-    <Setting Name="FloatUDEntityAdjacentRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.2</Value>
-    </Setting>
-    <Setting Name="PositionTypeBoxHead" Type="NovelTool.PositionType" Scope="User">
-      <Value Profile="(Default)">None</Value>
-    </Setting>
-    <Setting Name="PositionTypeBoxFooter" Type="NovelTool.PositionType" Scope="User">
-      <Value Profile="(Default)">None</Value>
-    </Setting>
-    <Setting Name="ColorBoxOutputBack" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">White</Value>
-    </Setting>
-    <Setting Name="ImageTypeBoxOutput" Type="NovelTool.ImageType" Scope="User">
-      <Value Profile="(Default)">Jpeg</Value>
-    </Setting>
-    <Setting Name="LongUDOutputQuality" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">90</Value>
-    </Setting>
-    <Setting Name="PixelFormatBoxOutput" Type="System.Drawing.Imaging.PixelFormat" Scope="User">
-      <Value Profile="(Default)">DontCare</Value>
-    </Setting>
-    <Setting Name="IntUDConfirmEntityEndGap" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="PositionTypeBoxPage" Type="NovelTool.PositionType" Scope="User">
-      <Value Profile="(Default)">None</Value>
-    </Setting>
-    <Setting Name="IntUDConfirmEntityHeadGap" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="FloatUDForeColorRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.5</Value>
-    </Setting>
-    <Setting Name="FloatUDEntityMergeTBMaxRate" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="IntUDIgnoreMinDetectXSize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="ColorBoxOutputFore" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Black</Value>
-    </Setting>
-    <Setting Name="CheckBoxOutputAdjustColor" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-  </Settings>
+	<Profiles />
+	<Settings>
+		<Setting Name="AnalysisTaskThreadLimit" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">2|1_Analysis|1_AnalysisFactor|Determines the maximum number of threads to perform analysis tasks (Default 2)</Value>
+		</Setting>
+		<Setting Name="IgnoreMinDetectXSize" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">3|1_Analysis|1_AnalysisFactor|Decided to ignore left and right widths when detecting images (Default 3, if there is non-text content on the edge)</Value>
+		</Setting>
+		<Setting Name="IgnoreMinDetectYSize" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">3|1_Analysis|1_AnalysisFactor|Decided to ignore top and bottom widths when detecting images (Default 3, if there is non-text content on the edge)</Value>
+		</Setting>
+		<Setting Name="IllustrationMinWidth" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|XXX</Value>
+		</Setting>
+		<Setting Name="IllustrationMinHeight" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|XXX</Value>
+		</Setting>
+		<Setting Name="HeadMinRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">0.1|1_Analysis|2_Rate|Determines the scale value of the header on the page from top to bottom (Default 0.1, Max 1)</Value>
+		</Setting>
+		<Setting Name="FooterMinRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">0.95|1_Analysis|2_Rate|Determines the scale value of the footer on the page from top to bottom (Default 0.95, Max 1)</Value>
+		</Setting>
+		<Setting Name="IllustrationRate" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">3|1_Analysis|2_Rate|XXX</Value>
+		</Setting>
+		<Setting Name="EntityMinRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">0.6|1_Analysis|2_Rate|Determines the scale value of the smallest text (rubi characters/ルビ) when the standard text scale is 1 (Default 0.6)</Value>
+		</Setting>
+		<Setting Name="EntityMaxRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">1.2|1_Analysis|2_Rate|Determines the scale value of the largest text (parsable as standard text) when the standard text scale is 1 (Default 1.2)</Value>
+		</Setting>
+		<Setting Name="EntityAdjacentRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">0.2|1_Analysis|2_Rate|Determines the minimum scale value that is immediately adjacent between two lines (Default 0.2, for example standard text and rubi characters)</Value>
+		</Setting>
+		<Setting Name="EntityMergeTBMaxRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">1|1_Analysis|2_Rate|Determines the scale value that can be merged into a one character, when a character is broken by wrong analysis (Default 1, for example 元, 二, 言...)</Value>
+		</Setting>
+		<Setting Name="IllustrationMinColorsLevel" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">2000|1_Analysis|3_Confirm|Determine the minimum number of colors for illustrations that can be detected as non-text (Default 2000, duplicate colors are not counted)</Value>
+		</Setting>
+		<Setting Name="IllustrationMinNonWhiteLevel" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">800000|1_Analysis|3_Confirm|Determine the minimum number of foreground colors for illustrations that can be detected as non-text (Default 800000)</Value>
+		</Setting>
+		<Setting Name="ConfirmWhiteLevel" Type="OptionTreeView.Option&lt;System.Byte&gt;" Scope="User">
+			<Value Profile="(Default)">240|1_Analysis|3_Confirm|Determines the color value detected as the background(white) color (Default 240)</Value>
+		</Setting>
+		<Setting Name="ConfirmHeadGap" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">15|1_Analysis|3_Confirm|Determines the minimum height  of the top margin above the header (Default 15)</Value>
+		</Setting>
+		<Setting Name="ConfirmFooterGap" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">15|1_Analysis|3_Confirm|Determines the minimum height of the bottom margin below the footer (Default 15)</Value>
+		</Setting>
+		<Setting Name="ConfirmEntityHeadGap" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">0|1_Analysis|3_Confirm|This value is related to determining whether it is the first word of the line (Default 0)</Value>
+		</Setting>
+		<Setting Name="ConfirmEntityEndGap" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">0|1_Analysis|3_Confirm|This value is related to determining whether it is the end of the line (Default 0)</Value>
+		</Setting>
+		<Setting Name="RectViewWidth" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">1|2_PreviewRect|1_Rect View|Determines the rendered Rect line width (Default 1)</Value>
+		</Setting>
+		<Setting Name="RectHeadColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">DarkMagenta|2_PreviewRect|2_Rect Color|Determines the rendered header Rect line color (Default DarkMagenta)</Value>
+		</Setting>
+		<Setting Name="RectBodyColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">Coral|2_PreviewRect|2_Rect Color|Determines the rendered body Rect line color (Default Coral)</Value>
+		</Setting>
+		<Setting Name="RectFooterColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">LightSkyBlue|2_PreviewRect|2_Rect Color|Determines the rendered footer Rect line color (Default LightSkyBlue)</Value>
+		</Setting>
+		<Setting Name="RectColumnColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">LightSkyBlue|2_PreviewRect|2_Rect Color|Determines the rendered column Rect line color (Default LightSkyBlue)</Value>
+		</Setting>
+		<Setting Name="RectEntityBodyColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">Red|2_PreviewRect|2_Rect Color|Determines the rendered entity body Rect line color (Default Red)</Value>
+		</Setting>
+		<Setting Name="RectColumnRubyColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">MediumSpringGreen|2_PreviewRect|2_Rect Color|Determines the rendered column ruby Rect line color (Default MediumSpringGreen)</Value>
+		</Setting>
+		<Setting Name="RectRubyColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">DarkGreen|2_PreviewRect|2_Rect Color|Determines the rendered ruby Rect line color (Default DarkGreen)</Value>
+		</Setting>
+		<Setting Name="RectMergeTBColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">MediumOrchid|2_PreviewRect|2_Rect Color|Determines the rendered mergeTB Rect line color (Default MediumOrchid)</Value>
+		</Setting>
+		<Setting Name="RectMergeLRColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">Tomato|2_PreviewRect|2_Rect Color|Determines the rendered mergeLR Rect line color (Default Tomato)</Value>
+		</Setting>
+		<Setting Name="RectSplitTopColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">Gold|2_PreviewRect|2_Rect Color|Determines the rendered split top Rect line color (Default Gold)</Value>
+		</Setting>
+		<Setting Name="RectSplitMiddleColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">RoyalBlue|2_PreviewRect|2_Rect Color|Determines the rendered split middle Rect line color (Default RoyalBlue)</Value>
+		</Setting>
+		<Setting Name="RectSplitBottomColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">LightCoral|2_PreviewRect|2_Rect Color|Determines the rendered split bottom Rect line color (Default LightCoral)</Value>
+		</Setting>
+		<Setting Name="OutputWidth" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">1200|3_Generate|1_Output|Determine the output width (Default 1200)</Value>
+		</Setting>
+		<Setting Name="OutputHeight" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">1600|3_Generate|1_Output|Determine the output height (Default 1600)</Value>
+		</Setting>
+		<Setting Name="OutputAdjustColorCheck" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+			<Value Profile="(Default)">False|3_Generate|1_Output|Determine whether to use `ForeColorRate` to adjust the contrast color when generating (Default false)</Value>
+		</Setting>
+		<Setting Name="ForeColorRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+			<Value Profile="(Default)">0.5|3_Generate|1_Output|This value adjusts the contrast color when `OutputAdjustColorCheck` is enabled (Default 0.5, the range is 0~2)</Value>
+		</Setting>
+		<Setting Name="OutputBackColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">White|3_Generate|1_Output|Determines the output background color (Default White)</Value>
+		</Setting>
+		<Setting Name="OutputForeColor" Type="OptionTreeView.Option&lt;System.Drawing.KnownColor&gt;" Scope="User">
+			<Value Profile="(Default)">Black|3_Generate|1_Output|Determines the output foreground color (Default Black)</Value>
+		</Setting>
+		<Setting Name="OutputImageType" Type="OptionTreeView.Option&lt;NovelTool.ImageType&gt;" Scope="User">
+			<Value Profile="(Default)">Jpeg|3_Generate|1_Output|Determine the output image type (Default Jpeg)</Value>
+		</Setting>
+		<Setting Name="OutputPixelFormat" Type="OptionTreeView.Option&lt;System.Drawing.Imaging.PixelFormat&gt;" Scope="User">
+			<Value Profile="(Default)">DontCare|3_Generate|1_Output|Determine the output Pixel format (Default DontCare)</Value>
+		</Setting>
+		<Setting Name="OutputQuality" Type="OptionTreeView.Option&lt;System.Int64&gt;" Scope="User">
+			<Value Profile="(Default)">90|3_Generate|1_Output|Determine the output image quality, A quality level of 0 corresponds to the greatest compression, and a quality level of 100 corresponds to the least compression (Default 90)</Value>
+		</Setting>
+		<Setting Name="PagePositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
+			<Value Profile="(Default)">None|3_Generate|1_Output|Determine the page number position of the output image (Default None)</Value>
+		</Setting>
+		<Setting Name="MarginLeft" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">30|3_Generate|2_Body|Determines the left margin width of the output image (Default 30)</Value>
+		</Setting>
+		<Setting Name="MarginRight" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">30|3_Generate|2_Body|Determines the width of the right margin of the output image (Default 30)</Value>
+		</Setting>
+		<Setting Name="MarginTop" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">30|3_Generate|2_Body|Determines the width of the top margin of the output image (Default 30)</Value>
+		</Setting>
+		<Setting Name="MarginBottom" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">30|3_Generate|2_Body|Determines the bottom margin width of the output image (Default 30)</Value>
+		</Setting>
+		<Setting Name="Leading" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
+			<Value Profile="(Default)">30|3_Generate|2_Body|Determine the output image line spacing width (Default 30)</Value>
+		</Setting>
+		<Setting Name="HeadPositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
+			<Value Profile="(Default)">None|3_Generate|3_Head|Determine the header position of the output image (Default None)</Value>
+		</Setting>
+		<Setting Name="FooterPositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
+			<Value Profile="(Default)">None|3_Generate|3_Footer|Determine the footer position of the output image (Default None)</Value>
+		</Setting>
+	</Settings>
 </SettingsFile>

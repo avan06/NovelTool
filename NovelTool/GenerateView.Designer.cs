@@ -29,7 +29,6 @@ namespace NovelTool
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.Panel1 = new System.Windows.Forms.Panel();
             this.OutputView = new System.Windows.Forms.PictureBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -48,32 +47,10 @@ namespace NovelTool
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripFilter = new System.Windows.Forms.ToolStripLabel();
             this.ToolStripFilterBox = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripContainer1.ContentPanel.SuspendLayout();
-            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
-            this.toolStripContainer1.SuspendLayout();
             this.Panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OutputView)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // toolStripContainer1
-            // 
-            // 
-            // toolStripContainer1.ContentPanel
-            // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.Panel1);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip1);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(800, 425);
-            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
-            this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(800, 450);
-            this.toolStripContainer1.TabIndex = 0;
-            this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
-            // toolStripContainer1.TopToolStripPanel
-            // 
-            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
             // Panel1
             // 
@@ -81,7 +58,7 @@ namespace NovelTool
             this.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.Panel1.Controls.Add(this.OutputView);
             this.Panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Panel1.Location = new System.Drawing.Point(0, 0);
+            this.Panel1.Location = new System.Drawing.Point(0, 25);
             this.Panel1.Name = "Panel1";
             this.Panel1.Size = new System.Drawing.Size(800, 403);
             this.Panel1.TabIndex = 2;
@@ -101,7 +78,7 @@ namespace NovelTool
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 403);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 22);
             this.statusStrip1.TabIndex = 0;
@@ -109,7 +86,8 @@ namespace NovelTool
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolStripSave,
             this.ToolStripSaveAll,
@@ -125,9 +103,9 @@ namespace NovelTool
             this.toolStripSeparator3,
             this.toolStripFilter,
             this.ToolStripFilterBox});
-            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(519, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(800, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // ToolStripSave
@@ -181,6 +159,7 @@ namespace NovelTool
             // 
             // ToolStripPage
             // 
+            this.ToolStripPage.ForeColor = System.Drawing.Color.Black;
             this.ToolStripPage.Name = "ToolStripPage";
             this.ToolStripPage.Size = new System.Drawing.Size(87, 22);
             this.ToolStripPage.Text = "Current page: ";
@@ -188,6 +167,8 @@ namespace NovelTool
             // ToolStripPageBox
             // 
             this.ToolStripPageBox.AutoSize = false;
+            this.ToolStripPageBox.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.ToolStripPageBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.ToolStripPageBox.Name = "ToolStripPageBox";
             this.ToolStripPageBox.Size = new System.Drawing.Size(50, 23);
             this.ToolStripPageBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripPageBox_SelectedIndexChanged);
@@ -223,6 +204,8 @@ namespace NovelTool
             // ToolStripZoomFactorBox
             // 
             this.ToolStripZoomFactorBox.AutoSize = false;
+            this.ToolStripZoomFactorBox.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.ToolStripZoomFactorBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.ToolStripZoomFactorBox.Items.AddRange(new object[] {
             "100",
             "150",
@@ -245,12 +228,15 @@ namespace NovelTool
             // 
             // toolStripFilter
             // 
+            this.toolStripFilter.ForeColor = System.Drawing.Color.Black;
             this.toolStripFilter.Name = "toolStripFilter";
             this.toolStripFilter.Size = new System.Drawing.Size(37, 22);
             this.toolStripFilter.Text = "Filter:";
             // 
             // ToolStripFilterBox
             // 
+            this.ToolStripFilterBox.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.ToolStripFilterBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.ToolStripFilterBox.Name = "ToolStripFilterBox";
             this.ToolStripFilterBox.Size = new System.Drawing.Size(121, 25);
             // 
@@ -258,28 +244,25 @@ namespace NovelTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(36)))), ((int)(((byte)(36)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.toolStripContainer1);
+            this.Controls.Add(this.Panel1);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.toolStrip1);
+            this.ForeColor = System.Drawing.Color.White;
             this.Name = "GenerateView";
             this.Text = "GenerateView";
-            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
-            this.toolStripContainer1.ContentPanel.PerformLayout();
-            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
-            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
-            this.toolStripContainer1.ResumeLayout(false);
-            this.toolStripContainer1.PerformLayout();
             this.Panel1.ResumeLayout(false);
             this.Panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OutputView)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.PictureBox OutputView;
