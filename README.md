@@ -26,24 +26,24 @@ NovelTool is a novel/ebook reading and conversion tool, written in .Net Framewor
 
 ## Supported file formats
 
-- Epub (*.epub)(Experimental feature)
+- Epub (*.epub)(Experimental feature)  
 EPUB is an e-book file format that uses the ".epub" file extension. The term is short for electronic publication and is sometimes styled ePub.
 
-- Aozora (*.txt)(Experimental feature)
+- Aozora (*.txt)(Experimental feature)  
 Aozora Bunko (青空文庫, literally the "Blue Sky Library", also known as the "Open Air Library") is a Japanese digital library. 
 
-- Text Image(*.bmp; *.jpg; *.gif; *.png)
+- Text Image(*.bmp; *.jpg; *.gif; *.png)  
 Novel eBook images or scanned image files.
 
 
 ## Getting started
 
-1. Open the folder or zip of novel/eBook file(*.epub; *.txt; *.bmp; *.jpg; *.gif; *.png), analyze image content immediately.
-2. Wait for the analysis of the novel/eBook results to be completed.
-3. Maybe you need to change the option settings, when the analysis result is wrong. Re-analyze the novel/eBook file after changing settings.
-4. Now execute GenerateView from the toolbar to confirm the generated content.
-5. The size of the output text image can be changed.
-6. Save the generated content as a new image file.
+1. Open the folder or zip(*zip; *.rar; .7z) of novel/eBook file(.epub; *.txt; *.bmp; *.jpg; *.gif; *.png;), analyze image content immediately, If you open the compressed format, it will be decompressed in the same directory.  
+1. Wait for the analysis of the novel/eBook results to be completed.  
+1. Maybe you need to change the option settings, when the analysis result is wrong. Re-analyze the novel/eBook file after changing settings.  
+1. Now execute GenerateView from the toolbar to confirm the generated content.  
+1. The size of the output text image can be changed.  
+1. Execute save or save all to save the generated content as a new image file, and wait for a while depending on the number of pages generated.  
 
 ![NovelTool](assets/NovelTool.webp)  
 ![GenerateView](assets/GenerateView.webp)  
@@ -52,12 +52,16 @@ Novel eBook images or scanned image files.
 ## Analysis Novel
 
 - Parse the novel/eBook image file sequentially from the vertical direction and detect the position of the text.
+- Analysis results can be viewed in the main window.
+- If there are analysis results in the illustration, you needs to be unchecked.
 
 
 ## Generate View
 
-- Reformat the recognized text image according to the specified output resolution, and generate a new image file.
-
+- In GenerateView, based on the analysis results, convert the image font size according to the specified output resolution.
+- Here are some built-in image filtering features, the more useful ones are `Sharpen`, the rest are just for testing.
+- Immediately view the results of changing image font size or filter options.
+- After confirming that the generation is correct, execute save (current page) or save all.
 
 ## Option settings
 
