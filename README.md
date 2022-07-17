@@ -1,12 +1,13 @@
 ﻿# NovelTool
 
-NovelTool is a tool written in .Net Framework 4.8 for reformatting novel/eBook images into pictures of specified output resolution.
+NovelTool is a novel/ebook reading and conversion tool, written in .Net Framework 4.8, which can convert ebooks into image files in another font size.
 
 
 ## Table of Contents
 
 - [NovelTool](#noveltool)
   * [Building](#building)
+  * [Supported file formats](#supported-file-formats)
   * [Getting started](#getting-started)
   * [Analysis Novel](#analysis-novel)
   * [Generate View](#generate-view)
@@ -23,9 +24,21 @@ NovelTool is a tool written in .Net Framework 4.8 for reformatting novel/eBook i
 - Open `NovelTool.sln` with Visual Studio([Community](https://visualstudio.microsoft.com/vs/community/) also available) and built with .Net Framework 4.8.
 
 
+## Supported file formats
+
+- Epub (*.epub)(Experimental feature)
+EPUB is an e-book file format that uses the ".epub" file extension. The term is short for electronic publication and is sometimes styled ePub.
+
+- Aozora (*.txt)(Experimental feature)
+Aozora Bunko (青空文庫, literally the "Blue Sky Library", also known as the "Open Air Library") is a Japanese digital library. 
+
+- Text Image(*.bmp; *.jpg; *.gif; *.png)
+Novel eBook images or scanned image files.
+
+
 ## Getting started
 
-1. Open the folder or zip of novel/eBook file, analyze image content immediately.
+1. Open the folder or zip of novel/eBook file(*.epub; *.txt; *.bmp; *.jpg; *.gif; *.png), analyze image content immediately.
 2. Wait for the analysis of the novel/eBook results to be completed.
 3. Maybe you need to change the option settings, when the analysis result is wrong. Re-analyze the novel/eBook file after changing settings.
 4. Now execute GenerateView from the toolbar to confirm the generated content.

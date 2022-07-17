@@ -68,11 +68,13 @@ namespace NovelTool
 
             return true;
         }
+        
         public static bool IsBlack(int argb, out byte gray, byte white = 240)
         {
             gray = ParseGray(argb);
             return gray < white;
         }
+
         /// <summary>
         /// https://blog.csdn.net/dannylsl/article/details/6261527
         /// https://stackoverflow.com/a/2693008
@@ -86,6 +88,7 @@ namespace NovelTool
 
             return (byte)(gray);
         }
+
         /// <summary>
         /// 初始分析文字頁面圖，分切為三塊，標頭、身體、頁尾
         /// </summary>
@@ -223,6 +226,7 @@ namespace NovelTool
             pageData.rectBody = rectBody;
             pageData.rectFooter = rectFooter;
         }
+
         /// <summary>
         /// 分析Body區域，將文字頁面圖依行分離成各自Column區域
         /// </summary>
@@ -257,6 +261,7 @@ namespace NovelTool
                 prevX = X;
             }
         }
+
         /// <summary>
         /// 分析 ColumnRects 將每行文字分離，並累計文字範圍上下左右位置與實體寬高，之後會用來確認眾數(Mode)
         /// </summary>
@@ -307,6 +312,12 @@ namespace NovelTool
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pStates"></param>
+        /// <param name="columnRects"></param>
+        /// <param name="modes"></param>
         public static void AnalysisEntityHeighWidth(Dictionary<(int X, int Y), int> pStates,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects,
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
@@ -366,13 +377,12 @@ namespace NovelTool
                 if (columnRect.Width > modes.WidthMax)
                 { //欄位寬度大於眾數寬度時
                 }
-
                 var columnRuby = new List<(RectType RType, float X, float Y, float Width, float Height)>();
                 for (int eIdx = 0; eIdx < entitys.Count; eIdx++)
                 {
                     bool isSeparate = false;
                     var entity = entitys[eIdx];
-                    if (entity.Width > modes.WidthMax) //寬度大於眾數寬度時，判斷是否要分離左右部分
+                    if (entity.Width > modes.WidthMax && entity.Width <= modes.WidthMax + modes.WidthMin) //寬度大於眾數寬度且不超過大小字寬度合時，判斷是否要分離左右部分
                     {
                         var ruby = NewEntity();
                         for (float yIdx = entity.Y; yIdx <= entity.Y + entity.Height; yIdx++)
@@ -401,7 +411,7 @@ namespace NovelTool
                         }
                     }
                     if (isSeparate && entity.Height > modes.HeighMax)
-                    {
+                    { //欄位左右分離後，判斷是否要上中下字切割分離
                         var newIdx = eIdx;
                         var newEntity = NewEntity();
                         for (float yIdx = entity.Y; yIdx <= entity.Y + entity.Height; yIdx++)
@@ -489,6 +499,7 @@ namespace NovelTool
                 }
             }
         }
+
         public static void AnalysisEntityHeadBodyEnd((RectType RType, float X, float Y, float Width, float Height) rectRegion,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects,
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
@@ -499,7 +510,7 @@ namespace NovelTool
             for (int idx = 0; idx < columnRects.Count; idx++)
             {
                 var columnRect = columnRects[idx];
-                if (idx == 0 && columnRect.X > modes.LeftMin) columnRect.RType = RectType.BodyOut; //判斷是否為末行／句尾
+                if (idx == 0 && columnRect.X > modes.LeftMin + modes.WidthMax) columnRect.RType = RectType.BodyOut; //判斷是否為末行／句尾
                 else if (idx == columnRects.Count - 1 && columnRect.X + columnRect.Width < modes.RightMin) //判斷是否為首行／句首
                 {
                     if (columnRect.RType != RectType.Ruby) columnRect.RType = RectType.BodyIn;
@@ -638,6 +649,16 @@ namespace NovelTool
             return rtnLen;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="srcImage"></param>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        /// <param name="extension"></param>
+        /// <param name="imgEncoder"></param>
+        /// <param name="encoderParameters"></param>
+        /// <param name="pixelFormat"></param>
         public static void SaveImage(Image srcImage, string path, string name, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat = PixelFormat.DontCare)
         {
             Directory.CreateDirectory(path);
@@ -674,6 +695,13 @@ namespace NovelTool
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="foreArgb"></param>
+        /// <param name="backArgb"></param>
+        /// <param name="ForeColorRate"></param>
         public static void ChangeForeColor(in Bitmap bmp, int foreArgb, int backArgb, float ForeColorRate = 1)
         {
             byte ConfirmWhiteLevel = Properties.Settings.Default.ConfirmWhiteLevel.Value; //指定白色數值
@@ -711,6 +739,15 @@ namespace NovelTool
             bmpTool.WriteUnlockBits();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="colorA"></param>
+        /// <param name="colorB"></param>
+        /// <param name="ForeColorRate"></param>
+        /// <param name="alphaA"></param>
+        /// <param name="alphaB"></param>
+        /// <returns></returns>
         private static byte AverageColor(byte colorA, byte colorB, float ForeColorRate, byte alphaA=255, byte alphaB=255)
         {
             ForeColorRate = ForeColorRate > 2 ? 2 : ForeColorRate;

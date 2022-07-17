@@ -115,8 +115,8 @@ namespace NovelTool
             this.ToolStripSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripSave.Name = "ToolStripSave";
             this.ToolStripSave.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripSave.Text = "toolStripSave";
-            this.ToolStripSave.ToolTipText = "toolStripSave";
+            this.ToolStripSave.Text = "ToolStripSave";
+            this.ToolStripSave.ToolTipText = "ToolStripSave";
             this.ToolStripSave.Click += new System.EventHandler(this.ToolStripSave_Click);
             // 
             // ToolStripSaveAll
@@ -126,8 +126,8 @@ namespace NovelTool
             this.ToolStripSaveAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripSaveAll.Name = "ToolStripSaveAll";
             this.ToolStripSaveAll.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripSaveAll.Text = "toolStripSaveAll";
-            this.ToolStripSaveAll.ToolTipText = "toolStripSaveAll";
+            this.ToolStripSaveAll.Text = "ToolStripSaveAll";
+            this.ToolStripSaveAll.ToolTipText = "ToolStripSaveAll";
             this.ToolStripSaveAll.Click += new System.EventHandler(this.ToolStripSaveAll_Click);
             // 
             // toolStripSeparator1
@@ -142,8 +142,8 @@ namespace NovelTool
             this.ToolStripPrevious.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripPrevious.Name = "ToolStripPrevious";
             this.ToolStripPrevious.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripPrevious.Text = "toolStripPrevious";
-            this.ToolStripPrevious.ToolTipText = "toolStripPrevious";
+            this.ToolStripPrevious.Text = "ToolStripPrevious";
+            this.ToolStripPrevious.ToolTipText = "ToolStripPrevious";
             this.ToolStripPrevious.Click += new System.EventHandler(this.ToolStripPrevious_Click);
             // 
             // ToolStripNext
@@ -153,8 +153,8 @@ namespace NovelTool
             this.ToolStripNext.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripNext.Name = "ToolStripNext";
             this.ToolStripNext.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripNext.Text = "toolStripNext";
-            this.ToolStripNext.ToolTipText = "toolStripNext";
+            this.ToolStripNext.Text = "ToolStripNext";
+            this.ToolStripNext.ToolTipText = "ToolStripNext";
             this.ToolStripNext.Click += new System.EventHandler(this.ToolStripNext_Click);
             // 
             // ToolStripPage
@@ -186,8 +186,8 @@ namespace NovelTool
             this.ToolStripZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripZoomIn.Name = "ToolStripZoomIn";
             this.ToolStripZoomIn.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripZoomIn.Text = "toolStripZoomIn";
-            this.ToolStripZoomIn.ToolTipText = "toolStripZoomIn";
+            this.ToolStripZoomIn.Text = "ToolStripZoomIn";
+            this.ToolStripZoomIn.ToolTipText = "ToolStripZoomIn";
             this.ToolStripZoomIn.Click += new System.EventHandler(this.ToolStripZoomIn_Click);
             // 
             // ToolStripZoomOut
@@ -197,8 +197,8 @@ namespace NovelTool
             this.ToolStripZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolStripZoomOut.Name = "ToolStripZoomOut";
             this.ToolStripZoomOut.Size = new System.Drawing.Size(23, 22);
-            this.ToolStripZoomOut.Text = "toolStripZoomOut";
-            this.ToolStripZoomOut.ToolTipText = "toolStripZoomOut";
+            this.ToolStripZoomOut.Text = "ToolStripZoomOut";
+            this.ToolStripZoomOut.ToolTipText = "ToolStripZoomOut";
             this.ToolStripZoomOut.Click += new System.EventHandler(this.ToolStripZoomOut_Click);
             // 
             // ToolStripZoomFactorBox
@@ -218,6 +218,7 @@ namespace NovelTool
             "500"});
             this.ToolStripZoomFactorBox.Name = "ToolStripZoomFactorBox";
             this.ToolStripZoomFactorBox.Size = new System.Drawing.Size(50, 23);
+            this.ToolStripZoomFactorBox.ToolTipText = "ToolStripZoomFactorBox";
             this.ToolStripZoomFactorBox.SelectedIndexChanged += new System.EventHandler(this.ToolStripZoomFactorBox_SelectedIndexChanged);
             this.ToolStripZoomFactorBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ToolStripZoomFactorBox_KeyUp);
             // 
@@ -239,6 +240,7 @@ namespace NovelTool
             this.ToolStripFilterBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.ToolStripFilterBox.Name = "ToolStripFilterBox";
             this.ToolStripFilterBox.Size = new System.Drawing.Size(121, 25);
+            this.ToolStripFilterBox.ToolTipText = "ToolStripFilterBox";
             // 
             // GenerateView
             // 

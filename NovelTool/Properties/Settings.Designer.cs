@@ -477,8 +477,8 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.5|3_Generate|1_Output|This value adjusts the contrast color when `OutputAdjustC" +
-            "olorCheck` is enabled (Default 0.5, the range is 0~2)")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2|3_Generate|1_Output|This value adjusts the contrast color when `OutputAdjustC" +
+            "olorCheck` is enabled (Default 0.2, the range is 0~2)")]
         public global::OptionTreeView.Option<System.Single> ForeColorRate {
             get {
                 return ((global::OptionTreeView.Option<System.Single>)(this["ForeColorRate"]));

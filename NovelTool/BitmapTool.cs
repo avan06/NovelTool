@@ -187,6 +187,11 @@ namespace NovelTool
             Sharpen3x3Type4,
             Sharpen5x5Type1,
             Sharpen5x5Type2,
+            Smooth3x3Type1,
+            Smooth3x3Type2,
+            Smooth3x3Type3,
+            Smooth5x5Type1,
+            Smooth5x5Type2,
             IntenseSharpen,
             Laplacian3x3Type1,
             Laplacian5x5Type1,
@@ -203,6 +208,7 @@ namespace NovelTool
             GradientSouth,
             GradientWest,
         }
+
         public static readonly Dictionary<Filter, (double[,] filterMatrix, double factor, int bias)> Filters = new Dictionary<Filter, (double[,] filterMatrix, double factor, int bias)>()
         {
             [Filter.Sharpen3x3Type1] = (new double[,] {
@@ -214,13 +220,13 @@ namespace NovelTool
                     { -1,  5, -1, },
                     {  0, -1,  0, }, }, 1.0, 0),
             [Filter.Sharpen3x3Type3] = (new double[,] {
-                    { 0,   -0.25, 0 },
+                    { 0,   -0.25, 0, },
                     {-0.25, 2,   -0.25 },
-                    { 0,   -0.25, 0 }, }, 1.0, 0),
+                    { 0,   -0.25, 0, }, }, 1.0, 0),
             [Filter.Sharpen3x3Type4] = (new double[,] {
-                    { -0.25, -0.25, -0.25 },
-                    { -0.25,  3,    -0.25 },
-                    { -0.25, -0.25, -0.25  }, }, 1.0, 0),
+                    { -0.25, -0.25, -0.25, },
+                    { -0.25,  3,    -0.25, },
+                    { -0.25, -0.25, -0.25, }, }, 1.0, 0),
             [Filter.Sharpen3x3Factor] = (new double[,] {
                     {  0, -2,  0, },
                     { -2, 11, -2, },
@@ -235,8 +241,32 @@ namespace NovelTool
                     { -1, -3, -4, -3, -1, },
                     { -3,  0,  6,  0, -3, },
                     { -4,  6, 21,  6, -4, },
-                    { -3,  0,  6,  0, -3 },
-                    { -1, -3, -4, -3, -1 }, }, 1.0, 0),
+                    { -3,  0,  6,  0, -3, },
+                    { -1, -3, -4, -3, -1, }, }, 1.0, 0),
+            [Filter.Smooth3x3Type1] = (new double[,] {
+                    {  1,  1,  1, },
+                    {  1, 10,  1, },
+                    {  1,  1,  1, }, }, 1.0 / 15, 0),
+            [Filter.Smooth3x3Type2] = (new double[,] {
+                    {  1,  2,  1, },
+                    {  2,  4,  2, },
+                    {  1,  2,  1, }, }, 1.0 / 11, 0),
+            [Filter.Smooth3x3Type3] = (new double[,] {
+                    {  1,  1,  1, },
+                    {  1,  5,  1, },
+                    {  1,  1,  1, }, }, 1.0 / 9, 0),
+            [Filter.Smooth5x5Type1] = (new double[,] {
+                    {  1,  4,  7,  4,  1, },
+                    {  4, 16, 26, 16,  4, },
+                    {  7, 26, 41, 26,  7, },
+                    {  4, 16, 26, 16,  4, },
+                    {  1,  4,  7,  4,  1, }, }, 1.0 / 180, 0),
+            [Filter.Smooth5x5Type2] = (new double[,] {
+                    {  1,  1,  1,  1,  1, },
+                    {  1,  5,  5,  5,  1, },
+                    {  1,  5, 44,  5,  1, },
+                    {  1,  5,  5,  5,  1, },
+                    {  1,  1,  1,  1,  1, }, }, 1.0 / 72, 0),
             [Filter.IntenseSharpen] = (new double[,] {
                     { 1,  1, 1, },
                     { 1, -7, 1, },
@@ -307,13 +337,15 @@ namespace NovelTool
                     { 1, 2, 1 },
                     { 0, 0, 0 },
                     { -1, -2, -1  }, }, 1.0, 0),
-        }; 
+        };
+
         public enum FilterXY
         {
             Sobel3x3,
             Prewitt3x3,
             Kirsch3x3,
         }
+
         public static readonly Dictionary<FilterXY, (double[,] xFilterMatrix, double[,] yFilterMatrix, double factor, int bias)> FilterXYs = new Dictionary<FilterXY, (double[,] xFilterMatrix, double[,] yFilterMatrix, double factor, int bias)>()
         {
             [FilterXY.Sobel3x3] = (
@@ -344,6 +376,7 @@ namespace NovelTool
                     { 5,  0, -3, },
                     { 5, -3, -3, }, }, 1.0, 0),
         };
+
         public static Bitmap ConvolutionFilter(Bitmap sourceBitmap, double[,] filterMatrix, double factor = 1, int bias = 0, bool grayscale = false)
         {
             if (sourceBitmap == null) return null;
@@ -377,15 +410,10 @@ namespace NovelTool
             {
                 for (int offsetX = filterOffset; offsetX < sourceBitmap.Width - filterOffset; offsetX++)
                 {
-                    blue = 0;
-                    green = 0;
-                    red = 0;
+                    blue = green = red = 0;
                     byteOffset = offsetY * sourceData.Stride + offsetX * 4;
                     var c = Color.FromArgb(pixelBuffer[byteOffset + 3], pixelBuffer[byteOffset + 2], pixelBuffer[byteOffset + 1], pixelBuffer[byteOffset]);
-                    if (c == Color.White)
-                    {
-                        Console.WriteLine(c);
-                    }
+                    if (c == Color.White) { } //Console.WriteLine(c);
                     else
                     {
                         for (int filterY = -filterOffset; filterY <= filterOffset; filterY++)
@@ -429,6 +457,7 @@ namespace NovelTool
 
             return resultBitmap;
         }
+
         public static Bitmap ConvolutionFilter(Bitmap sourceBitmap, double[,] xFilterMatrix, double[,] yFilterMatrix, double factor = 1, int bias = 0, bool grayscale = false)
         {
             if (sourceBitmap == null) return null;
@@ -505,6 +534,17 @@ namespace NovelTool
             Marshal.Copy(resultBuffer, 0, resultData.Scan0, resultBuffer.Length);
             resultBitmap.UnlockBits(resultData);
             return resultBitmap;
+        }
+
+        public static Bitmap ConvolutionXYFilter(Bitmap sourceBitmap, double[,] xFilterMatrix, double[,] yFilterMatrix, double factor, int bias)
+        {
+            if (xFilterMatrix == null) return sourceBitmap;
+
+            sourceBitmap = yFilterMatrix == null ?
+                BitmapFilter.ConvolutionFilter(sourceBitmap, xFilterMatrix, factor, bias) :
+                BitmapFilter.ConvolutionFilter(sourceBitmap, xFilterMatrix, yFilterMatrix, factor, bias);
+            //sourceBitmap.MakeTransparent(Color.Transparent);
+            return sourceBitmap;
         }
     }
 }

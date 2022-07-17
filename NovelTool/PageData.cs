@@ -40,43 +40,19 @@ namespace NovelTool
         SplitBottom,    //分割字下半部
         MergeLR,    //合併(合併左右分離的文字)
         MergeTB,    //合併(合併上下分離的文字)
-        //Outer,    //外圍方格
-        //Blank,    //空白
-        //Symbol,    //符號
-        //SplitLeft,    //分割字左半部
-        //SplitRight,    //分割字右半部
-        //AlignBottom,    //輸出位置置底
-        //AlignMiddle,    //輸出位置置中
-        //AozoraBold,    //粗體字
-        //AlignMiddleNoNewPage,    //不換行
-        //ScaleFullHeight,    //強制放大輸出高度至整頁
-        //OutputRotate,    //輸出圖片需旋轉90度
-        //MergeLR2,    //合併(合併左右分離的文字)
-        //MergeLR3,    //合併(合併左右分離的文字)
-        //MergeLR4,    //合併(合併左右分離的文字)
-        //MergeTB2,    //合併(合併上下分離的文字)
-        //MergeBlank,    //合併(與額外空白合併的文字)
-        //NoMerge1,    //不上下合併
-        //NoMerge2,    //不上下合併
-        //NoMerge3,    //不上下合併
-        //NoMerge4,    //不上下合併
-        //NoMerge5,    //不上下合併
-        //NoMerge6,    //不上下合併
-        //NoMerge7,    //不上下合併
-        //NoMerge8,    //不上下合併
-        //MainLeft,    //左主體
-        //MainRight,    //右主體
-        //MainTop,    //上主體
-        //MainBottom,    //下主體
     }
+
     public enum PositionType
     {
         None,
         TopLeft,
         TopRight,
         BottomLeft,
-        BottomRight
+        BottomRight,
+        Top,
+        Bottom,
     }
+
     public enum ImageType
     {
         Jpeg,
