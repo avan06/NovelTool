@@ -653,5 +653,84 @@ namespace NovelTool.Properties {
                 this["FooterPositionType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30|4_EpubAozora|TextFont|Determine the font size of Epub or Aozora eBooks display" +
+            "ed in GenerateView (Default 30)")]
+        public global::OptionTreeView.Option<System.Single> TextFontSize {
+            get {
+                return ((global::OptionTreeView.Option<System.Single>)(this["TextFontSize"]));
+            }
+            set {
+                this["TextFontSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[FontFamily: Name=Microsoft Sans Serif]|4_EpubAozora|TextFont|Determine the font " +
+            "of Epub or Aozora eBooks displayed in GenerateView (Default \"[FontFamily: Name=M" +
+            "icrosoft Sans Serif]\")")]
+        public global::OptionTreeView.Option<System.Drawing.FontFamily> TextFontFamily {
+            get {
+                return ((global::OptionTreeView.Option<System.Drawing.FontFamily>)(this["TextFontFamily"]));
+            }
+            set {
+                this["TextFontFamily"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true|4_EpubAozora|TextFont|Determines whether the font style of Epub or Aozora eB" +
+            "ooks in GenerateView is bold (Default true)")]
+        public global::OptionTreeView.Option<System.Boolean> TextFontBold {
+            get {
+                return ((global::OptionTreeView.Option<System.Boolean>)(this["TextFontBold"]));
+            }
+            set {
+                this["TextFontBold"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false|4_EpubAozora|TextFont|Determines whether the font style of Epub or Aozora e" +
+            "Books in GenerateView is italic (Default false)")]
+        public global::OptionTreeView.Option<System.Boolean> TextFontItalic {
+            get {
+                return ((global::OptionTreeView.Option<System.Boolean>)(this["TextFontItalic"]));
+            }
+            set {
+                this["TextFontItalic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200%|4_EpubAozora|WebViewStyle|Determine the line-height style of Epub or Aozora " +
+            "eBooks in GenerateView\'s WebView (Default 200%)")]
+        public global::OptionTreeView.Option<System.String> WebViewLineHeight {
+            get {
+                return ((global::OptionTreeView.Option<System.String>)(this["WebViewLineHeight"]));
+            }
+            set {
+                this["WebViewLineHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("140%|4_EpubAozora|WebViewStyle|Determine the font-size style of Epub or Aozora eB" +
+            "ooks in GenerateView\'s WebView (Default 140%)")]
+        public global::OptionTreeView.Option<System.String> WebViewFontSize {
+            get {
+                return ((global::OptionTreeView.Option<System.String>)(this["WebViewFontSize"]));
+            }
+            set {
+                this["WebViewFontSize"] = value;
+            }
+        }
     }
 }

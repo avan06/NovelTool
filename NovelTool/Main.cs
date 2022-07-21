@@ -1,4 +1,5 @@
 ﻿using SharpCompress.Archives;
+using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using SharpCompress.Readers;
 using System;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -221,13 +223,25 @@ namespace NovelTool
                 {
                     fileDirName = fileDirName + Path.DirectorySeparatorChar + fileName;
                     Directory.CreateDirectory(fileDirName);
-                    IArchive archive = ArchiveFactory.Open(openFileDialog.FileName);
-                    IReader reader = archive.ExtractAllEntries();
-                    while (reader.MoveToNextEntry())
+                    using (IArchive archive = ArchiveFactory.Open(openFileDialog.FileName))
+                    using (IReader reader = archive.ExtractAllEntries())
                     {
-                        if (!reader.Entry.IsDirectory)
-                            reader.WriteEntryToDirectory(fileDirName, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true, PreserveFileTime = true });
+                        while (reader.MoveToNextEntry())
+                        {
+                            if (!reader.Entry.IsDirectory)
+                                reader.WriteEntryToDirectory(fileDirName, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true, PreserveFileTime = true });
+                        }
                     }
+                    //using (FileStream zipToOpen = new FileStream(openFileDialog.FileName, FileMode.Open))
+                    //using (System.IO.Compression.ZipArchive archive = new System.IO.Compression.ZipArchive(zipToOpen))
+                    //{
+                    //    foreach (System.IO.Compression.ZipArchiveEntry entry in archive.Entries)
+                    //    {
+                    //        Stream s = entry.Open();
+                    //        var sr = new StreamReader(s);
+                    //        var myStr = sr.ReadToEnd();
+                    //    }
+                    //}
                 }
                 #endregion
                 #region Parse Epub
@@ -235,36 +249,38 @@ namespace NovelTool
                 {
                     string fullPath = "";
                     string rootPath = "";
-                    XmlTextReader reader = new XmlTextReader($"{fileDirName}/META-INF/container.xml");
-                    XmlTextReader readerOpt = null;
-                    while (reader.Read())
-                    {
-                        if (reader.Name != "rootfile") continue;
-
-                        fullPath = reader.GetAttribute("full-path");
-                        rootPath = Path.GetDirectoryName($"{fileDirName}/{fullPath}");
-                        readerOpt = new XmlTextReader($"{fileDirName}/{fullPath}");
-                        break;
-                    }
                     string title = "";
                     string publisher = "";
                     List<string> creators = new List<string>();
                     List<string> itemrefs = new List<string>();
-                    //Dictionary<string, string> images = new Dictionary<string, string>();
                     Dictionary<string, string> xhtmls = new Dictionary<string, string>();
-                    while (readerOpt.Read())
+                    //Dictionary<string, string> images = new Dictionary<string, string>();
+                    using (XmlTextReader reader = new XmlTextReader($"{fileDirName}/META-INF/container.xml"))
                     {
-                        if (readerOpt.NodeType != XmlNodeType.Element) continue;
-
-                        if (readerOpt.LocalName == "title") title = readerOpt.ReadString();
-                        else if (readerOpt.LocalName == "creator") creators.Add(readerOpt.ReadString());
-                        else if (readerOpt.LocalName == "publisher") publisher = readerOpt.ReadString();
-                        else if (readerOpt.LocalName == "item")
+                        XmlTextReader readerOpt = null;
+                        while (reader.Read())
                         {
-                            //if (readerOpt.GetAttribute("media-type").StartsWith("image")) images.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
-                            if (readerOpt.GetAttribute("media-type") == "application/xhtml+xml") xhtmls.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
+                            if (reader.Name != "rootfile") continue;
+
+                            fullPath = reader.GetAttribute("full-path");
+                            rootPath = Path.GetDirectoryName($"{fileDirName}/{fullPath}");
+                            readerOpt = new XmlTextReader($"{fileDirName}/{fullPath}");
+                            break;
                         }
-                        else if (readerOpt.LocalName == "itemref") itemrefs.Add(readerOpt.GetAttribute("idref"));
+                        while (readerOpt.Read())
+                        {
+                            if (readerOpt.NodeType != XmlNodeType.Element) continue;
+
+                            if (readerOpt.LocalName == "title") title = readerOpt.ReadString();
+                            else if (readerOpt.LocalName == "creator") creators.Add(readerOpt.ReadString());
+                            else if (readerOpt.LocalName == "publisher") publisher = readerOpt.ReadString();
+                            else if (readerOpt.LocalName == "item")
+                            {
+                                //if (readerOpt.GetAttribute("media-type").StartsWith("image")) images.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
+                                if (readerOpt.GetAttribute("media-type") == "application/xhtml+xml") xhtmls.Add(readerOpt.GetAttribute("id"), readerOpt.GetAttribute("href"));
+                            }
+                            else if (readerOpt.LocalName == "itemref") itemrefs.Add(readerOpt.GetAttribute("idref"));
+                        }
                     }
                     FileListView.BeginUpdate();
                     FileListView.Items.Clear();

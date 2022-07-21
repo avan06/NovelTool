@@ -149,5 +149,23 @@
     <Setting Name="FooterPositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
       <Value Profile="(Default)">None|3_Generate|3_Footer|Determine the footer position of the output image (Default None)</Value>
     </Setting>
+    <Setting Name="TextFontSize" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+      <Value Profile="(Default)">30|4_EpubAozora|TextFont|Determine the font size of Epub or Aozora eBooks displayed in GenerateView (Default 30)</Value>
+    </Setting>
+    <Setting Name="TextFontFamily" Type="OptionTreeView.Option&lt;System.Drawing.FontFamily&gt;" Scope="User">
+      <Value Profile="(Default)">[FontFamily: Name=Microsoft Sans Serif]|4_EpubAozora|TextFont|Determine the font of Epub or Aozora eBooks displayed in GenerateView (Default "[FontFamily: Name=Microsoft Sans Serif]")</Value>
+    </Setting>
+    <Setting Name="TextFontBold" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)">true|4_EpubAozora|TextFont|Determines whether the font style of Epub or Aozora eBooks in GenerateView is bold (Default true)</Value>
+    </Setting>
+    <Setting Name="TextFontItalic" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)">false|4_EpubAozora|TextFont|Determines whether the font style of Epub or Aozora eBooks in GenerateView is italic (Default false)</Value>
+    </Setting>
+    <Setting Name="WebViewLineHeight" Type="OptionTreeView.Option&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)">200%|4_EpubAozora|WebViewStyle|Determine the line-height style of Epub or Aozora eBooks in GenerateView's WebView (Default 200%)</Value>
+    </Setting>
+    <Setting Name="WebViewFontSize" Type="OptionTreeView.Option&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)">140%|4_EpubAozora|WebViewStyle|Determine the font-size style of Epub or Aozora eBooks in GenerateView's WebView (Default 140%)</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

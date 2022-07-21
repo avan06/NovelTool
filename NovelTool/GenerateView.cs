@@ -42,6 +42,13 @@ namespace NovelTool
         private Color OutputForeColor;
         private float ForeColorRate;
 
+        private float TextFontSize;
+        private FontFamily TextFontFamily;
+        private FontStyle FontTextStyle;
+
+        private string WebViewLineHeight;
+        private string WebViewFontSize;
+
         #region Event
 
         #region OutputView
@@ -113,9 +120,11 @@ namespace NovelTool
                 }
                 using (Bitmap outputImage = new Bitmap(result.Width, result.Height))
                 using (Graphics graphics = Graphics.FromImage(outputImage))
-                using (SolidBrush backBrush = new SolidBrush(OutputBackColor))
                 {
-                    if (!(result.Tag is bool)) graphics.FillRectangle(backBrush, 0, 0, result.Width, result.Height);
+                    if (!(result.Tag is bool)) //Bitmap Not Illustration
+                        using (SolidBrush backBrush = new SolidBrush(OutputAdjustColorCheck ? OutputBackColor : Color.White))
+                            graphics.FillRectangle(backBrush, 0, 0, result.Width, result.Height);
+
                     graphics.DrawImage(result, 0, 0, result.Width, result.Height);
                     ImageTool.SaveImage(outputImage, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
                 }
@@ -231,6 +240,13 @@ namespace NovelTool
             OutputForeColor = Color.FromKnownColor(Properties.Settings.Default.OutputForeColor.Value);
             ForeColorRate = Properties.Settings.Default.ForeColorRate.Value;
 
+            TextFontSize = Properties.Settings.Default.TextFontSize.Value;
+            TextFontFamily = Properties.Settings.Default.TextFontFamily.Value;
+            FontTextStyle = (Properties.Settings.Default.TextFontBold.Value ? FontStyle.Bold : 0) | (Properties.Settings.Default.TextFontItalic.Value ? FontStyle.Italic : 0);
+
+            WebViewLineHeight = Properties.Settings.Default.WebViewLineHeight.Value;
+            WebViewFontSize = Properties.Settings.Default.WebViewFontSize.Value;
+
             InitializeComponent();
         }
 
@@ -334,9 +350,9 @@ namespace NovelTool
                         "body {\n" +
                         "background-color: " + "#" + OutputBackColor.R.ToString("X2") + OutputBackColor.G.ToString("X2") + OutputBackColor.B.ToString("X2") + ";" +
                         "color: " + "#" + OutputForeColor.R.ToString("X2") + OutputForeColor.G.ToString("X2") + OutputForeColor.B.ToString("X2") + ";" +
-                        "line-height: 200%;" +
-                        "font-size: 140%;" +
-                        "font-family: 'Lucida Grande', 'Meiryo', 'Meiryo UI', 'Microsoft JhengHei UI', 'Microsoft JhengHei', sans-serif;" +
+                        "line-height: " + WebViewLineHeight + ";" +
+                        "font-size: " + WebViewFontSize + ";" +
+                        "font-family: '" + TextFontFamily.Name + "', 'Lucida Grande', 'Meiryo', 'Meiryo UI', 'Microsoft JhengHei UI', 'Microsoft JhengHei', sans-serif;" +
                         "-ms-writing-mode: tb-rl;" +
                         "writing-mode: vertical-rl;" +
                         "overflow-x: scroll;" +
@@ -407,9 +423,8 @@ namespace NovelTool
         {
             int outputCount = 0;
 
-            float zoomFactor = mainForm.ZoomFactor;
-            var modeWidth = mainForm.Modes.Width * zoomFactor;
-            var modeWidthMax = mainForm.Modes.WidthMax * zoomFactor;
+            var modeWidth = mainForm.Modes.Width * mainForm.ZoomFactor;
+            var modeWidthMax = mainForm.Modes.WidthMax * mainForm.ZoomFactor;
 
             outputImgs = new List<Image>();
             Bitmap destImage = null;
@@ -422,9 +437,9 @@ namespace NovelTool
                 #region Parse Text Image
                 if (pageData.textList == null || pageData.textList.Count <= 0)
                 {
-                    AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, false, true); //trigger create new dest Image when destImage is null
+                    AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, false, true); //trigger create new dest Image when destImage is null
                     if (pageData.isIllustration) //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
-                        AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, true, false, true); //Trigger to save Illustration Image
+                        AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, true, false, true); //Trigger to save Illustration Image
                     else if (pageData.columnBodyList != null)
                     {
                         float offsetX = -1;
@@ -449,11 +464,11 @@ namespace NovelTool
 
                             if (RType == RectType.BodyIn && Width > mainForm.Modes.WidthMax && destPoint.X != InitWidthLocation) // && Entitys[0].RType == RectType.EntityHead
                             { //該行為本頁最右邊第一段，且寬度大於眾數最大寬度，可能為標題，且輸出座標已非初始位置，換一頁輸出顯示
-                                AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                                AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                             }
 
-                            int newWidth = (int)(Width * zoomFactor);
-                            int blankWidth = offsetX != -1 ? (int)((offsetX - X - Width) * zoomFactor) : 0;
+                            int newWidth = (int)(Width * mainForm.ZoomFactor);
+                            int blankWidth = offsetX != -1 ? (int)((offsetX - X - Width) * mainForm.ZoomFactor) : 0;
                             double blankFactor = (double)blankWidth / newWidth;
                             blankFactor = blankFactor > 2.5 ? 2.5 : (blankFactor < 1.5 ? 0 : blankFactor);
                             destPoint.X -= (int)(newWidth * blankFactor); //原圖兩行之間的空白行較大時，輸出位置加上空白行比例寬度
@@ -467,22 +482,22 @@ namespace NovelTool
                             if (destPoint.X == InitWidthLocation) destPoint.X -= newWidth + Leading; //位移右邊第一行輸出位置
                             if (columnRuby.Entitys != null && columnRuby.X - X - Width > mainForm.Modes.Width * EntityAdjacentRate)
                             { //column 與 Ruby 非相鄰時，代表右側非 Ruby
-                                var rubyWidth = (int)(columnRuby.Width * zoomFactor);
-                                GenerateDrawImage(pageData, columnRuby.X, columnRuby.Width, columnRuby.Entitys, rubyWidth, zoomFactor, outputIdx,
+                                var rubyWidth = (int)(columnRuby.Width * mainForm.ZoomFactor);
+                                GenerateDrawImage(pageData, columnRuby.X, columnRuby.Width, columnRuby.Entitys, rubyWidth, outputIdx,
                                     ref outputCount, ref srcImage, ref destImage, ref destPoint, ImageTool.NewEntitys(), outputAll);
                                 columnRuby = ImageTool.NewEntitys();
                             }
 
-                            GenerateDrawImage(pageData, X, Width, Entitys, newWidth, zoomFactor, outputIdx,
+                            GenerateDrawImage(pageData, X, Width, Entitys, newWidth, outputIdx,
                                 ref outputCount, ref srcImage, ref destImage, ref destPoint, columnRuby, outputAll);
 
                             offsetX = X;
                             if (columnRuby.Entitys != null) columnRuby = ImageTool.NewEntitys();
 
                             if (Entitys[Entitys.Count - 1].Height < mainForm.Modes.HeighMin && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
-                                destPoint.Y += (int)(mainForm.Modes.HeighMin * zoomFactor); //每行非句尾的最後一字(句子連接下一頁)，若高度不到最小高度(例如符號字)，則增加空白輸出
+                                destPoint.Y += (int)(mainForm.Modes.HeighMin * mainForm.ZoomFactor); //每行非句尾的最後一字(句子連接下一頁)，若高度不到最小高度(例如符號字)，則增加空白輸出
                             else if (RType == RectType.BodyOut && Entitys[Entitys.Count - 1].RType == RectType.EntityEnd)
-                                AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                                AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                         }
                     }
                 }
@@ -491,7 +506,7 @@ namespace NovelTool
                 else
                 {
                     bool isBegin = false;
-                    float fontSize = 30 * zoomFactor;
+                    float fontSize = TextFontSize * mainForm.ZoomFactor;
                     float blankSize = fontSize / 6;
                     PointF destRubyPTmp = PointF.Empty;
                     StringFormat format = new StringFormat();/*StringFormat.GenericTypographic*/
@@ -499,17 +514,17 @@ namespace NovelTool
                     format.LineAlignment = StringAlignment.Center;
                     for (int tIdx = 0; tIdx < pageData.textList.Count; tIdx++)
                     {
-                        AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, false, true); //trigger create new dest Image when destImage is null
+                        AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, false, true); //trigger create new dest Image when destImage is null
                         (string text, string ruby) = pageData.textList[tIdx];
                         bool newLineFlag = text.EndsWith("\n");
                         text = text.Replace("\n", "");
                         if (text == "_pagebreak_")
                         {
-                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                         }
                         else if (text == "_img_")
                         {
-                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor, true, false, true, ruby); //Trigger to save Illustration Image
+                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, true, false, true, ruby); //Trigger to save Illustration Image
                         }
                         else if (text == "_bold_") { /*webStr.Append($"<b>{ruby}</b>");*/ }
                         else
@@ -526,21 +541,15 @@ namespace NovelTool
                             do
                             {
                                 isContinue = false;
+                                using (var foreBrush = new SolidBrush(OutputForeColor))
                                 using (Graphics gr = Graphics.FromImage(destImage))
                                 {
-                                    //gr.CompositingMode = CompositingMode.SourceCopy;
                                     gr.CompositingQuality = CompositingQuality.HighQuality;
                                     gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
                                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                                     gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
                                     gr.PageUnit = GraphicsUnit.Pixel;
                                     gr.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;//AntiAlias;
-
-                                    //Get instance brush with Solid style to draw background
-                                    Brush backBrush = new SolidBrush(OutputBackColor);
-                                    //Get instance a font to draw item name with this style
-                                    var foreBrush = new SolidBrush(OutputForeColor);
-                                    Font itemFont = new Font("Microsoft Sans Serif", fontSize, FontStyle.Bold, GraphicsUnit.Pixel); //Meiryo、MS Gothic、MS PGothic
 
                                     if (ruby.Length > 0)
                                     {
@@ -551,7 +560,7 @@ namespace NovelTool
                                         {
                                             if (destRect.X - fontSize - Leading < MarginLeft)
                                             { //若輸出 X軸位置已於最左側，則紀錄Ruby目前索引
-                                                //AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                                                //AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, mainForm.ZoomFactor); //trigger save and create new dest Image
                                                 idxRuby = idx;
                                                 isContinue = true;
                                                 break;
@@ -564,7 +573,7 @@ namespace NovelTool
                                                     #region FixVerticalAlign
                                                     if ("ー".IndexOf(charR) != -1)
                                                     { //日本語の長音符
-                                                        rubyPath.AddString("丨", new FontFamily("Microsoft Sans Serif"), (int)FontStyle.Bold, fontSize / 2, new PointF(0, 0), format);
+                                                        rubyPath.AddString("丨", TextFontFamily, (int)FontTextStyle, fontSize / 2, new PointF(0, 0), format);
                                                         using (var flipXMatrix = new Matrix(-1, 0, 0, 1, destRect.X + fontSize / 4, destRect.Y + fontSize / 4))
                                                         using (Matrix matrix = new Matrix())
                                                         { //Flip a Graphics object. https://stackoverflow.com/a/53182901
@@ -574,7 +583,7 @@ namespace NovelTool
                                                     }
                                                     else
                                                     {
-                                                        rubyPath.AddString(charR.ToString(), new FontFamily("Microsoft Sans Serif"), (int)FontStyle.Bold, fontSize / 2, destRect, format);
+                                                        rubyPath.AddString(charR.ToString(), TextFontFamily, (int)FontTextStyle, fontSize / 2, destRect, format);
                                                         if (IsVerticalAlign(charR)) //「」『』ー─―…()（）〈〉《》〔〕﹝﹞【】〝〟=＝~～
                                                         {
                                                             using (Matrix mRotate = new Matrix())
@@ -608,7 +617,7 @@ namespace NovelTool
                                     {
                                         if (destPoint.X - Leading < MarginLeft)
                                         { //若輸出 X軸位置已於最左側，則換一頁
-                                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                                            AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                                             idxText = idx;
                                             isContinue = true;
                                             break;
@@ -623,7 +632,7 @@ namespace NovelTool
                                                 #region FixVerticalAlign
                                                 if ("ー".IndexOf(charT) != -1)
                                                 { //日本語の長音符
-                                                    textPath.AddString("丨", new FontFamily("Microsoft Sans Serif"), (int)FontStyle.Bold, fontSize, new PointF(0, 0), format);
+                                                    textPath.AddString("丨", TextFontFamily, (int)FontTextStyle, fontSize, new PointF(0, 0), format);
                                                     using (var flipXMatrix = new Matrix(-1, 0, 0, 1, destRect.X + fontSize / 2, destRect.Y + fontSize / 2))
                                                     using (Matrix matrix = new Matrix())
                                                     { //Flip a Graphics object. https://stackoverflow.com/a/53182901
@@ -633,7 +642,7 @@ namespace NovelTool
                                                 }
                                                 else
                                                 {
-                                                    textPath.AddString(charT.ToString(), new FontFamily("Microsoft Sans Serif"), (int)FontStyle.Bold, fontSize, destRect, format);
+                                                    textPath.AddString(charT.ToString(), TextFontFamily, (int)FontTextStyle, fontSize, destRect, format);
                                                     if (IsVerticalAlign(charT)) //「」『』ー─―…()（）〈〉《》〔〕﹝﹞【】〝〟=＝~～
                                                     {
                                                         using (Matrix mRotate = new Matrix())
@@ -668,7 +677,7 @@ namespace NovelTool
                                 destPoint.Y = InitHeightLocation;
                                 if (destPoint.X - Leading < MarginLeft)
                                 {
-                                    AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                                    AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                                 }
                             }
                         }
@@ -701,12 +710,12 @@ namespace NovelTool
         /// <param name="triggerCreate">Trigger to generate new Bitmap page</param>
         /// <param name="triggerSrcAdd">Trigger to save the current source Bitmap when the source is an illustration</param>
         private void AddNowCreateNext(PageData pageData, bool outputAll, int outputIdx,
-            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint, double zoomFactor,
-            bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false) => AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor,
+            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
+            bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false) => AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint,
                 triggerAdd, triggerCreate, triggerSrcAdd, string.Format("{0}/{1}", pageData.path, pageData.name), false, pageData.columnHeadList, pageData.columnFooterList);
 
         private void AddNowCreateNext(bool outputAll, int outputIdx,
-            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint, double zoomFactor,
+            ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
             bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false, string fullPath = "", bool isEpubAozora = true,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList = null,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnFooterList = null)
@@ -744,9 +753,10 @@ namespace NovelTool
                     {
                         if (srcImage == null) srcImage = OpenImage(fullPath);
 
-                        GenerateDrawTitle(HeadPositionType, columnHeadList, zoomFactor, srcImage, ref destImage);
-                        GenerateDrawTitle(FooterPositionType, columnFooterList, zoomFactor, srcImage, ref destImage);
+                        GenerateDrawTitle(HeadPositionType, columnHeadList, srcImage, ref destImage);
+                        GenerateDrawTitle(FooterPositionType, columnFooterList, srcImage, ref destImage);
                     }
+                    GenerateDrawText(PagePositionType, outputIdx.ToString(), srcImage, ref destImage);
                 }
                 else (destImage, destPoint) = CreateDestImage(1, 1, null);
             }
@@ -763,12 +773,12 @@ namespace NovelTool
         /// <param name="initSize">Margin size of print header or footer</param>
         private void GenerateDrawTitle(PositionType PositionTypeBoxTitle,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnTitleList,
-            double zoomFactor, Bitmap srcImage, ref Bitmap destImage, int initSize = 10)
+            Bitmap srcImage, ref Bitmap destImage, int initSize = 10)
         {
             if (PositionTypeBoxTitle == PositionType.None || columnTitleList == null || columnTitleList.Count <= 0) return;
 
             float offsetX = -1;
-            int modeWidth = (int)(mainForm.Modes.Width * zoomFactor);
+            int modeWidth = (int)(mainForm.Modes.Width * mainForm.ZoomFactor);
             Point destPointTitle = new Point(initSize, initSize);
             if (PositionTypeBoxTitle == PositionType.TopRight) destPointTitle = new Point(OutputWidth - initSize, initSize);
             else if (PositionTypeBoxTitle == PositionType.BottomRight) destPointTitle = new Point(OutputWidth - initSize, OutputHeight - initSize);
@@ -782,35 +792,26 @@ namespace NovelTool
                 for (int cIdx = columnTitleList.Count - 1; cIdx >= 0; cIdx--)
                 {
                     var columnTitle = columnTitleList[cIdx];
-                    int newWidth = (int)(columnTitle.Width * zoomFactor);
-                    int newHeight = (int)(columnTitle.Height * zoomFactor);
-                    int blankWidth = offsetX != -1 ? (int)((offsetX - columnTitle.X - columnTitle.Width) * zoomFactor) : 0;
+                    int newWidth = (int)(columnTitle.Width * mainForm.ZoomFactor);
+                    int newHeight = (int)(columnTitle.Height * mainForm.ZoomFactor);
+                    int blankWidth = offsetX != -1 ? (int)((offsetX - columnTitle.X - columnTitle.Width) * mainForm.ZoomFactor) : 0;
                     blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
                     DrawTitle(columnTitle, newWidth, newHeight, -blankWidth, true, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                     offsetX = columnTitle.X;
                 }
             }
-            else if (PositionTypeBoxTitle == PositionType.TopLeft || PositionTypeBoxTitle == PositionType.BottomLeft)
+            else if (PositionTypeBoxTitle == PositionType.TopLeft || PositionTypeBoxTitle == PositionType.BottomLeft || PositionTypeBoxTitle == PositionType.Top || PositionTypeBoxTitle == PositionType.Bottom)
             {
+                if (PositionTypeBoxTitle == PositionType.Top || PositionTypeBoxTitle == PositionType.Bottom)
+                    destPointTitle.X -= (int)(columnTitleList.Count > 1 ? (columnTitleList[columnTitleList.Count - 1].X + 
+                        columnTitleList[columnTitleList.Count - 1].Width - columnTitleList[0].X) : columnTitleList[0].Width) / 2;
+                
                 for (int cIdx = 0; cIdx < columnTitleList.Count; cIdx++)
                 {
                     var columnTitle = columnTitleList[cIdx];
-                    int newWidth = (int)(columnTitle.Width * zoomFactor);
-                    int newHeight = (int)(columnTitle.Height * zoomFactor);
-                    int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * zoomFactor) : 0;
-                    blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
-                    DrawTitle(columnTitle, newWidth, newHeight, blankWidth, false, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
-                    offsetX = columnTitle.X + columnTitle.Width;
-                }
-            }
-            else if (PositionTypeBoxTitle == PositionType.Top || PositionTypeBoxTitle == PositionType.Bottom)
-            {
-                for (int cIdx = 0; cIdx < columnTitleList.Count; cIdx++)
-                {
-                    var columnTitle = columnTitleList[cIdx];
-                    int newWidth = (int)(columnTitle.Width * zoomFactor);
-                    int newHeight = (int)(columnTitle.Height * zoomFactor);
-                    int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * zoomFactor) : 0;
+                    int newWidth = (int)(columnTitle.Width * mainForm.ZoomFactor);
+                    int newHeight = (int)(columnTitle.Height * mainForm.ZoomFactor);
+                    int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * mainForm.ZoomFactor) : 0;
                     blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
                     DrawTitle(columnTitle, newWidth, newHeight, blankWidth, false, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                     offsetX = columnTitle.X + columnTitle.Width;
@@ -853,10 +854,71 @@ namespace NovelTool
             if (!shiftLeftX) destPointTitle.X += newWidth;
         }
 
-        /// <summary>
-        /// Read image file and parse to Bitmap.
-        /// </summary>
-        private Bitmap OpenImage(string path, string name) => OpenImage(string.Format("{0}/{1}", path, name));
+        private void GenerateDrawText(PositionType PositionTypeBoxTitle, string text,
+            Bitmap srcImage, ref Bitmap destImage, int initSize = 10)
+        {
+            if (PositionTypeBoxTitle == PositionType.None || text.Trim() == "") return;
+
+            Point destPoint = new Point(initSize, initSize);
+
+            StringFormat format = new StringFormat();
+            format.Alignment = StringAlignment.Near;
+            format.LineAlignment = StringAlignment.Near;
+
+            if (PositionTypeBoxTitle == PositionType.TopRight)
+            {
+                destPoint = new Point(OutputWidth - initSize, initSize);
+                format.Alignment = StringAlignment.Far;
+            }
+            else if (PositionTypeBoxTitle == PositionType.BottomRight)
+            {
+                destPoint = new Point(OutputWidth - initSize, OutputHeight - initSize);
+                format.Alignment = StringAlignment.Far;
+                format.LineAlignment = StringAlignment.Far;
+            }
+            else if (PositionTypeBoxTitle == PositionType.TopLeft)
+            {
+                destPoint = new Point(initSize, initSize);
+            }
+            else if (PositionTypeBoxTitle == PositionType.BottomLeft)
+            {
+                destPoint = new Point(initSize, OutputHeight - initSize);
+                format.LineAlignment = StringAlignment.Far;
+            }
+            else if (PositionTypeBoxTitle == PositionType.Top)
+            {
+                destPoint = new Point(OutputWidth / 2, initSize);
+                format.Alignment = StringAlignment.Center;
+            }
+            else if (PositionTypeBoxTitle == PositionType.Bottom)
+            {
+                destPoint = new Point(OutputWidth / 2, OutputHeight - initSize);
+                format.Alignment = StringAlignment.Center;
+                format.LineAlignment = StringAlignment.Far;
+            }
+
+            DrawText(text, format, ref destImage, ref destPoint);
+        }
+
+        private void DrawText(string text, StringFormat format, ref Bitmap destImage, ref Point destPoint)
+        {
+            using (Graphics gr = Graphics.FromImage(destImage))
+            {
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                gr.SmoothingMode = SmoothingMode.AntiAlias;
+                gr.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                gr.PageUnit = GraphicsUnit.Pixel;
+                gr.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+                using (var foreBrush = new SolidBrush(OutputForeColor))
+                using (GraphicsPath textPath = new GraphicsPath())
+                {
+                    textPath.AddString(text, TextFontFamily, (int)FontTextStyle, TextFontSize * mainForm.ZoomFactor, destPoint, format);
+                    gr.FillPath(foreBrush, textPath);
+                }
+            }
+        }
 
         /// <summary>
         /// Read image file and parse to Bitmap.
@@ -905,23 +967,22 @@ namespace NovelTool
         /// <param name="columnRuby">Ruby column information of the current column of the source bitmap</param>
         /// <param name="outputAll">is generate all pages</param>
         private void GenerateDrawImage(PageData pageData, float columnX, float columnWidth,
-            List<(RectType RType, float X, float Y, float Width, float Height)> Entitys, int newWidth,
-            float zoomFactor, int outputIdx,
+            List<(RectType RType, float X, float Y, float Width, float Height)> Entitys, int newWidth, int outputIdx,
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
             (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnRuby, bool outputAll = false)
         {
             float offsetY = pageData.rectBody.Y; //The Y-axis position of the top of the body of the source Bitmap
             int rubyIdx = 0;
             var rubyNewWidth = 0;
-            var modeWidth = mainForm.Modes.Width * zoomFactor;
+            var modeWidth = mainForm.Modes.Width * mainForm.ZoomFactor;
             (RectType RType, float X, float Y, float Width, float Height) rubyEntity = (0, 0, 0, 0, 0);
-            if (columnRuby.Entitys != null && columnRuby.Entitys.Count > 0) rubyNewWidth = (int)(columnRuby.Width * zoomFactor);
+            if (columnRuby.Entitys != null && columnRuby.Entitys.Count > 0) rubyNewWidth = (int)(columnRuby.Width * mainForm.ZoomFactor);
             if (columnRuby.Entitys != null && rubyIdx < columnRuby.Entitys.Count) rubyEntity = columnRuby.Entitys[rubyIdx++];
             for (int eIdx = 0; eIdx < Entitys.Count; eIdx++)
             {
                 var entity = Entitys[eIdx];
-                var blankHeight = entity.Y > offsetY ? ((entity.Y - offsetY) * zoomFactor) : 0;
-                int newHeight = (int)(entity.Height * zoomFactor);
+                var blankHeight = entity.Y > offsetY ? ((entity.Y - offsetY) * mainForm.ZoomFactor) : 0;
+                int newHeight = (int)(entity.Height * mainForm.ZoomFactor);
                 if (destPoint.Y != InitHeightLocation)
                 {
                     if (eIdx == 0) destPoint.X += newWidth < modeWidth ? (int)(modeWidth - newWidth) : 0; //該行寬度小於通常寬度時，將輸出 X軸位置往右偏移一點
@@ -944,7 +1005,7 @@ namespace NovelTool
                 }
                 if (destPoint.X < MarginLeft)
                 { //若輸出 X軸位置已於最左側，則換一頁
-                    AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, zoomFactor); //trigger save and create new dest Image
+                    AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                     destPoint.X -= newWidth + Leading;
                 }
                 destPoint.Y += blankHeight;
@@ -966,9 +1027,9 @@ namespace NovelTool
                             {
                                 while ((rubyEntity.Y >= entity.Y && rubyEntity.Y <= entity.Y + entity.Height) || (entity.Y >= rubyEntity.Y && entity.Y <= rubyEntity.Y + rubyEntity.Height))
                                 {
-                                    int rubyNewHeight = (int)(rubyEntity.Height * zoomFactor);
-                                    int rubyOffsetX = (int)((rubyEntity.X - entity.X - entity.Width) * zoomFactor);
-                                    int rubyOffsetY = (int)((rubyEntity.Y - entity.Y) * zoomFactor);
+                                    int rubyNewHeight = (int)(rubyEntity.Height * mainForm.ZoomFactor);
+                                    int rubyOffsetX = (int)((rubyEntity.X - entity.X - entity.Width) * mainForm.ZoomFactor);
+                                    int rubyOffsetY = (int)((rubyEntity.Y - entity.Y) * mainForm.ZoomFactor);
                                     RectangleF rubyDestRect = new RectangleF(destPoint.X + newWidth + rubyOffsetX, destPoint.Y + rubyOffsetY, rubyNewWidth, rubyNewHeight);
                                     gr.DrawImage(srcImage, Rectangle.Round(rubyDestRect), columnRuby.X, rubyEntity.Y, columnRuby.Width, rubyEntity.Height, GraphicsUnit.Pixel, imgAttr);
                                     if (columnRuby.Entitys != null && rubyIdx < columnRuby.Entitys.Count) rubyEntity = columnRuby.Entitys[rubyIdx++];

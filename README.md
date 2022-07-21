@@ -136,4 +136,17 @@ Novel eBook images or scanned image files.
 
 1. Head & Footer
    * `PositionType`: Determine the header/footer position of the output image (Default None)(None, TopLeft, TopRight, BottomLeft, BottomRight).  
-   
+
+
+### EpubAozora
+
+1. TextFont
+   * `TextFontSize`: Determine the font size of Epub or Aozora eBooks displayed in GenerateView (Default 30).  
+   * `TextFontName`: Determine the font of Epub or Aozora eBooks displayed in GenerateView (Default "[FontFamily: Name=Microsoft Sans Serif]").  
+   * `TextFontBold`: Determines whether the font style of Epub or Aozora eBooks in GenerateView is bold (Default true).  
+   * `TextFontItalic`: Determines whether the font style of Epub or Aozora eBooks in GenerateView is italic (Default false).  
+
+1. WebViewStyle
+   * `WebViewLineHeight`: Determine the line-height style of Epub or Aozora eBooks in GenerateView's WebView (Default 200%).  
+   * `WebViewFontSize`: Determine the font-size style of Epub or Aozora eBooks in GenerateView's WebView (Default 140%).  
+
