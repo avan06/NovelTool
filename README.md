@@ -126,6 +126,7 @@ Novel eBook images or scanned image files.
    * `OutputPixelFormat`: Determine the output Pixel format (Default DontCare)(DontCare, Indexed, Gdi, Alpha, PAlpha, Extended, Canonical, Format1bppIndexed, Format4bppIndexed, Format8bppIndexed, Format16bppGrayScale, Format16bppRgb555, Format16bppRgb565, Format16bppArgb1555, Format24bppRgb, Format32bppRgb, Format32bppArgb, Format32bppPArgb, Format48bppRgb, Format64bppArgb, Format64bppPArgb, Max).  
    * `OutputQuality`: Determine the output image quality, A quality level of 0 corresponds to the greatest compression, and a quality level of 100 corresponds to the least compression (Default 90).  
    * `PagePositionType`: Determine the page number position of the output image (Default None)(None, TopLeft, TopRight, BottomLeft, BottomRight).  
+   * `PageSizeAffectByZoom`: Determines whether the page number size is affected by the zoom feature (Default false).  
 
 1. Body
    * `MarginLeft`: Determines the left margin width of the output image (Default 30).  
@@ -134,8 +135,13 @@ Novel eBook images or scanned image files.
    * `MarginBottom`: Determines the bottom margin width of the output image (Default 30).  
    * `Leading`: Determine the output image line spacing width (Default 30).  
 
-1. Head & Footer
-   * `PositionType`: Determine the header/footer position of the output image (Default None)(None, TopLeft, TopRight, BottomLeft, BottomRight).  
+1. Head
+   * `HeadPositionType`: Determine the header position of the output image (Default None)(None, TopLeft, TopRight, BottomLeft, BottomRight).  
+   * `HeadSizeAffectByZoom`: Determines whether the header size is affected by the zoom feature (Default false).  
+
+1. Footer
+   * `FooterPositionType`: Determine the footer position of the output image (Default None)(None, TopLeft, TopRight, BottomLeft, BottomRight).  
+   * `FooterSizeAffectByZoom`: Determines whether the footer size is affected by the zoom feature (Default false).  
 
 
 ### EpubAozora

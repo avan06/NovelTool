@@ -566,6 +566,19 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false|3_Generate|1_Output|Determines whether the page number size is affected by " +
+            "the zoom feature (Default false)")]
+        public global::OptionTreeView.Option<System.Boolean> PageSizeAffectByZoom {
+            get {
+                return ((global::OptionTreeView.Option<System.Boolean>)(this["PageSizeAffectByZoom"]));
+            }
+            set {
+                this["PageSizeAffectByZoom"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30|3_Generate|2_Body|Determines the left margin width of the output image (Defaul" +
             "t 30)")]
         public global::OptionTreeView.Option<System.Int32> MarginLeft {
@@ -643,6 +656,19 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false|3_Generate|3_Head|Determines whether the header size is affected by the zoo" +
+            "m feature (Default false)")]
+        public global::OptionTreeView.Option<System.Boolean> HeadSizeAffectByZoom {
+            get {
+                return ((global::OptionTreeView.Option<System.Boolean>)(this["HeadSizeAffectByZoom"]));
+            }
+            set {
+                this["HeadSizeAffectByZoom"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("None|3_Generate|3_Footer|Determine the footer position of the output image (Defau" +
             "lt None)")]
         public global::OptionTreeView.Option<NovelTool.PositionType> FooterPositionType {
@@ -651,6 +677,19 @@ namespace NovelTool.Properties {
             }
             set {
                 this["FooterPositionType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("false|3_Generate|3_Footer|Determines whether the footer size is affected by the z" +
+            "oom feature (Default false)")]
+        public global::OptionTreeView.Option<System.Boolean> FooterSizeAffectByZoom {
+            get {
+                return ((global::OptionTreeView.Option<System.Boolean>)(this["FooterSizeAffectByZoom"]));
+            }
+            set {
+                this["FooterSizeAffectByZoom"] = value;
             }
         }
         

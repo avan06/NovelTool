@@ -128,6 +128,9 @@
     <Setting Name="PagePositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
       <Value Profile="(Default)">None|3_Generate|1_Output|Determine the page number position of the output image (Default None)</Value>
     </Setting>
+    <Setting Name="PageSizeAffectByZoom" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)">false|3_Generate|1_Output|Determines whether the page number size is affected by the zoom feature (Default false)</Value>
+    </Setting>
     <Setting Name="MarginLeft" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
       <Value Profile="(Default)">30|3_Generate|2_Body|Determines the left margin width of the output image (Default 30)</Value>
     </Setting>
@@ -146,8 +149,14 @@
     <Setting Name="HeadPositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
       <Value Profile="(Default)">None|3_Generate|3_Head|Determine the header position of the output image (Default None)</Value>
     </Setting>
+    <Setting Name="HeadSizeAffectByZoom" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)">false|3_Generate|3_Head|Determines whether the header size is affected by the zoom feature (Default false)</Value>
+    </Setting>
     <Setting Name="FooterPositionType" Type="OptionTreeView.Option&lt;NovelTool.PositionType&gt;" Scope="User">
       <Value Profile="(Default)">None|3_Generate|3_Footer|Determine the footer position of the output image (Default None)</Value>
+    </Setting>
+    <Setting Name="FooterSizeAffectByZoom" Type="OptionTreeView.Option&lt;System.Boolean&gt;" Scope="User">
+      <Value Profile="(Default)">false|3_Generate|3_Footer|Determines whether the footer size is affected by the zoom feature (Default false)</Value>
     </Setting>
     <Setting Name="TextFontSize" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
       <Value Profile="(Default)">30|4_EpubAozora|TextFont|Determine the font size of Epub or Aozora eBooks displayed in GenerateView (Default 30)</Value>

@@ -42,6 +42,13 @@ namespace NovelTool
         private Color OutputForeColor;
         private float ForeColorRate;
 
+        private PositionType HeadPositionType;
+        private PositionType FooterPositionType;
+        private PositionType PagePositionType;
+        private bool HeadSizeAffectByZoom;
+        private bool FooterSizeAffectByZoom;
+        private bool PageSizeAffectByZoom;
+
         private float TextFontSize;
         private FontFamily TextFontFamily;
         private FontStyle FontTextStyle;
@@ -105,14 +112,14 @@ namespace NovelTool
         {
             (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = GetSaveInfo();
 
-            ParseOutput(-1, true);
-
-            for (int idx = 0; idx < OutputImgs.Count; idx++)
+            for (int outputIdx = 0; outputIdx < outputCount; outputIdx++)
             {
+                ParseOutput(outputIdx);
+
                 string name = mainForm.Filter.name != null ?
-                    string.Format(@"{0}_{1}", idx, mainForm.Filter.name) :
-                    string.Format(@"{0}", idx);
-                Bitmap result = (Bitmap)OutputImgs[idx];
+                    string.Format(@"{0}_{1}", outputIdx, mainForm.Filter.name) :
+                    string.Format(@"{0}", outputIdx);
+                Bitmap result = (Bitmap)OutputImgs[0];
                 if (!(result.Tag is bool))
                 { //Bitmap Not Illustration
                     if (OutputAdjustColorCheck) ImageTool.ChangeForeColor(result, OutputForeColor.ToArgb(), OutputBackColor.ToArgb(), ForeColorRate);
@@ -129,6 +136,7 @@ namespace NovelTool
                     ImageTool.SaveImage(outputImage, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
                 }
                 result.Dispose();
+                GC.Collect();
             }
         }
 
@@ -239,6 +247,13 @@ namespace NovelTool
             OutputBackColor = Color.FromKnownColor(Properties.Settings.Default.OutputBackColor.Value);
             OutputForeColor = Color.FromKnownColor(Properties.Settings.Default.OutputForeColor.Value);
             ForeColorRate = Properties.Settings.Default.ForeColorRate.Value;
+
+            HeadPositionType = Properties.Settings.Default.HeadPositionType.Value; //Head輸出位置
+            FooterPositionType = Properties.Settings.Default.FooterPositionType.Value; //Footer輸出位置
+            PagePositionType = Properties.Settings.Default.PagePositionType.Value; //Page輸出位置
+            HeadSizeAffectByZoom = Properties.Settings.Default.HeadSizeAffectByZoom.Value;
+            FooterSizeAffectByZoom = Properties.Settings.Default.FooterSizeAffectByZoom.Value;
+            PageSizeAffectByZoom = Properties.Settings.Default.PageSizeAffectByZoom.Value;
 
             TextFontSize = Properties.Settings.Default.TextFontSize.Value;
             TextFontFamily = Properties.Settings.Default.TextFontFamily.Value;
@@ -416,6 +431,7 @@ namespace NovelTool
 
             ToolStripPageBox.SelectedItem = outputIdx;
 
+            GC.Collect();
             return outputIdx;
         }
 
@@ -745,18 +761,15 @@ namespace NovelTool
                 {
                     (destImage, destPoint) = CreateDestImage(OutputWidth, OutputHeight, srcImage);
 
-                    PositionType HeadPositionType = Properties.Settings.Default.HeadPositionType.Value; //Head輸出位置
-                    PositionType FooterPositionType = Properties.Settings.Default.FooterPositionType.Value; //Footer輸出位置
-                    PositionType PagePositionType = Properties.Settings.Default.PagePositionType.Value; //Page輸出位置
-
                     if (!isEpubAozora)
                     {
                         if (srcImage == null) srcImage = OpenImage(fullPath);
 
-                        GenerateDrawTitle(HeadPositionType, columnHeadList, srcImage, ref destImage);
-                        GenerateDrawTitle(FooterPositionType, columnFooterList, srcImage, ref destImage);
+                        GenerateDrawTitle(HeadPositionType, HeadSizeAffectByZoom, columnHeadList, srcImage, ref destImage);
+                        GenerateDrawTitle(FooterPositionType, FooterSizeAffectByZoom, columnFooterList, srcImage, ref destImage);
                     }
-                    GenerateDrawText(PagePositionType, outputIdx.ToString(), srcImage, ref destImage);
+                    var pageCnt = outputIdx != -1 ? outputIdx : outputImgs.Count;
+                    GenerateDrawText(PagePositionType, pageCnt.ToString(), srcImage, ref destImage);
                 }
                 else (destImage, destPoint) = CreateDestImage(1, 1, null);
             }
@@ -771,14 +784,15 @@ namespace NovelTool
         /// <param name="srcImage">The source Bitmap currently read</param>
         /// <param name="destImage">The currently generated Bitmap</param>
         /// <param name="initSize">Margin size of print header or footer</param>
-        private void GenerateDrawTitle(PositionType PositionTypeBoxTitle,
+        private void GenerateDrawTitle(PositionType PositionTypeBoxTitle, bool SizeAffectByZoom,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnTitleList,
             Bitmap srcImage, ref Bitmap destImage, int initSize = 10)
         {
             if (PositionTypeBoxTitle == PositionType.None || columnTitleList == null || columnTitleList.Count <= 0) return;
 
             float offsetX = -1;
-            int modeWidth = (int)(mainForm.Modes.Width * mainForm.ZoomFactor);
+            float zoomFactor = SizeAffectByZoom ? mainForm.ZoomFactor : 1;
+            int modeWidth = (int)(mainForm.Modes.Width * zoomFactor);
             Point destPointTitle = new Point(initSize, initSize);
             if (PositionTypeBoxTitle == PositionType.TopRight) destPointTitle = new Point(OutputWidth - initSize, initSize);
             else if (PositionTypeBoxTitle == PositionType.BottomRight) destPointTitle = new Point(OutputWidth - initSize, OutputHeight - initSize);
@@ -792,9 +806,9 @@ namespace NovelTool
                 for (int cIdx = columnTitleList.Count - 1; cIdx >= 0; cIdx--)
                 {
                     var columnTitle = columnTitleList[cIdx];
-                    int newWidth = (int)(columnTitle.Width * mainForm.ZoomFactor);
-                    int newHeight = (int)(columnTitle.Height * mainForm.ZoomFactor);
-                    int blankWidth = offsetX != -1 ? (int)((offsetX - columnTitle.X - columnTitle.Width) * mainForm.ZoomFactor) : 0;
+                    int newWidth = (int)(columnTitle.Width * zoomFactor);
+                    int newHeight = (int)(columnTitle.Height * zoomFactor);
+                    int blankWidth = offsetX != -1 ? (int)((offsetX - columnTitle.X - columnTitle.Width) * zoomFactor) : 0;
                     blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
                     DrawTitle(columnTitle, newWidth, newHeight, -blankWidth, true, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                     offsetX = columnTitle.X;
@@ -809,9 +823,9 @@ namespace NovelTool
                 for (int cIdx = 0; cIdx < columnTitleList.Count; cIdx++)
                 {
                     var columnTitle = columnTitleList[cIdx];
-                    int newWidth = (int)(columnTitle.Width * mainForm.ZoomFactor);
-                    int newHeight = (int)(columnTitle.Height * mainForm.ZoomFactor);
-                    int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * mainForm.ZoomFactor) : 0;
+                    int newWidth = (int)(columnTitle.Width * zoomFactor);
+                    int newHeight = (int)(columnTitle.Height * zoomFactor);
+                    int blankWidth = offsetX != -1 ? (int)((columnTitle.X - offsetX) * zoomFactor) : 0;
                     blankWidth = blankWidth > modeWidth ? modeWidth : blankWidth;
                     DrawTitle(columnTitle, newWidth, newHeight, blankWidth, false, destPointTitle.Y == OutputHeight - initSize, srcImage, ref destImage, ref destPointTitle);
                     offsetX = columnTitle.X + columnTitle.Width;
@@ -897,10 +911,10 @@ namespace NovelTool
                 format.LineAlignment = StringAlignment.Far;
             }
 
-            DrawText(text, format, ref destImage, ref destPoint);
+            DrawText(text, format, ref destImage, ref destPoint, PageSizeAffectByZoom);
         }
 
-        private void DrawText(string text, StringFormat format, ref Bitmap destImage, ref Point destPoint)
+        private void DrawText(string text, StringFormat format, ref Bitmap destImage, ref Point destPoint, bool PageZoomAffect = false)
         {
             using (Graphics gr = Graphics.FromImage(destImage))
             {
@@ -914,7 +928,7 @@ namespace NovelTool
                 using (var foreBrush = new SolidBrush(OutputForeColor))
                 using (GraphicsPath textPath = new GraphicsPath())
                 {
-                    textPath.AddString(text, TextFontFamily, (int)FontTextStyle, TextFontSize * mainForm.ZoomFactor, destPoint, format);
+                    textPath.AddString(text, TextFontFamily, (int)FontTextStyle, TextFontSize * (PageZoomAffect ? mainForm.ZoomFactor : 1), destPoint, format);
                     gr.FillPath(foreBrush, textPath);
                 }
             }

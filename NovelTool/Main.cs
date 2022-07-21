@@ -166,6 +166,7 @@ namespace NovelTool
 
             PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
         }
+
         private Bitmap PictureBox_Zoom(Bitmap bitMap, double zoomFactor)
         {
             if (bitMap == null) return null;
@@ -335,7 +336,7 @@ namespace NovelTool
                     FileListView.BeginUpdate();
                     FileListView.Items.Clear();
                     PageDatas.Clear();
-                    sourceImg = null;
+                    if (sourceImg != null) sourceImg.Dispose();
                     foreach (string filePath in fileEntries)
                     {
                         DirectoryInfo file = new DirectoryInfo(filePath);
@@ -436,6 +437,7 @@ namespace NovelTool
                 if (pageData != null) pageData.isIllustration = true;
             }
         }
+
         private void FileListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (!e.IsSelected) return;
@@ -477,11 +479,6 @@ namespace NovelTool
             Color RectColumnColor = Color.FromKnownColor(Properties.Settings.Default.RectColumnColor.Value);
             Color RectColumnRubyColor = Color.FromKnownColor(Properties.Settings.Default.RectColumnRubyColor.Value);
 
-            Pen penHead = new Pen(RectHeadColor, RectViewWidth);
-            Pen penBody = new Pen(RectBodyColor, RectViewWidth);
-            Pen penFooter = new Pen(RectFooterColor, RectViewWidth);
-            Pen penColumn = new Pen(RectColumnColor, RectViewWidth);
-            Pen penColumnRuby = new Pen(RectColumnRubyColor, RectViewWidth);
             try
             {
                 if (PicBox.Image != null) PicBox.Image.Dispose();
@@ -495,8 +492,14 @@ namespace NovelTool
 
                 PicBox.Image = img;
                 PicBox.Location = Point.Empty;
+                if (sourceImg != null) sourceImg.Dispose();
                 sourceImg = (Bitmap)PicBox.Image;
                 sourceImg.Tag = item.Index;
+                using (Pen penHead = new Pen(RectHeadColor, RectViewWidth))
+                using (Pen penBody = new Pen(RectBodyColor, RectViewWidth))
+                using (Pen penFooter = new Pen(RectFooterColor, RectViewWidth))
+                using (Pen penColumn = new Pen(RectColumnColor, RectViewWidth))
+                using (Pen penColumnRuby = new Pen(RectColumnRubyColor, RectViewWidth))
                 using (Graphics gr = Graphics.FromImage(PicBox.Image))
                 {
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
@@ -505,6 +508,7 @@ namespace NovelTool
                     gr.DrawRectangles(penFooter, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.rectFooter) });
                     DrawRectangles(gr, rTypes, pageData.columnBodyList, drawRectObj, penColumn, penColumnRuby);
                 }
+                foreach (var drawRect in drawRectObj) drawRect.Value.pen.Dispose();
 
                 if (zoomFactor != 1) PicBox.Image = PictureBox_Zoom(sourceImg, zoomFactor);
             }
@@ -516,6 +520,7 @@ namespace NovelTool
             finally
             {
                 if (fs != null) fs.Dispose();
+                GC.Collect();
             }
         }
         private void FileListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -777,60 +782,62 @@ namespace NovelTool
             int AnalysisTaskThreadLimit = Properties.Settings.Default.AnalysisTaskThreadLimit.Value;
             Stopwatch tickerMajor = Stopwatch.StartNew();
             Stopwatch tickerMinor = null;
-            SemaphoreSlim semaphore = new SemaphoreSlim(AnalysisTaskThreadLimit);
-            Invoke(new MethodInvoker(() => { ToolMsg.Text = string.Format("Analysis {0} Image, start...", PageDatas.Count); }));
-            
-            newAnalysisWorker.ReportProgress(0);
-            #region AnalysisImage
-            Task<(string, TimeSpan)>[] tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
-            float calIdx = 0;
-            counts = (new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>(), 
-                new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>(), 
-                new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>());
-            for (int idx = 0; idx < PageDatas.Count; ++idx)
+            using (SemaphoreSlim semaphore = new SemaphoreSlim(AnalysisTaskThreadLimit))
             {
-                if (newAnalysisWorker.CancellationPending) break;
+                Invoke(new MethodInvoker(() => { ToolMsg.Text = string.Format("Analysis {0} Image, start...", PageDatas.Count); }));
 
-                PageData pageData = PageDatas[idx];
-                FileStream fs = null;
-                Image pageImg = null;
-                tasks[idx] = Task.Run<(string, TimeSpan)>(() =>
+                newAnalysisWorker.ReportProgress(0);
+                #region AnalysisImage
+                Task<(string, TimeSpan)>[] tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
+                float calIdx = 0;
+                counts = (new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>(),
+                    new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>(),
+                    new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>());
+                for (int idx = 0; idx < PageDatas.Count; ++idx)
                 {
-                    try
-                    {
-                        semaphore.Wait();
-                        tickerMinor = Stopwatch.StartNew();
-                        fs = File.OpenRead(pageData.path + @"\" + pageData.name);
-                        pageImg = Image.FromStream(fs);
+                    if (newAnalysisWorker.CancellationPending) break;
 
-                        if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData))
+                    PageData pageData = PageDatas[idx];
+                    FileStream fs = null;
+                    Image pageImg = null;
+                    tasks[idx] = Task.Run<(string, TimeSpan)>(() =>
+                    {
+                        try
                         {
-                            ImageTool.AnalysisPageY(pageData);
-                            if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
-                            if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
-                            if (pageData.xStatesFooter != null) ImageTool.AnalysisPageX(pageData.rectFooter, pageData.xStatesFooter, out pageData.columnFooterList);
-                            if (pageData.columnBodyList != null) ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
-                        }
+                            semaphore.Wait();
+                            tickerMinor = Stopwatch.StartNew();
+                            fs = File.OpenRead(pageData.path + @"\" + pageData.name);
+                            pageImg = Image.FromStream(fs);
 
-                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 70),
-                            new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
-                        return (pageData.name, tickerMinor.Elapsed);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                        throw;
-                    }
-                    finally
-                    {
-                        if (pageImg != null) pageImg.Dispose();
-                        if (fs != null) fs.Dispose();
-                        semaphore.Release();
-                    }
-                });
+                            if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData))
+                            {
+                                ImageTool.AnalysisPageY(pageData);
+                                if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
+                                if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
+                                if (pageData.xStatesFooter != null) ImageTool.AnalysisPageX(pageData.rectFooter, pageData.xStatesFooter, out pageData.columnFooterList);
+                                if (pageData.columnBodyList != null) ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
+                            }
+
+                            newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 70),
+                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
+                            return (pageData.name, tickerMinor.Elapsed);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                            throw;
+                        }
+                        finally
+                        {
+                            if (pageImg != null) pageImg.Dispose();
+                            if (fs != null) fs.Dispose();
+                            semaphore.Release();
+                            GC.Collect();
+                        }
+                    });
+                }
+                using (Task<(string, TimeSpan)[]> whenTasks = Task.WhenAll(tasks)) whenTasks.Wait();
             }
-            Task<(string, TimeSpan)[]> whenTasks = Task.WhenAll(tasks);
-            whenTasks.Wait();
             #endregion
 
             #region CalculateModes
@@ -838,42 +845,44 @@ namespace NovelTool
             #endregion
 
             #region AnalysisEntity
-            semaphore = new SemaphoreSlim(1); //<= For TEST
-            tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
-            calIdx = 0;
-            for (int idx = 0; idx < PageDatas.Count; ++idx)
+            using (SemaphoreSlim semaphore = new SemaphoreSlim(1))
             {
-                if (newAnalysisWorker.CancellationPending) break;
-
-                PageData pageData = PageDatas[idx];
-                tasks[idx] = Task.Run<(string, TimeSpan)>(() =>
+                Task<(string, TimeSpan)>[] tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
+                float calIdx = 0;
+                for (int idx = 0; idx < PageDatas.Count; ++idx)
                 {
-                    try
+                    if (newAnalysisWorker.CancellationPending) break;
+
+                    PageData pageData = PageDatas[idx];
+                    tasks[idx] = Task.Run<(string, TimeSpan)>(() =>
                     {
-                        semaphore.Wait();
-                        tickerMinor = Stopwatch.StartNew();
-                        if (!pageData.isIllustration && pageData.columnBodyList != null)
+                        try
                         {
-                            ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
-                            ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
+                            semaphore.Wait();
+                            tickerMinor = Stopwatch.StartNew();
+                            if (!pageData.isIllustration && pageData.columnBodyList != null)
+                            {
+                                ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
+                                ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
+                            }
+                            newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 30 + 70),
+                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
+                            return (pageData.name, tickerMinor.Elapsed);
                         }
-                        newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 30 + 70),
-                            new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
-                        return (pageData.name, tickerMinor.Elapsed);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                        throw;
-                    }
-                    finally
-                    {
-                        semaphore.Release();
-                    }
-                });
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                            throw;
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                            GC.Collect();
+                        }
+                    });
+                }
+                using (Task<(string, TimeSpan)[]> whenTasks = Task.WhenAll(tasks)) whenTasks.Wait();
             }
-            whenTasks = Task.WhenAll(tasks);
-            whenTasks.Wait();
             #endregion
         }
 

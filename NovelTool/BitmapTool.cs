@@ -380,6 +380,7 @@ namespace NovelTool
         public static Bitmap ConvolutionFilter(Bitmap sourceBitmap, double[,] filterMatrix, double factor = 1, int bias = 0, bool grayscale = false)
         {
             if (sourceBitmap == null) return null;
+
             BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
             byte[] resultBuffer = new byte[sourceData.Stride * sourceData.Height];
