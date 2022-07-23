@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -494,7 +493,15 @@ namespace NovelTool
                             if (columnRuby.Entitys != null) columnRuby = ImageTool.NewEntitys();
 
                             if (Entitys[Entitys.Count - 1].Height < mainForm.Modes.Heigh && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
-                                destPoint.Y += (int)(mainForm.Modes.HeighMin * mainForm.ZoomFactor); //每行非句尾的最後一字(句子連接下一頁)，若高度不到通常高度(例如符號字)，則增加空白輸出
+                            { //每行非句尾的最後一字(句子連接下一頁)，若高度不到通常高度(例如符號字)，則增加空白輸出
+                                if (Entitys[Entitys.Count - 1].Height < mainForm.Modes.HeighMin) destPoint.Y += (int)(mainForm.Modes.HeighMin * mainForm.ZoomFactor);
+                                else
+                                {
+                                    var blankSize1 = (int)((mainForm.Modes.Heigh - Entitys[Entitys.Count - 1].Height) * mainForm.ZoomFactor);
+                                    var blankSize2 = (int)(mainForm.Modes.HeighMin * 0.2 * mainForm.ZoomFactor);
+                                    destPoint.Y += blankSize1 < blankSize2 ? blankSize1 : blankSize2;
+                                }
+                            }
                             else if (RType == RectType.BodyOut && Entitys[Entitys.Count - 1].RType == RectType.EntityEnd)
                                 AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                         }
