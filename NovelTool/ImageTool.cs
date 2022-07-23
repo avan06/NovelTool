@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace NovelTool
 {
     public static class ImageTool
     {
-        public static bool AnalysisPointStates(in Bitmap bmp, in PageData pageData, bool forcedAnalysis=false)
+        public static bool AnalysisPointStates(Bitmap bmp, PageData pageData, bool forcedAnalysis=false)
         {
             GraphicsUnit units = GraphicsUnit.Pixel;
-            pageData.rectImg = NewEntity(bmp.GetBounds(ref units), RectType.None); //RectangleF rectImg = bmp.GetBounds(ref units);
-            BitmapTool bmpTool = new BitmapTool(bmp, true, true);
+            pageData.RectImg = NewEntity(bmp.GetBounds(ref units), RectType.None); //RectangleF rectImg = bmp.GetBounds(ref units);
             HashSet<int> colorDict = new HashSet<int>();
-            Dictionary<(int, int), int> pStates = new Dictionary<(int, int), int>();
+            Dictionary<(int, int), float> pStates = new Dictionary<(int, int), float>();
             HashSet<int> xStateSet = new HashSet<int>();
             HashSet<int> yStateSet = new HashSet<int>();
 
@@ -26,46 +27,57 @@ namespace NovelTool
             byte ConfirmWhiteLevel = Properties.Settings.Default.ConfirmWhiteLevel.Value; //指定白色數值
             int IgnoreMinDetectXSize = Properties.Settings.Default.IgnoreMinDetectXSize.Value;
             int IgnoreMinDetectYSize = Properties.Settings.Default.IgnoreMinDetectYSize.Value;
+            float IgnoreBrightness = Properties.Settings.Default.IgnoreBrightness.Value;
 
-            for (int y = 0; y < bmpTool.Height; y++)
+            using (BitmapTool bmpTool = new BitmapTool(bmp, true, true))
             {
-                if (y < IgnoreMinDetectYSize || y > bmpTool.Height - IgnoreMinDetectYSize) continue;
-                for (int x = 0; x < bmpTool.Width; x++)
+                for (int y = 0; y < bmpTool.Height; y++)
                 {
-                    if (x < IgnoreMinDetectXSize || x > bmpTool.Width - IgnoreMinDetectXSize) continue;
-                    int argb = bmpTool.GetPixel(x, y);
-                    bool isBlack = IsBlack(argb, out byte gray, ConfirmWhiteLevel);
-                    if (isBlack) pStates.Add((x, y), argb);
-                    if (forcedAnalysis) continue;
-                    if (!isBlack && !colorDict.Contains(argb)) colorDict.Add(argb);
-                    if (colorDict.Count > IllustrationMinColorsLevel || pStates.Count > IllustrationMinNonWhiteLevel) //2000色以上視為插圖 or 前景數量過多判定為插圖
+                    if (y < IgnoreMinDetectYSize || y > bmpTool.Height - IgnoreMinDetectYSize) continue;
+                    for (int x = 0; x < bmpTool.Width; x++)
                     {
-                        pageData.isIllustration = true;
-                        return false;
+                        if (x < IgnoreMinDetectXSize || x > bmpTool.Width - IgnoreMinDetectXSize) continue;
+                        int argb = bmpTool.GetPixel(x, y);
+                        bool isBlack = IsBlack(argb, out _, ConfirmWhiteLevel);
+                        if (isBlack)
+                        {
+                            Color foreColor = Color.FromArgb(argb);
+                            float brightness = foreColor.GetBrightness();
+
+                            if (brightness < IgnoreBrightness) pStates.Add((x, y), brightness);
+                        }
+                        if (forcedAnalysis) continue;
+                        if (!isBlack && !colorDict.Contains(argb)) colorDict.Add(argb);
+                        if (colorDict.Count > IllustrationMinColorsLevel || pStates.Count > IllustrationMinNonWhiteLevel) //2000色以上視為插圖 or 前景數量過多判定為插圖
+                        {
+                            pageData.IsIllustration = true;
+                            return false;
+                        }
                     }
                 }
-            }
 
-            foreach (KeyValuePair<(int X, int Y), int> item in pStates)
-            {
-                if (!xStateSet.Contains(item.Key.X)) xStateSet.Add(item.Key.X);
-                if (!yStateSet.Contains(item.Key.Y)) yStateSet.Add(item.Key.Y);
-            }
-            if (!forcedAnalysis && bmpTool.Width - xStateSet.Count < 50 && bmpTool.Height - yStateSet.Count < 50)
-            {
-                pageData.isIllustration = true;
-                pageData.pStates = pStates;
-                return false;
+                foreach (KeyValuePair<(int X, int Y), float> item in pStates)
+                {
+                    if (!xStateSet.Contains(item.Key.X)) xStateSet.Add(item.Key.X);
+                    if (!yStateSet.Contains(item.Key.Y)) yStateSet.Add(item.Key.Y);
+                }
+                if (!forcedAnalysis && bmpTool.Width - xStateSet.Count < 50 && bmpTool.Height - yStateSet.Count < 50)
+                { //當X軸與Y軸幾乎都是前景時，判定為插圖
+                    pageData.IsIllustration = true;
+                    pageData.StatesP = pStates;
+                    return false;
+                }
             }
             List<int> xStateList = new List<int>(xStateSet);
             List<int> yStateList = new List<int>(yStateSet);
             xStateList.Sort();
             yStateList.Sort();
 
-            pageData.pStates = pStates;
-            pageData.xStates = xStateList;
-            pageData.yStates = yStateList;
+            pageData.StatesP = pStates;
+            pageData.StatesX = xStateList;
+            pageData.StatesY = yStateList;
 
+            GC.Collect();
             return true;
         }
         
@@ -95,9 +107,9 @@ namespace NovelTool
         public static void AnalysisPageY(in PageData pageData)
         {
             int prevY = 0;
-            (RectType RType, float X, float Y, float Width, float Height) bounds = pageData.rectImg, rect = NewEntity(), rectHead = NewEntity(), rectBody = NewEntity(), rectFooter = NewEntity();
-            Dictionary<(int, int), int> pStates = pageData.pStates;
-            List<int> xStates = pageData.xStates, yStates = pageData.yStates;
+            (RectType RType, float X, float Y, float Width, float Height) bounds = pageData.RectImg, rect = NewEntity(), rectHead = NewEntity(), rectBody = NewEntity(), rectFooter = NewEntity();
+            Dictionary<(int, int), float> pStates = pageData.StatesP;
+            List<int> xStates = pageData.StatesX, yStates = pageData.StatesY;
             float HeadMinRate = Properties.Settings.Default.HeadMinRate.Value;
             float FooterMinRate = Properties.Settings.Default.FooterMinRate.Value;
             int ConfirmHeadGap = Properties.Settings.Default.ConfirmHeadGap.Value;
@@ -163,7 +175,7 @@ namespace NovelTool
                 rectBody = UnionEntity(rectBody, rectFooter);
                 rectFooter = NewEntity(); //RectangleF.Empty;
             }
-            if (rectBody.Y - bounds.Y >= bounds.Height * 0.15) pageData.isIllustration = true; //前景頂端由上往下介於整頁 15%以內才繼續分析內容，否則視為插圖
+            if (rectBody.Y - bounds.Y >= bounds.Height * 0.15) pageData.IsIllustration = true; //前景頂端由上往下介於整頁 15%以內才繼續分析內容，否則視為插圖
 
             if (rectHead.RType == RectType.None && rectBody.RType == RectType.None && rectFooter.RType == RectType.None) return;
 
@@ -202,7 +214,7 @@ namespace NovelTool
             {
                 List<int> xStatesHeadList = new List<int>(xStatesHead);
                 xStatesHeadList.Sort();
-                pageData.xStatesHead = xStatesHeadList;
+                pageData.StatesXHead = xStatesHeadList;
                 rectHead.X = xStatesHeadList[0];
                 rectHead.Width = xStatesHeadList[xStatesHeadList.Count - 1] + 1 - rectHead.X;
             }
@@ -210,7 +222,7 @@ namespace NovelTool
             {
                 List<int> xStatesBodyList = new List<int>(xStatesBody);
                 xStatesBodyList.Sort();
-                pageData.xStatesBody = xStatesBodyList;
+                pageData.StatesXBody = xStatesBodyList;
                 rectBody.X = xStatesBodyList[0];
                 rectBody.Width = xStatesBodyList[xStatesBodyList.Count - 1] + 1 - rectBody.X;
             }
@@ -218,13 +230,13 @@ namespace NovelTool
             {
                 List<int> xStatesFooterList = new List<int>(xStatesFooter);
                 xStatesFooterList.Sort();
-                pageData.xStatesFooter = xStatesFooterList;
+                pageData.StatesXFooter = xStatesFooterList;
                 rectFooter.X = xStatesFooterList[0];
                 rectFooter.Width = xStatesFooterList[xStatesFooterList.Count - 1] + 1 - rectFooter.X;
             }
-            pageData.rectHead = rectHead;
-            pageData.rectBody = rectBody;
-            pageData.rectFooter = rectFooter;
+            pageData.RectHead = rectHead;
+            pageData.RectBody = rectBody;
+            pageData.RectFooter = rectFooter;
         }
 
         /// <summary>
@@ -265,7 +277,7 @@ namespace NovelTool
         /// <summary>
         /// 分析 ColumnRects 將每行文字分離，並累計文字範圍上下左右位置與實體寬高，之後會用來確認眾數(Mode)
         /// </summary>
-        public static void AnalysisColumnRects(Dictionary<(int X, int Y), int> pStates, (RectType RType, float X, float Y, float Width, float Height) rectRegion,
+        public static void AnalysisColumnRects(Dictionary<(int X, int Y), float> pStates, (RectType RType, float X, float Y, float Width, float Height) rectRegion,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects,
             in (ConcurrentDictionary<float, int> TopDict, ConcurrentDictionary<float, int> BottomDict,
                 ConcurrentDictionary<float, int> LeftDict, ConcurrentDictionary<float, int> RightDict,
@@ -280,21 +292,21 @@ namespace NovelTool
                 var columnRect = columnRects[idx];
                 float entityY = 0;
                 counts.WidthDict.AddOrUpdate(columnRect.Width, 1, (k, v) => v + 1);
-                for (float Y = columnRect.Y; Y <= columnRect.Y + columnRect.Height; Y++)
-                {
-                    for (float X = columnRect.X; X <= columnRect.X + columnRect.Width; X++)
-                    {
-                        if (pStates.ContainsKey(((int)X, (int)Y)))
+                for (float yIdx = columnRect.Y; yIdx <= columnRect.Y + columnRect.Height; yIdx++)
+                { //loop Y
+                    for (float xIdx = columnRect.X; xIdx <= columnRect.X + columnRect.Width; xIdx++)
+                    { //loop X
+                        if (pStates.ContainsKey(((int)xIdx, (int)yIdx)))
                         {
-                            if (entityY == 0) entityY = Y;
+                            if (entityY == 0) entityY = yIdx;
                             break; //有值代表還是同一字
                         }
-                        if (entityY == 0 || X < columnRect.X + columnRect.Width) continue; //還在空白處或還未到最右側不處理
+                        if (entityY == 0 || xIdx < columnRect.X + columnRect.Width) continue; //還在空白處或還未到最右側不處理
                         if (columnRect.Entitys == null) columnRect.Entitys = new List<(RectType RType, float X, float Y, float Width, float Height)>();
-                        float entityHeight = Y - entityY;
+                        float entityHeight = yIdx - entityY;
                         var entityPrev = columnRect.Entitys.Count > 1 ? columnRect.Entitys[columnRect.Entitys.Count -2] : (RectType.None, 0, 0, 0, 0);
 
-                        if (Y - entityPrev.Y - entityPrev.Height < 50 || entityHeight > 2)
+                        if (yIdx - entityPrev.Y - entityPrev.Height < 50 || entityHeight > 2)
                         {
                             counts.HeightDict.AddOrUpdate(entityHeight, 1, (k, v) => v + 1);
                             columnRect.Entitys.Add((RectType.EntityBody, columnRect.X, entityY, columnRect.Width, entityHeight));
@@ -313,12 +325,12 @@ namespace NovelTool
         }
 
         /// <summary>
-        /// 
+        /// 分析前一次AnalysisImage的ColumnRects結果，確認是否需要修正: 合併Column、設定Ruby、分離Column、分離Entity...
         /// </summary>
         /// <param name="pStates"></param>
         /// <param name="columnRects"></param>
         /// <param name="modes"></param>
-        public static void AnalysisEntityHeighWidth(Dictionary<(int X, int Y), int> pStates,
+        public static void AnalysisEntityHeighWidth(Dictionary<(int X, int Y), float> pStates,
             List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnRects,
             (float Top, float Bottom, float Left, float Right, float Width, float Heigh, float TopMin, float BottomMin, float LeftMin, float RightMin,
                 float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes)
@@ -331,25 +343,47 @@ namespace NovelTool
 
                 if (entitys == null || entitys.Count == 0) continue;
 
+                var columnRectPrev = idx - 1 >= 0 ? columnRects[idx - 1] : NewEntitys(); //  【> 0】 =>  【>= 0】
+                var columnRectNext = idx + 1 < columnRects.Count ? columnRects[idx + 1] : NewEntitys();
+                float colSpacePrev = columnRect.X - columnRectPrev.X - columnRectPrev.Width;
+                float colSpaceNext = columnRectNext.X - columnRect.X - columnRect.Width;
                 if (columnRect.Width < modes.WidthMin)
                 { //欄位寬度小於最小實體寬度
                     bool isUnion = false;
-                    var columnRectPrev = idx - 1 >= 0 ? columnRects[idx - 1] : NewEntitys(); //  【> 0】 =>  【>= 0】
-                    var columnRectNext = idx + 1 < columnRects.Count ? columnRects[idx + 1] : NewEntitys();
-                    float colSpace = columnRect.X - columnRectPrev.X - columnRectPrev.Width;
-                    if (colSpace > 4 && columnRectNext.Entitys != null && columnRectNext.Entitys.Count > 0 && columnRectNext.X > columnRect.X)
+                    if (colSpacePrev > modes.WidthMin * 0.3 && columnRectNext.Entitys != null && columnRectNext.Entitys.Count > 0 && columnRectNext.X > columnRect.X)
                     { //與前一列分離，且存在下一列
                         float newWidth = columnRectNext.X + columnRectNext.Width - columnRect.X;
                         if (newWidth < modes.WidthMax)
-                        { //前後兩列寬度小於最大實體寬度，則判斷合併
+                        { //目前與後一列寬度小於最大實體寬度，則判斷合併
                             isUnion = true;
                             columnRect = UnionEntitys(columnRect, columnRectNext);
                             columnRects.RemoveAt(idx + 1);
                         }
                     }
+                    else if (colSpaceNext > modes.WidthMin * 0.3 && columnRectPrev.Entitys != null && columnRectPrev.Entitys.Count > 0 && columnRect.X > columnRectPrev.X)
+                    { //與下一列分離，且存在前一列
+                        float newWidth = columnRect.X + columnRect.Width - columnRectPrev.X;
+                        if (newWidth < modes.WidthMax)
+                        { //前一列與目前寬度小於最大實體寬度，則判斷合併
+                            isUnion = true;
+                            columnRect = UnionEntitys(columnRectPrev, columnRect);
+                            columnRects.RemoveAt(idx);
+                            idx--;
+                        }
+                    }
+                    if (!isUnion && colSpacePrev > modes.WidthMin * 0.3 && colSpaceNext > modes.WidthMin * 0.3)
+                    { //與前後列分離，擴大column不足的寬度
+                        var colSpaceWidth = Math.Abs(colSpaceNext - colSpacePrev); //前後列空白差距
+                        //if (colSpaceWidth > 1) colSpaceWidth -= 1;
+                        var underWidth = modes.Width - columnRect.Width; //目前column不足的寬度
+                        var fillWidth = underWidth < colSpaceWidth ? underWidth : colSpaceWidth; //可填充的最大寬度
+                        if (colSpaceNext > colSpacePrev) columnRect.Width += fillWidth;
+                        else columnRect.X -= fillWidth;
+                        isUnion = true;
+                    }
                     if (!isUnion)
-                    {
-                        if (columnRectPrev.RType != RectType.None && colSpace < 4)
+                    { //未執行合併時，確認是否為 Ruby
+                        if (columnRectPrev.RType != RectType.None && colSpacePrev < modes.WidthMin * 0.3)
                         { //與前一列相鄰，判斷為Ruby
                             if (columnRectPrev.RType == RectType.Ruby && columnRect.X + columnRect.Width - columnRectPrev.X < modes.WidthMin)
                             { //前一列也是Ruby，且兩者寬度小於最小實體寬度，則將之合併成為一個Ruby，也許是【い】之類的Ruby被分成兩列
@@ -379,16 +413,16 @@ namespace NovelTool
                 }
                 var columnRuby = new List<(RectType RType, float X, float Y, float Width, float Height)>();
                 for (int eIdx = 0; eIdx < entitys.Count; eIdx++)
-                {
-                    bool isSeparate = false;
+                { //確認Entity是否需要分離
                     var entity = entitys[eIdx];
-                    if (entity.Width > modes.WidthMax && entity.Width <= modes.WidthMax + modes.WidthMin) //寬度大於眾數寬度且不超過大小字寬度合時，判斷是否要分離左右部分
-                    {
+                    if (colSpacePrev > 0 && colSpacePrev < modes.Width * 2 && entity.Width > modes.WidthMax && entity.Width <= modes.WidthMax + modes.WidthMin)
+                    { //與前列未分離過遠(非標題)，寬度大於眾數寬度且不超過大小字寬度合時，判斷是否要分離左右部分，右側為Ruby
+                        bool isSeparate = false;
                         var ruby = NewEntity();
                         for (float yIdx = entity.Y; yIdx <= entity.Y + entity.Height; yIdx++)
-                        {
+                        { //loop entity Y
                             for (float xIdx = entity.X + modes.Width + (float)Math.Round(modes.Width * 0.08); xIdx <= entity.X + entity.Width; xIdx++)
-                            {
+                            { //loop entity X
                                 if (pStates.ContainsKey(((int)xIdx, (int)yIdx)))
                                 {
                                     if (ruby.RType == RectType.None)
@@ -409,59 +443,59 @@ namespace NovelTool
                                 }
                             }
                         }
-                    }
-                    if (isSeparate && entity.Height > modes.HeighMax)
-                    { //欄位左右分離後，判斷是否要上中下字切割分離
-                        var newIdx = eIdx;
-                        var newEntity = NewEntity();
-                        for (float yIdx = entity.Y; yIdx <= entity.Y + entity.Height; yIdx++)
-                        {
-                            for (float xIdx = entity.X; xIdx <= entity.X + modes.Width - (float)Math.Round(modes.Width * 0.08); xIdx++)
-                            {
-                                if (pStates.ContainsKey(((int)xIdx, (int)yIdx)))
-                                {
-                                    if (newEntity.RType == RectType.None)
+
+                        if (isSeparate && entity.Height > modes.HeighMax)
+                        { //欄位左右分離後，當Entity高度大於最大實體高度時，判斷是否要上中下字切割分離
+                            var newIdx = eIdx;
+                            var newEntity = NewEntity();
+                            for (float yIdx = entity.Y; yIdx <= entity.Y + entity.Height; yIdx++)
+                            { //loop entity Y
+                                for (float xIdx = entity.X; xIdx <= entity.X + modes.Width - (float)Math.Round(modes.Width * 0.08); xIdx++)
+                                { //loop entity X
+                                    if (pStates.ContainsKey(((int)xIdx, (int)yIdx)))
                                     {
-                                        if (newIdx == eIdx) newEntity.RType = RectType.SplitTop;
-                                        else newEntity.RType = RectType.SplitMiddle;
-                                        newEntity.X = entity.X;
-                                        newEntity.Y = yIdx;
-                                        newEntity.Width = modes.Width;
+                                        if (newEntity.RType == RectType.None)
+                                        {
+                                            newEntity.RType = newIdx == eIdx ? RectType.SplitTop : RectType.SplitMiddle;
+                                            newEntity.X = entity.X;
+                                            newEntity.Y = yIdx;
+                                            newEntity.Width = modes.Width;
+                                        }
+                                        break;
                                     }
-                                    break;
+                                    if (xIdx == entity.X + modes.Width - (float)Math.Round(modes.Width * 0.08) && (newEntity.RType == RectType.SplitTop || newEntity.RType == RectType.SplitMiddle))
+                                    { //位於實體X軸的最右側，代表該處為空白，紀錄 Entity高度
+                                        newEntity.Height = yIdx - newEntity.Y;
+                                        entitys.Insert(newIdx++, newEntity);
+                                        newEntity = NewEntity();
+                                    }
                                 }
-                                if (xIdx == entity.X + modes.Width - (float)Math.Round(modes.Width * 0.08) && (newEntity.RType == RectType.SplitTop || newEntity.RType == RectType.SplitMiddle))
-                                { //位於實體X軸的最右側，代表該處為空白，紀錄 Entity高度
-                                    newEntity.Height = yIdx - newEntity.Y;
-                                    entitys.Insert(newIdx++, newEntity);
-                                    newEntity = NewEntity();
+                            }
+                            if (newIdx > eIdx)
+                            {
+                                if (newEntity.RType != RectType.None)
+                                {
+                                    newEntity.RType = RectType.SplitBottom;
+                                    newEntity.Height = entity.Y + entity.Height - newEntity.Y;
+                                    entitys[newIdx] = newEntity;
+                                    eIdx = newIdx;
+                                }
+                                else
+                                {
+                                    entitys.RemoveAt(newIdx);
+                                    eIdx = newIdx - 1;
                                 }
                             }
+                            continue;
                         }
-                        if (newIdx > eIdx)
-                        {
-                            if (newEntity.RType != RectType.None)
-                            {
-                                newEntity.RType = RectType.SplitBottom;
-                                newEntity.Height = entity.Y + entity.Height - newEntity.Y;
-                                entitys[newIdx] = newEntity;
-                                eIdx = newIdx;
-                            }
-                            else
-                            {
-                                entitys.RemoveAt(newIdx);
-                                eIdx = newIdx - 1;
-                            }
-                        }
-                        continue;
                     }
 
                     if (entity.Height > modes.Heigh || eIdx == entitys.Count - 1 || entity.RType == RectType.Ruby) continue; //不調整高度大於眾數的實體、不調整最後一個實體高度
 
                     var entityNext = entitys[eIdx + 1];
-                    float entitySpace = entityNext.Y - entity.Y - entity.Height;
+                    float entityNextSpace = entityNext.Y - entity.Y - entity.Height;
                     float newHeight = entityNext.Y + entityNext.Height - entity.Y;
-                    while (entitySpace < modes.HeighMin * 0.5 && newHeight < modes.Heigh * EntityMergeTBMaxRate) //前後實體高度在範圍內，則合併 * EntityMaxRate
+                    while (entityNextSpace < modes.HeighMin * 0.5 && newHeight < modes.HeighMax * EntityMergeTBMaxRate) //前後實體高度在範圍內，則合併
                     {
                         entity.RType = RectType.MergeTB;
                         entity.Height = newHeight;
@@ -471,7 +505,7 @@ namespace NovelTool
                         if (eIdx + 1 < entitys.Count)
                         {
                             entityNext = entitys[eIdx + 1];
-                            entitySpace = entityNext.Y - entity.Y - entity.Height;
+                            entityNextSpace = entityNext.Y - entity.Y - entity.Height;
                             newHeight = entityNext.Y + entityNext.Height - entity.Y;
                         }
                         else break;
@@ -754,6 +788,69 @@ namespace NovelTool
             float BlackForeColorRate = (float)2 - ForeColorRate;
 
             return (byte)((ForeColorRate * colorA * (float)alphaA / 255 + BlackForeColorRate * colorB * (float)alphaB / 255) / 2);
+        }
+
+
+        /// <summary>
+        /// Read image file and parse to Bitmap.
+        /// </summary>
+        public static Bitmap OpenImage(string fullPath)
+        {
+            FileStream fs = null;
+            Bitmap srcImage = null;
+            try
+            {
+                if (fullPath == null || fullPath == "" || fullPath.EndsWith("xhtml")) return srcImage;
+
+                fs = File.OpenRead(fullPath);
+                srcImage = (Bitmap)Image.FromStream(fs);
+                //https://www.c-sharpcorner.com/article/solution-for-a-graphics-object-cannot-be-created-from-an-im/
+                if (srcImage.PixelFormat == PixelFormat.Undefined || srcImage.PixelFormat == PixelFormat.DontCare ||
+                    srcImage.PixelFormat == PixelFormat.Format1bppIndexed ||
+                    srcImage.PixelFormat == PixelFormat.Format4bppIndexed ||
+                    srcImage.PixelFormat == PixelFormat.Format8bppIndexed ||
+                    srcImage.PixelFormat == PixelFormat.Format16bppGrayScale ||
+                    srcImage.PixelFormat == PixelFormat.Format16bppArgb1555) srcImage = new Bitmap(srcImage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                MessageBox.Show("OpenImage failed, " + ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+            finally
+            {
+                if (fs != null) fs.Dispose();
+            }
+            return srcImage;
+        }
+
+        public static (string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) GetSaveImageInfo()
+        {
+            long OutputQuality = Properties.Settings.Default.OutputQuality.Value; //輸出品質
+            ImageType OutputImageType = Properties.Settings.Default.OutputImageType.Value; //輸出檔案格式
+            PixelFormat OutputPixelFormat = Properties.Settings.Default.OutputPixelFormat.Value; //輸出色彩資料格式
+
+            ImageCodecInfo imgEncoder = null;
+            EncoderParameters encoderParameters = new EncoderParameters(1);
+            Encoder encoder = Encoder.Quality;
+            encoderParameters.Param[0] = new EncoderParameter(encoder, OutputQuality);
+
+            string extension = null;
+            foreach (ImageCodecInfo imageCodecInfo in ImageCodecInfo.GetImageDecoders())
+            {
+                if (OutputImageType == ImageType.Jpeg && imageCodecInfo.FormatID == ImageFormat.Jpeg.Guid) extension = ".jpg";
+                else if (OutputImageType == ImageType.Png && imageCodecInfo.FormatID == ImageFormat.Png.Guid) extension = ".png";
+                else if (OutputImageType == ImageType.Tiff && imageCodecInfo.FormatID == ImageFormat.Tiff.Guid) extension = ".tiff";
+                else if (OutputImageType == ImageType.Bmp && imageCodecInfo.FormatID == ImageFormat.Bmp.Guid) extension = ".bmp";
+                else if (OutputImageType == ImageType.Gif && imageCodecInfo.FormatID == ImageFormat.Gif.Guid) extension = ".gif";
+                if (extension != null)
+                {
+                    imgEncoder = imageCodecInfo;
+                    break;
+                }
+            }
+
+            return (extension, imgEncoder, encoderParameters, OutputPixelFormat);
         }
     }
 }

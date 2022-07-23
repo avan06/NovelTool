@@ -1,5 +1,4 @@
 ﻿using SharpCompress.Archives;
-using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using SharpCompress.Readers;
 using System;
@@ -10,7 +9,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -80,7 +78,7 @@ namespace NovelTool
             {
                 if (sourceImg.Tag == null) return;
                 var pageData = PageDatas[(int)sourceImg.Tag];
-                var columnBodyList = pageData.columnBodyList;
+                var columnBodyList = pageData.ColumnBodyList;
                 var X = e.X / zoomFactor;
                 var Y = e.Y / zoomFactor;
                 if (columnBodyList == null)
@@ -203,7 +201,8 @@ namespace NovelTool
                 $"Zip Files({filterZipExts})|{filterZipExts}|" +
                 $"Epub Files({filterEpubExts})|{filterEpubExts}|" +
                 $"Aozora Files({filterAozoraExts})|{filterAozoraExts}|" +
-                $"Image Files({filterImageExts})|{filterImageExts}";
+                $"Image Files({filterImageExts})|{filterImageExts}|" +
+                $"Analysis Result (*.yaml)|*.yaml";
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
 
@@ -219,6 +218,7 @@ namespace NovelTool
                     PicBox.Image.Dispose();
                     PicBox.Image = null;
                 }
+
                 #region UNZIP
                 if (filterEpubExts.IndexOf(fileExt) != -1 || filterZipExts.IndexOf(fileExt) != -1)
                 {
@@ -245,8 +245,53 @@ namespace NovelTool
                     //}
                 }
                 #endregion
+                #region Load yaml
+
+                if (fileExt == ".YAML")
+                {
+                    using (var yamlInput = File.OpenText(openFileDialog.FileName))
+                    {
+                        List<PageData> pageDatas = null;
+                        var deSerializer = new YamlDotNet.Serialization.DeserializerBuilder().Build();
+                        (counts, modes, pageDatas)  = 
+                            deSerializer.Deserialize<((ConcurrentDictionary<float, int> TopDict, ConcurrentDictionary<float, int> BottomDict, 
+                            ConcurrentDictionary<float, int> LeftDict, ConcurrentDictionary<float, int> RightDict,
+                            ConcurrentDictionary<float, int> WidthDict, ConcurrentDictionary<float, int> HeightDict) counts,
+                            (float Top, float Bottom, float Left, float Right, float Width, float Heigh,
+                            float TopMin, float BottomMin, float LeftMin, float RightMin,
+                            float WidthMin, float WidthMax, float HeighMin, float HeighMax) modes, List<PageData>)>(yamlInput);
+
+                        PageDatas.Clear();
+                        PageDatas.AddRange(pageDatas);
+
+                        if (PicBox.Image != null)
+                        {
+                            PicBox.Image.Dispose();
+                            PicBox.Image = null;
+                        }
+                        FileListView.BeginUpdate();
+                        FileListView.Items.Clear();
+                        if (sourceImg != null) sourceImg.Dispose();
+
+                        foreach (var pageData in PageDatas)
+                        {
+                            int itemIdx = FileListView.Items.Count;
+                            if (itemIdx == 0) inputDir = pageData.Path;
+                            FileListView.Items.Add(itemIdx.ToString(), $"{pageData.Path}\\{pageData.Name}", 0);
+                            FileListView.Items[itemIdx].Checked = !pageData.IsIllustration;
+                            FileListView.Items[itemIdx].SubItems.Add(pageData.Name);
+                            FileListView.Items[itemIdx].SubItems.Add(pageData.Path);
+                        }
+
+                        newAnalysisWorker.RunWorkerAsync();
+
+                        //FileListView.EndUpdate();
+                        //ToolProgressBar.Value = ToolProgressBar.Maximum;
+                    }
+                }
+                #endregion
                 #region Parse Epub
-                if (filterEpubExts.IndexOf(fileExt) != -1)
+                else if (filterEpubExts.IndexOf(fileExt) != -1)
                 {
                     string fullPath = "";
                     string rootPath = "";
@@ -313,7 +358,7 @@ namespace NovelTool
                         FileListView.Items[itemIdx].SubItems.Add(xhtml);
                         FileListView.Items[itemIdx].SubItems.Add(rootPath);
                         PageData pageData = new PageData(itemIdx, rootPath, xhtml, xhtmlExt);
-                        pageData.textList = xmlTextList;
+                        pageData.TextList = xmlTextList;
                         PageDatas.Add(pageData);
                     }
                     FileListView.EndUpdate();
@@ -359,11 +404,100 @@ namespace NovelTool
                     newAnalysisWorker.RunWorkerAsync();
                 }
                 #endregion
+
+                saveFileDialog.FileName = openFileDialog.FileName;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 MessageBox.Show("Open file failed, " + ex.Message + "\n" + ex.StackTrace, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+        }
+        
+        private void ToolStripSave_Click(object sender, EventArgs e)
+        {
+            if (FileListView.Items.Count == 0) return;
+
+            saveFileDialog.Filter = "Analysis Image (current)|Directory|Analysis Image (all)|Directory|Analysis Result (*.yaml)|Directory";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FileName = "Save in Analysis Directory";
+
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            string fileDirName = Path.GetDirectoryName(saveFileDialog.FileName);
+            string filePath = string.Format(@"{0}\Analysis", fileDirName);
+
+            if (saveFileDialog.FilterIndex == 1)
+            {
+                (string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = ImageTool.GetSaveImageInfo();
+
+                if (FileListView.SelectedItems.Count == 0) FileListView.Items[0].Selected = true;
+
+                Bitmap image;
+                var item = FileListView.SelectedItems[0];
+                var pageData = PageDatas.Count > item.Index ? PageDatas[item.Index] : null;
+                string name = Path.GetFileNameWithoutExtension(pageData.Name);
+                name += Filter.name != null ? $"_{Filter.name}" : "";
+                if (pageData.IsIllustration)
+                {
+                    image = ImageTool.OpenImage(pageData.Path + @"\" + pageData.Name);
+                    image.Tag = true;
+                }
+                else
+                {
+                    image = (Bitmap)PicBox.Image;
+                }
+                using (Bitmap outputImage = new Bitmap(image.Width, image.Height))
+                using (Graphics graphics = Graphics.FromImage(outputImage))
+                {
+                    graphics.DrawImage(image, 0, 0, image.Width, image.Height);
+                    ImageTool.SaveImage(outputImage, filePath, name, extension, imgEncoder, encoderParameters, pixelFormat);
+                }
+
+                GC.Collect();
+
+                ToolMsg.Text = String.Format(@"Save current analysis image success: \Analysis\{0}{1}", name, extension);
+            }
+            else if (saveFileDialog.FilterIndex == 2)
+            {
+                (string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = ImageTool.GetSaveImageInfo();
+
+                for (int idx = 0; idx < PageDatas.Count; idx++)
+                {
+                    Bitmap image;
+                    var pageData = PageDatas[idx];
+                    string name = Path.GetFileNameWithoutExtension(pageData.Name);
+                    name += Filter.name != null ? $"_{Filter.name}" : "";
+                    if (pageData.IsIllustration)
+                    {
+                        image = ImageTool.OpenImage(pageData.Path + @"\" + pageData.Name);
+                        image.Tag = true;
+                    }
+                    else
+                    {
+                        FileListViewPicBoxChanged(pageData);
+                        image = (Bitmap)PicBox.Image;
+                    }
+                    using (Bitmap outputImage = new Bitmap(image.Width, image.Height))
+                    using (Graphics graphics = Graphics.FromImage(outputImage))
+                    {
+                        graphics.DrawImage(image, 0, 0, image.Width, image.Height);
+                        ImageTool.SaveImage(outputImage, filePath, name, extension, imgEncoder, encoderParameters, pixelFormat);
+                    }
+                    if (idx % 10 == 0) GC.Collect();
+                }
+
+                ToolMsg.Text = @"Save all analysis image success";
+            }
+            else if (saveFileDialog.FilterIndex == 3)
+            {
+                var serializer = new YamlDotNet.Serialization.SerializerBuilder().Build();
+                var yamlString = serializer.Serialize((counts, modes, PageDatas));
+
+                FileInfo file = new FileInfo($"{filePath}\\PageDatas.yaml");
+                file.Directory.Create(); // If the directory already exists, this method does nothing.
+                File.WriteAllText(file.FullName, yamlString);
             }
         }
 
@@ -389,6 +523,8 @@ namespace NovelTool
         {
             ListViewItem item = e.Item;
 
+            if (item.SubItems.Count < 2) return; //ListViewItem has just been created, not yet completed
+
             var pageData = PageDatas.Count > item.Index ? PageDatas[item.Index] : null;
 
             if (item.Checked)
@@ -403,19 +539,19 @@ namespace NovelTool
                 try
                 {
                     RefreshModes();
-                    fs = File.OpenRead(pageData.path + @"\" + pageData.name);
+                    fs = File.OpenRead(pageData.Path + @"\" + pageData.Name);
                     pageImg = Image.FromStream(fs);
                     if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData, true))
                     {
-                        pageData.isIllustration = false;
+                        pageData.IsIllustration = false;
                         ImageTool.AnalysisPageY(pageData);
-                        if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
-                        if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
-                        if (pageData.xStatesFooter != null) ImageTool.AnalysisPageX(pageData.rectFooter, pageData.xStatesFooter, out pageData.columnFooterList);
-                        ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
+                        if (pageData.StatesXHead != null) ImageTool.AnalysisPageX(pageData.RectHead, pageData.StatesXHead, out pageData.ColumnHeadList);
+                        if (pageData.StatesXBody != null) ImageTool.AnalysisPageX(pageData.RectBody, pageData.StatesXBody, out pageData.ColumnBodyList);
+                        if (pageData.StatesXFooter != null) ImageTool.AnalysisPageX(pageData.RectFooter, pageData.StatesXFooter, out pageData.ColumnFooterList);
+                        ImageTool.AnalysisColumnRects(pageData.StatesP, pageData.RectBody, pageData.ColumnBodyList, counts);
 
-                        ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
-                        ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
+                        ImageTool.AnalysisEntityHeighWidth(pageData.StatesP, pageData.ColumnBodyList, modes);
+                        ImageTool.AnalysisEntityHeadBodyEnd(pageData.RectBody, pageData.ColumnBodyList, modes);
                         item.Selected = false;
                         item.Selected = true;
                     }
@@ -434,7 +570,7 @@ namespace NovelTool
             else
             {
                 item.BackColor = Color.CadetBlue;
-                if (pageData != null) pageData.isIllustration = true;
+                if (pageData != null) pageData.IsIllustration = true;
             }
         }
 
@@ -442,20 +578,21 @@ namespace NovelTool
         {
             if (!e.IsSelected) return;
 
-            FileStream fs = null;
-            ListViewItem item = e.Item;
+            PageData pageData = PageDatas[e.Item.Index];
 
-            string name = item.SubItems[1].Text;
-            var pageData = PageDatas[item.Index];
-
-            if (pageData.textList != null)
+            if (pageData.TextList != null)
             {
                 if (generateWeb == null || generateWeb.IsDisposed) generateWeb = new GenerateView(this, true);
                 generateWeb.StartPosition = FormStartPosition.CenterParent;
                 generateWeb.TopMost = true;
                 generateWeb.Show();
-                return;
             }
+            else FileListViewPicBoxChanged(pageData);
+        }
+
+        private void FileListViewPicBoxChanged(PageData pageData)
+        {
+            FileStream fs = null;
 
             int RectViewWidth = Properties.Settings.Default.RectViewWidth.Value;
             RectType[] rTypes = new RectType[] { //RectType.Head, RectType.Body, RectType.Footer, 
@@ -483,7 +620,7 @@ namespace NovelTool
             {
                 if (PicBox.Image != null) PicBox.Image.Dispose();
 
-                fs = File.OpenRead(item.Text);
+                fs = File.OpenRead(pageData.Path + @"\" + pageData.Name);
                 Bitmap img = (Bitmap)Image.FromStream(fs);
                 //https://www.c-sharpcorner.com/article/solution-for-a-graphics-object-cannot-be-created-from-an-im/
                 if (img.PixelFormat == PixelFormat.Undefined || img.PixelFormat == PixelFormat.DontCare || img.PixelFormat == PixelFormat.Format1bppIndexed ||
@@ -494,7 +631,7 @@ namespace NovelTool
                 PicBox.Location = Point.Empty;
                 if (sourceImg != null) sourceImg.Dispose();
                 sourceImg = (Bitmap)PicBox.Image;
-                sourceImg.Tag = item.Index;
+                sourceImg.Tag = pageData.Seq;
                 using (Pen penHead = new Pen(RectHeadColor, RectViewWidth))
                 using (Pen penBody = new Pen(RectBodyColor, RectViewWidth))
                 using (Pen penFooter = new Pen(RectFooterColor, RectViewWidth))
@@ -503,10 +640,10 @@ namespace NovelTool
                 using (Graphics gr = Graphics.FromImage(PicBox.Image))
                 {
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
-                    gr.DrawRectangles(penHead, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.rectHead) });
-                    gr.DrawRectangles(penBody, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.rectBody) });
-                    gr.DrawRectangles(penFooter, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.rectFooter) });
-                    DrawRectangles(gr, rTypes, pageData.columnBodyList, drawRectObj, penColumn, penColumnRuby);
+                    gr.DrawRectangles(penHead, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.RectHead) });
+                    gr.DrawRectangles(penBody, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.RectBody) });
+                    gr.DrawRectangles(penFooter, new RectangleF[] { ImageTool.EntityToRectangleF(pageData.RectFooter) });
+                    DrawRectangles(gr, rTypes, pageData.ColumnBodyList, drawRectObj, penColumn, penColumnRuby);
                 }
                 foreach (var drawRect in drawRectObj) drawRect.Value.pen.Dispose();
 
@@ -523,6 +660,7 @@ namespace NovelTool
                 GC.Collect();
             }
         }
+
         private void FileListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             Rectangle rect = e.Bounds;
@@ -713,7 +851,7 @@ namespace NovelTool
             FileListView.Items[itemIdx].SubItems.Add(file.Name);
             FileListView.Items[itemIdx].SubItems.Add(file.Parent.FullName);
             PageData pageData = new PageData(itemIdx, file.Parent.FullName, file.Name, file.Extension.ToUpper());
-            pageData.textList = aozoras;
+            pageData.TextList = aozoras;
             PageDatas.Add(pageData);
 
             FileListView.EndUpdate();
@@ -782,12 +920,12 @@ namespace NovelTool
             int AnalysisTaskThreadLimit = Properties.Settings.Default.AnalysisTaskThreadLimit.Value;
             Stopwatch tickerMajor = Stopwatch.StartNew();
             Stopwatch tickerMinor = null;
+            #region AnalysisImage
             using (SemaphoreSlim semaphore = new SemaphoreSlim(AnalysisTaskThreadLimit))
             {
                 Invoke(new MethodInvoker(() => { ToolMsg.Text = string.Format("Analysis {0} Image, start...", PageDatas.Count); }));
 
                 newAnalysisWorker.ReportProgress(0);
-                #region AnalysisImage
                 Task<(string, TimeSpan)>[] tasks = new Task<(string, TimeSpan)>[PageDatas.Count];
                 float calIdx = 0;
                 counts = (new ConcurrentDictionary<float, int>(), new ConcurrentDictionary<float, int>(),
@@ -799,28 +937,37 @@ namespace NovelTool
 
                     PageData pageData = PageDatas[idx];
                     FileStream fs = null;
-                    Image pageImg = null;
                     tasks[idx] = Task.Run<(string, TimeSpan)>(() =>
                     {
                         try
                         {
                             semaphore.Wait();
                             tickerMinor = Stopwatch.StartNew();
-                            fs = File.OpenRead(pageData.path + @"\" + pageData.name);
-                            pageImg = Image.FromStream(fs);
+                            fs = File.OpenRead(pageData.Path + @"\" + pageData.Name);
 
-                            if (ImageTool.AnalysisPointStates(new Bitmap(pageImg), pageData))
+                            bool isNeedAnalysis = pageData.RectImg.Width == 0 && pageData.RectImg.Height == 0;
+                            using (Image pageImg = Image.FromStream(fs))
+                            using (Bitmap pageBmp = new Bitmap(pageImg))
+                            {
+                                if (!isNeedAnalysis)
+                                {
+                                    if (!pageData.IsIllustration) ImageTool.AnalysisPointStates(pageBmp, pageData);
+                                }
+                                else ImageTool.AnalysisPointStates(pageBmp, pageData);
+                            }
+
+                            if (!pageData.IsIllustration)
                             {
                                 ImageTool.AnalysisPageY(pageData);
-                                if (pageData.xStatesHead != null) ImageTool.AnalysisPageX(pageData.rectHead, pageData.xStatesHead, out pageData.columnHeadList);
-                                if (pageData.xStatesBody != null) ImageTool.AnalysisPageX(pageData.rectBody, pageData.xStatesBody, out pageData.columnBodyList);
-                                if (pageData.xStatesFooter != null) ImageTool.AnalysisPageX(pageData.rectFooter, pageData.xStatesFooter, out pageData.columnFooterList);
-                                if (pageData.columnBodyList != null) ImageTool.AnalysisColumnRects(pageData.pStates, pageData.rectBody, pageData.columnBodyList, counts);
+                                if (pageData.StatesXHead != null) ImageTool.AnalysisPageX(pageData.RectHead, pageData.StatesXHead, out pageData.ColumnHeadList);
+                                if (pageData.StatesXBody != null) ImageTool.AnalysisPageX(pageData.RectBody, pageData.StatesXBody, out pageData.ColumnBodyList);
+                                if (pageData.StatesXFooter != null) ImageTool.AnalysisPageX(pageData.RectFooter, pageData.StatesXFooter, out pageData.ColumnFooterList);
+                                if (pageData.ColumnBodyList != null) ImageTool.AnalysisColumnRects(pageData.StatesP, pageData.RectBody, pageData.ColumnBodyList, counts);
                             }
 
                             newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 70),
-                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
-                            return (pageData.name, tickerMinor.Elapsed);
+                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.Name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
+                            return (pageData.Name, tickerMinor.Elapsed);
                         }
                         catch (Exception ex)
                         {
@@ -829,10 +976,9 @@ namespace NovelTool
                         }
                         finally
                         {
-                            if (pageImg != null) pageImg.Dispose();
                             if (fs != null) fs.Dispose();
                             semaphore.Release();
-                            GC.Collect();
+                            if (idx % 10 == 0) GC.Collect();
                         }
                     });
                 }
@@ -860,14 +1006,14 @@ namespace NovelTool
                         {
                             semaphore.Wait();
                             tickerMinor = Stopwatch.StartNew();
-                            if (!pageData.isIllustration && pageData.columnBodyList != null)
+                            if (!pageData.IsIllustration && pageData.ColumnBodyList != null)
                             {
-                                ImageTool.AnalysisEntityHeighWidth(pageData.pStates, pageData.columnBodyList, modes);
-                                ImageTool.AnalysisEntityHeadBodyEnd(pageData.rectBody, pageData.columnBodyList, modes);
+                                ImageTool.AnalysisEntityHeighWidth(pageData.StatesP, pageData.ColumnBodyList, modes);
+                                ImageTool.AnalysisEntityHeadBodyEnd(pageData.RectBody, pageData.ColumnBodyList, modes);
                             }
                             newAnalysisWorker.ReportProgress((int)((++calIdx / (float)FileListView.Items.Count) * 30 + 70),
-                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
-                            return (pageData.name, tickerMinor.Elapsed);
+                                new Tuple<string, float, int, TimeSpan, TimeSpan>(pageData.Name, calIdx, PageDatas.Count, tickerMinor.Elapsed, tickerMajor.Elapsed));
+                            return (pageData.Name, tickerMinor.Elapsed);
                         }
                         catch (Exception ex)
                         {
@@ -877,7 +1023,7 @@ namespace NovelTool
                         finally
                         {
                             semaphore.Release();
-                            GC.Collect();
+                            if (idx % 10 == 0) GC.Collect();
                         }
                     });
                 }
@@ -896,7 +1042,7 @@ namespace NovelTool
 
         private void NewAnalysis_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            for (int idx = 0; idx < PageDatas.Count; ++idx) if (PageDatas[idx].isIllustration) FileListView.Items[idx].Checked = false;
+            for (int idx = 0; idx < PageDatas.Count; ++idx) if (PageDatas[idx].IsIllustration) FileListView.Items[idx].Checked = false;
 
             FileListView.EndUpdate();
             ToolProgressBar.Value = ToolProgressBar.Maximum;

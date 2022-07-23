@@ -102,10 +102,27 @@ namespace NovelTool
         private void ToolStripSave_Click(object sender, EventArgs e)
         {
             (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = GetSaveInfo();
+
             string name = mainForm.Filter.name != null ?
                 string.Format(@"{0}_{1}", ToolStripPageBox.SelectedItem, mainForm.Filter.name) :
                 string.Format(@"{0}", ToolStripPageBox.SelectedItem);
-            ImageTool.SaveImage(OutputView.Image, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
+            Bitmap result = (Bitmap)OutputImgs[0];
+            if (!(result.Tag is bool))
+            { //Bitmap Not Illustration
+                if (OutputAdjustColorCheck) ImageTool.ChangeForeColor(result, OutputForeColor.ToArgb(), OutputBackColor.ToArgb(), ForeColorRate);
+                result = BitmapFilter.ConvolutionXYFilter(result, mainForm.Filter.xFilterMatrix, mainForm.Filter.yFilterMatrix, mainForm.Filter.factor, mainForm.Filter.bias);
+            }
+            using (Bitmap outputImage = new Bitmap(result.Width, result.Height))
+            using (Graphics graphics = Graphics.FromImage(outputImage))
+            {
+                if (!(result.Tag is bool)) //Bitmap Not Illustration
+                    using (SolidBrush backBrush = new SolidBrush(OutputAdjustColorCheck ? OutputBackColor : Color.White))
+                        graphics.FillRectangle(backBrush, 0, 0, result.Width, result.Height);
+
+                graphics.DrawImage(result, 0, 0, result.Width, result.Height);
+                ImageTool.SaveImage(outputImage, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
+            }
+            GC.Collect();
         }
 
         private void ToolStripSaveAll_Click(object sender, EventArgs e)
@@ -135,8 +152,7 @@ namespace NovelTool
                     graphics.DrawImage(result, 0, 0, result.Width, result.Height);
                     ImageTool.SaveImage(outputImage, path, name, extension, imgEncoder, encoderParameters, pixelFormat);
                 }
-                result.Dispose();
-                GC.Collect();
+                if (outputIdx % 10 == 0) GC.Collect();
             }
         }
 
@@ -186,45 +202,10 @@ namespace NovelTool
 
         private (string path, string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) GetSaveInfo()
         {
-            long OutputQuality = Properties.Settings.Default.OutputQuality.Value; //輸出品質
-            ImageType OutputImageType = Properties.Settings.Default.OutputImageType.Value; //輸出檔案格式
-            PixelFormat OutputPixelFormat = Properties.Settings.Default.OutputPixelFormat.Value; //輸出色彩資料格式
+            string path = string.Format(@"{0}\Output", mainForm.InputDir);
+            (string extension, ImageCodecInfo imgEncoder, EncoderParameters encoderParameters, PixelFormat pixelFormat) = ImageTool.GetSaveImageInfo();
 
-            string path = string.Format(@"{0}\Output", mainForm.InputDir), extension;
-            ImageCodecInfo imgEncoder;
-            EncoderParameters encoderParameters = new EncoderParameters(1);
-            Encoder encoder = Encoder.Quality;
-            encoderParameters.Param[0] = new EncoderParameter(encoder, OutputQuality);
-
-            switch (OutputImageType)
-            {
-                case ImageType.Jpeg:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Jpeg.Guid).FirstOrDefault();
-                    extension = ".jpg";
-                    break;
-                case ImageType.Png:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Png.Guid).FirstOrDefault();
-                    extension = ".png";
-                    break;
-                case ImageType.Tiff:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Tiff.Guid).FirstOrDefault();
-                    extension = ".tiff";
-                    break;
-                case ImageType.Bmp:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Bmp.Guid).FirstOrDefault();
-                    extension = ".bmp";
-                    break;
-                case ImageType.Gif:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Gif.Guid).FirstOrDefault();
-                    extension = ".gif";
-                    break;
-                default:
-                    imgEncoder = ImageCodecInfo.GetImageDecoders().Where(m => m.FormatID == ImageFormat.Jpeg.Guid).FirstOrDefault();
-                    extension = ".jpg";
-                    break;
-            }
-
-            return (path, extension, imgEncoder, encoderParameters, OutputPixelFormat);
+            return (path, extension, imgEncoder, encoderParameters, pixelFormat);
         }
         #endregion
 
@@ -264,6 +245,8 @@ namespace NovelTool
 
             InitializeComponent();
         }
+
+        private void GenerateView_FormClosing(object sender, FormClosingEventArgs e) => GC.Collect();
 
         public GenerateView(Main mainForm, bool isWeView = false) : this()
         {
@@ -317,12 +300,12 @@ namespace NovelTool
                 for (int pIdx = 0; pIdx < mainForm.PageDatas.Count; ++pIdx)
                 {
                     PageData pageData = mainForm.PageDatas[pIdx];
-                    if (pageData.textList == null || pageData.textList.Count <= 0) continue;
+                    if (pageData.TextList == null || pageData.TextList.Count <= 0) continue;
 
                     bool isBegin = false;
-                    for (int tIdx = 0; tIdx < pageData.textList.Count; tIdx++)
+                    for (int tIdx = 0; tIdx < pageData.TextList.Count; tIdx++)
                     {
-                        (string text, string ruby) = pageData.textList[tIdx];
+                        (string text, string ruby) = pageData.TextList[tIdx];
                         bool newLineFlag = text.EndsWith("\n");
                         text = text.Replace("\n", "");
                         if (text == "_pagebreak_") webStr.AppendLine("<p style='page-break-after: always;'>&nbsp;</p><p style='page-break-before: always;'>&nbsp;</p>");
@@ -431,7 +414,7 @@ namespace NovelTool
 
             ToolStripPageBox.SelectedItem = outputIdx;
 
-            GC.Collect();
+            if (outputIdx % 10 == 0) GC.Collect();
             return outputIdx;
         }
 
@@ -451,16 +434,16 @@ namespace NovelTool
                 Bitmap srcImage = null;
                 PageData pageData = mainForm.PageDatas[pIdx];
                 #region Parse Text Image
-                if (pageData.textList == null || pageData.textList.Count <= 0)
+                if (pageData.TextList == null || pageData.TextList.Count <= 0)
                 {
                     AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, false, true); //trigger create new dest Image when destImage is null
-                    if (pageData.isIllustration) //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
+                    if (pageData.IsIllustration) //此頁為圖片時，先儲存目前已產生頁面，再儲存圖片檔案
                         AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, true, false, true); //Trigger to save Illustration Image
-                    else if (pageData.columnBodyList != null)
+                    else if (pageData.ColumnBodyList != null)
                     {
                         float offsetX = -1;
-                        var columnRects = pageData.columnBodyList;
-                        float bodyTop = pageData.rectBody.Y;
+                        var columnRects = pageData.ColumnBodyList;
+                        float bodyTop = pageData.RectBody.Y;
                         var columnRuby = ImageTool.NewEntitys();
                         for (int cIdx = columnRects.Count - 1; cIdx >= 0; cIdx--)
                         {
@@ -510,8 +493,8 @@ namespace NovelTool
                             offsetX = X;
                             if (columnRuby.Entitys != null) columnRuby = ImageTool.NewEntitys();
 
-                            if (Entitys[Entitys.Count - 1].Height < mainForm.Modes.HeighMin && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
-                                destPoint.Y += (int)(mainForm.Modes.HeighMin * mainForm.ZoomFactor); //每行非句尾的最後一字(句子連接下一頁)，若高度不到最小高度(例如符號字)，則增加空白輸出
+                            if (Entitys[Entitys.Count - 1].Height < mainForm.Modes.Heigh && Entitys[Entitys.Count - 1].RType != RectType.EntityEnd)
+                                destPoint.Y += (int)(mainForm.Modes.HeighMin * mainForm.ZoomFactor); //每行非句尾的最後一字(句子連接下一頁)，若高度不到通常高度(例如符號字)，則增加空白輸出
                             else if (RType == RectType.BodyOut && Entitys[Entitys.Count - 1].RType == RectType.EntityEnd)
                                 AddNowCreateNext(pageData, outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint); //trigger save and create new dest Image
                         }
@@ -528,10 +511,10 @@ namespace NovelTool
                     StringFormat format = new StringFormat();/*StringFormat.GenericTypographic*/
                     format.Alignment = StringAlignment.Center;
                     format.LineAlignment = StringAlignment.Center;
-                    for (int tIdx = 0; tIdx < pageData.textList.Count; tIdx++)
+                    for (int tIdx = 0; tIdx < pageData.TextList.Count; tIdx++)
                     {
                         AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint, false, true); //trigger create new dest Image when destImage is null
-                        (string text, string ruby) = pageData.textList[tIdx];
+                        (string text, string ruby) = pageData.TextList[tIdx];
                         bool newLineFlag = text.EndsWith("\n");
                         text = text.Replace("\n", "");
                         if (text == "_pagebreak_")
@@ -728,7 +711,7 @@ namespace NovelTool
         private void AddNowCreateNext(PageData pageData, bool outputAll, int outputIdx,
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
             bool triggerAdd = true, bool triggerCreate = true, bool triggerSrcAdd = false) => AddNowCreateNext(outputAll, outputIdx, ref outputCount, ref srcImage, ref destImage, ref destPoint,
-                triggerAdd, triggerCreate, triggerSrcAdd, string.Format("{0}/{1}", pageData.path, pageData.name), false, pageData.columnHeadList, pageData.columnFooterList);
+                triggerAdd, triggerCreate, triggerSrcAdd, string.Format("{0}/{1}", pageData.Path, pageData.Name), false, pageData.ColumnHeadList, pageData.ColumnFooterList);
 
         private void AddNowCreateNext(bool outputAll, int outputIdx,
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
@@ -746,14 +729,14 @@ namespace NovelTool
             {
                 if (outputCount == outputIdx || outputAll)
                 {
-                    if (srcImage == null || isEpubAozora) srcImage = OpenImage(fullPath);
+                    if (srcImage == null || isEpubAozora) srcImage = ImageTool.OpenImage(fullPath);
                     srcImage.Tag = true; //Illustration
                     outputImgs.Add(srcImage);
                 }
                 outputCount++;
             }
 
-            if (!isEpubAozora && (outputCount == outputIdx || outputAll) && srcImage == null) srcImage = OpenImage(fullPath);
+            if (!isEpubAozora && (outputCount == outputIdx || outputAll) && srcImage == null) srcImage = ImageTool.OpenImage(fullPath);
 
             if (triggerCreate && (destImage == null || (outputCount == outputIdx && destImage.Size == new Size(1, 1))))
             {
@@ -763,7 +746,7 @@ namespace NovelTool
 
                     if (!isEpubAozora)
                     {
-                        if (srcImage == null) srcImage = OpenImage(fullPath);
+                        if (srcImage == null) srcImage = ImageTool.OpenImage(fullPath);
 
                         GenerateDrawTitle(HeadPositionType, HeadSizeAffectByZoom, columnHeadList, srcImage, ref destImage);
                         GenerateDrawTitle(FooterPositionType, FooterSizeAffectByZoom, columnFooterList, srcImage, ref destImage);
@@ -935,36 +918,6 @@ namespace NovelTool
         }
 
         /// <summary>
-        /// Read image file and parse to Bitmap.
-        /// </summary>
-        private Bitmap OpenImage(string fullPath)
-        {
-            FileStream fs = null;
-            Bitmap srcImage = null;
-            try
-            {
-                if (fullPath == null || fullPath == "" || fullPath.EndsWith("xhtml")) return srcImage;
-
-                fs = File.OpenRead(fullPath);
-                srcImage = (Bitmap)Image.FromStream(fs);
-                //https://www.c-sharpcorner.com/article/solution-for-a-graphics-object-cannot-be-created-from-an-im/
-                if (srcImage.PixelFormat == PixelFormat.Undefined || srcImage.PixelFormat == PixelFormat.DontCare || srcImage.PixelFormat == PixelFormat.Format1bppIndexed ||
-                    srcImage.PixelFormat == PixelFormat.Format4bppIndexed || srcImage.PixelFormat == PixelFormat.Format8bppIndexed ||
-                    srcImage.PixelFormat == PixelFormat.Format16bppGrayScale || srcImage.PixelFormat == PixelFormat.Format16bppArgb1555) srcImage = new Bitmap(srcImage);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-                MessageBox.Show("fileList Item Selection failed, " + ex.Message, ex.Source, MessageBoxButtons.OK, MessageBoxIcon.Hand);
-            }
-            finally
-            {
-                if (fs != null) fs.Dispose();
-            }
-            return srcImage;
-        }
-
-        /// <summary>
         /// Print out text images to generate Bitmap
         /// </summary>
         /// <param name="pageData">PageData</param>
@@ -985,7 +938,7 @@ namespace NovelTool
             ref int outputCount, ref Bitmap srcImage, ref Bitmap destImage, ref PointF destPoint,
             (RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys) columnRuby, bool outputAll = false)
         {
-            float offsetY = pageData.rectBody.Y; //The Y-axis position of the top of the body of the source Bitmap
+            float offsetY = pageData.RectBody.Y; //The Y-axis position of the top of the body of the source Bitmap
             int rubyIdx = 0;
             var rubyNewWidth = 0;
             var modeWidth = mainForm.Modes.Width * mainForm.ZoomFactor;

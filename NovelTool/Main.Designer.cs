@@ -61,6 +61,8 @@ namespace NovelTool
             this.ToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolStripGenView = new System.Windows.Forms.ToolStripButton();
             this.BasePanel = new System.Windows.Forms.Panel();
+            this.ToolStripSave = new System.Windows.Forms.ToolStripButton();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.SplitContainer1)).BeginInit();
             this.SplitContainer1.Panel1.SuspendLayout();
             this.SplitContainer1.Panel2.SuspendLayout();
@@ -210,6 +212,7 @@ namespace NovelTool
             this.ToolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.ToolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolStripOpen,
+            this.ToolStripSave,
             this.ToolStripSeparator1,
             this.ToolStripZoomIn,
             this.ToolStripZoomOut,
@@ -321,6 +324,19 @@ namespace NovelTool
             resources.ApplyResources(this.BasePanel, "BasePanel");
             this.BasePanel.Name = "BasePanel";
             // 
+            // ToolStripSave
+            // 
+            this.ToolStripSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolStripSave.Image = global::NovelTool.Properties.Resources.Save_16x;
+            resources.ApplyResources(this.ToolStripSave, "ToolStripSave");
+            this.ToolStripSave.Name = "ToolStripSave";
+            this.ToolStripSave.Click += new System.EventHandler(this.ToolStripSave_Click);
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.CheckPathExists = false;
+            this.saveFileDialog.ValidateNames = false;
+            // 
             // Main
             // 
             resources.ApplyResources(this, "$this");
@@ -379,6 +395,8 @@ namespace NovelTool
         private System.Windows.Forms.ToolStripStatusLabel ToolMsg;
         private System.Windows.Forms.Panel Panel1;
         private System.Windows.Forms.ProgressBar ToolProgressBar;
+        private System.Windows.Forms.ToolStripButton ToolStripSave;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 

@@ -254,6 +254,7 @@ namespace NovelTool
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "GenerateView";
             this.Text = "GenerateView";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GenerateView_FormClosing);
             this.Panel1.ResumeLayout(false);
             this.Panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OutputView)).EndInit();

@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
+using YamlDotNet.Serialization;
 
 namespace NovelTool
 {
     public class PageData
     {
-        public int seq;
-        public string path, name, extension;
-        public bool isIllustration;
-        public (RectType RType, float X, float Y, float Width, float Height) rectImg, rectHead, rectBody, rectFooter;
-        public List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> columnHeadList, columnBodyList, columnFooterList;
-        public List<(string text, string ruby)> textList;
-        public Dictionary<(int X, int Y), int> pStates;
-        public List<int> xStates, yStates, xStatesHead, xStatesBody, xStatesFooter;
+        public int Seq;
+        public string Path, Name, Extension;
+        public bool IsIllustration;
+        public (RectType RType, float X, float Y, float Width, float Height) RectImg, RectHead, RectBody, RectFooter;
+        public List<(RectType RType, float X, float Y, float Width, float Height, List<(RectType RType, float X, float Y, float Width, float Height)> Entitys)> ColumnHeadList, ColumnBodyList, ColumnFooterList;
 
+        public List<(string text, string ruby)> TextList;
+
+        [YamlIgnore]
+        public Dictionary<(int X, int Y), float> StatesP;
+        [YamlIgnore]
+        public List<int> StatesX, StatesY, StatesXHead, StatesXBody, StatesXFooter;
+
+        public PageData() { }
         public PageData(int seq, string path, string name, string extension)
         {
-            this.seq = seq;
-            this.path = path;
-            this.name = name;
-            this.extension = extension;
+            Seq = seq;
+            Path = path;
+            Name = name;
+            Extension = extension;
         }
     }
 

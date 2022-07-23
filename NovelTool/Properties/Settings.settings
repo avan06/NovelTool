@@ -11,11 +11,14 @@
     <Setting Name="IgnoreMinDetectYSize" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
       <Value Profile="(Default)">3|1_Analysis|1_AnalysisFactor|Decided to ignore top and bottom widths when detecting images (Default 3, if there is non-text content on the edge)</Value>
     </Setting>
+    <Setting Name="IgnoreBrightness" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
+      <Value Profile="(Default)">0.9|1_Analysis|1_AnalysisFactor|Determine the brightness value, when the brightness of the pixel exceeds this value, it is not detected, 1.0 represents white (Default 0.9)</Value>
+    </Setting>
     <Setting Name="IllustrationMinWidth" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
-      <Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|XXX</Value>
+      <Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|none</Value>
     </Setting>
     <Setting Name="IllustrationMinHeight" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
-      <Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|XXX</Value>
+      <Value Profile="(Default)">130|1_Analysis|1_AnalysisFactor|none</Value>
     </Setting>
     <Setting Name="HeadMinRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
       <Value Profile="(Default)">0.1|1_Analysis|2_Rate|Determines the scale value of the header on the page from top to bottom (Default 0.1, Max 1)</Value>
@@ -24,7 +27,7 @@
       <Value Profile="(Default)">0.95|1_Analysis|2_Rate|Determines the scale value of the footer on the page from top to bottom (Default 0.95, Max 1)</Value>
     </Setting>
     <Setting Name="IllustrationRate" Type="OptionTreeView.Option&lt;System.Int32&gt;" Scope="User">
-      <Value Profile="(Default)">3|1_Analysis|2_Rate|XXX</Value>
+      <Value Profile="(Default)">3|1_Analysis|2_Rate|none</Value>
     </Setting>
     <Setting Name="EntityMinRate" Type="OptionTreeView.Option&lt;System.Single&gt;" Scope="User">
       <Value Profile="(Default)">0.6|1_Analysis|2_Rate|Determines the scale value of the smallest text (rubi characters/ルビ) when the standard text scale is 1 (Default 0.6)</Value>

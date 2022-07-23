@@ -64,7 +64,21 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("130|1_Analysis|1_AnalysisFactor|XXX")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.9|1_Analysis|1_AnalysisFactor|Determine the brightness value, when the brightne" +
+            "ss of the pixel exceeds this value, it is not detected, 1.0 represents white (De" +
+            "fault 0.9)")]
+        public global::OptionTreeView.Option<System.Single> IgnoreBrightness {
+            get {
+                return ((global::OptionTreeView.Option<System.Single>)(this["IgnoreBrightness"]));
+            }
+            set {
+                this["IgnoreBrightness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("130|1_Analysis|1_AnalysisFactor|none")]
         public global::OptionTreeView.Option<System.Int32> IllustrationMinWidth {
             get {
                 return ((global::OptionTreeView.Option<System.Int32>)(this["IllustrationMinWidth"]));
@@ -76,7 +90,7 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("130|1_Analysis|1_AnalysisFactor|XXX")]
+        [global::System.Configuration.DefaultSettingValueAttribute("130|1_Analysis|1_AnalysisFactor|none")]
         public global::OptionTreeView.Option<System.Int32> IllustrationMinHeight {
             get {
                 return ((global::OptionTreeView.Option<System.Int32>)(this["IllustrationMinHeight"]));
@@ -114,7 +128,7 @@ namespace NovelTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3|1_Analysis|2_Rate|XXX")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3|1_Analysis|2_Rate|none")]
         public global::OptionTreeView.Option<System.Int32> IllustrationRate {
             get {
                 return ((global::OptionTreeView.Option<System.Int32>)(this["IllustrationRate"]));

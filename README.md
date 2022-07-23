@@ -1,6 +1,6 @@
 ﻿# NovelTool
 
-NovelTool is a novel/ebook reading and conversion tool, written in .Net Framework 4.8, which can convert ebooks into image files in another font size.
+NovelTool is a novel/ebook(Mainly `Japanese` novels) reading and conversion tool, written in .Net Framework 4.8, which can convert ebooks into image files in another font size.
 
 
 ## Table of Contents
@@ -71,13 +71,14 @@ Novel eBook images or scanned image files.
    * `AnalysisTaskThreadLimit`: Determines the maximum number of threads to perform analysis tasks (Default 2).  
    * `IgnoreMinDetectXSize`: Decided to ignore left and right widths when detecting images (Default 3, if there is non-text content on the edge).  
    * `IgnoreMinDetectYSize`: Decided to ignore top and bottom widths when detecting images (Default 3, if there is non-text content on the edge).  
-   * `IllustrationMinHeight`: XXXX  
-   * `IllustrationMinWidth`: XXXX  
+   * `IgnoreBrightness`: Determine the brightness value, when the brightness of the pixel exceeds this value, it is not detected, 1.0 represents white (Default 0.9).  
+   * `IllustrationMinHeight`: none  
+   * `IllustrationMinWidth`: none  
 
 1. Rate
    * `HeadMinRate`: Determines the scale value of the header on the page from top to bottom (Default 0.1, Max 1).  
    * `FooterMinRate`: Determines the scale value of the footer on the page from top to bottom (Default 0.95, Max 1).  
-   * `IllustrationRate`: XXXX  
+   * `IllustrationRate`: none  
    * `EntityMinRate`: Determines the scale value of the smallest text (rubi characters/ルビ) when the standard text scale is 1 (Default 0.6).  
    * `EntityMaxRate`: Determines the scale value of the largest text (parsable as standard text) when the standard text scale is 1 (Default 1.2).  
    * `EntityAdjacentRate`: Determines the minimum scale value that is immediately adjacent between two lines (Default 0.2, for example standard text and rubi characters).  
